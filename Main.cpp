@@ -1,232 +1,252 @@
 #include <iostream>
 #include <string>
-#include <vector>
 #include <memory>
-#include "quickjs-msvc.h"
+#include "v8.h"
+#include "libplatform/libplatform.h"
 
-class QuickJSWrapper {
+class V8HelloWorld {
 private:
-    JSRuntime* rt;
-    JSContext* ctx;
+    v8::Platform* platform;
+    v8::Isolate* isolate;
 
 public:
-    QuickJSWrapper() : rt(nullptr), ctx(nullptr) {
-        // Initialize QuickJS runtime and context
-        rt = JS_NewRuntime();
-        if (!rt) {
-            throw std::runtime_error("Failed to create QuickJS runtime");
+    V8HelloWorld() : platform(nullptr), isolate(nullptr) {
+        // Initialize V8
+        v8::V8::InitializeICU();
+        platform = v8::platform::NewDefaultPlatform_Without_Stl(0, v8::platform::IdleTaskSupport::kDisabled, v8::platform::InProcessStackDumping::kDisabled, nullptr, v8::platform::PriorityMode::kDontApply);
+        v8::V8::InitializePlatform(platform);
+        v8::V8::Initialize();
+
+        // Create a new isolate
+        v8::Isolate::CreateParams create_params;
+        create_params.array_buffer_allocator = v8::ArrayBuffer::Allocator::NewDefaultAllocator();
+        isolate = v8::Isolate::New(create_params);
+    }
+
+    ~V8HelloWorld() {
+        // Cleanup
+        if (isolate) {
+            isolate->Dispose();
+        }
+        v8::V8::Dispose();
+        v8::V8::DisposePlatform();
+        if (platform) {
+            delete platform;
+        }
+    }
+
+    void runHelloWorld() {
+        // Create isolate scope
+        v8::Isolate::Scope isolate_scope(isolate);
+
+        // Create a stack-allocated handle scope
+        v8::HandleScope handle_scope(isolate);
+
+        // Create a new context
+        v8::Local<v8::Context> context = v8::Context::New(isolate);
+
+        // Enter the context for compiling and running the hello world script
+        v8::Context::Scope context_scope(context);
+
+        std::cout << "=== V8 Hello World Examples ===\n\n";
+
+        // Example 1: Simple Hello World
+        runSimpleExample(context);
+
+        // Example 2: Variables and Functions
+        runVariableExample(context);
+
+        // Example 3: Objects and Arrays
+        runObjectExample(context);
+
+        // Example 4: Error Handling
+        runErrorExample(context);
+
+        // Example 5: C++ Function Integration
+        runCppFunctionExample(context);
+    }
+
+private:
+    void runSimpleExample(v8::Local<v8::Context> context) {
+        std::cout << "1. Simple Hello World:\n";
+
+        // Create a string containing the JavaScript source code
+        v8::Local<v8::String> source = v8::String::NewFromUtf8Literal(isolate,
+            "'Hello, World from V8!'"
+        );
+
+        // Compile the source code
+        v8::Local<v8::Script> script = v8::Script::Compile(context, source).ToLocalChecked();
+
+        // Run the script to get the result
+        v8::Local<v8::Value> result = script->Run(context).ToLocalChecked();
+
+        // Convert the result to a UTF8 string and print it
+        v8::String::Utf8Value utf8(isolate, result);
+        std::cout << "Result: " << *utf8 << "\n\n";
+    }
+
+    void runVariableExample(v8::Local<v8::Context> context) {
+        std::cout << "2. Variables and Math:\n";
+
+        const char* js_code = R"(
+            var x = 10;
+            var y = 20;
+            var message = 'The sum of ' + x + ' and ' + y + ' is: ' + (x + y);
+            message;
+        )";
+
+        v8::Local<v8::String> source = v8::String::NewFromUtf8(isolate, js_code).ToLocalChecked();
+        v8::Local<v8::Script> script = v8::Script::Compile(context, source).ToLocalChecked();
+        v8::Local<v8::Value> result = script->Run(context).ToLocalChecked();
+
+        v8::String::Utf8Value utf8(isolate, result);
+        std::cout << *utf8 << "\n\n";
+    }
+
+    void runObjectExample(v8::Local<v8::Context> context) {
+        std::cout << "3. Objects and Arrays:\n";
+
+        const char* js_code = R"(
+            var person = {
+                name: 'John Doe',
+                age: 30,
+                greet: function() {
+                    return 'Hello, my name is ' + this.name + ' and I am ' + this.age + ' years old.';
+                }
+            };
+            
+            var numbers = [1, 2, 3, 4, 5];
+            var sum = numbers.reduce(function(acc, num) { return acc + num; }, 0);
+            
+            person.greet() + ' Sum of numbers: ' + sum;
+        )";
+
+        v8::Local<v8::String> source = v8::String::NewFromUtf8(isolate, js_code).ToLocalChecked();
+        v8::Local<v8::Script> script = v8::Script::Compile(context, source).ToLocalChecked();
+        v8::Local<v8::Value> result = script->Run(context).ToLocalChecked();
+
+        v8::String::Utf8Value utf8(isolate, result);
+        std::cout << *utf8 << "\n\n";
+    }
+
+    void runErrorExample(v8::Local<v8::Context> context) {
+        std::cout << "4. Error Handling:\n";
+
+        const char* js_code = "throw new Error('This is a test error');";
+
+        v8::Local<v8::String> source = v8::String::NewFromUtf8(isolate, js_code).ToLocalChecked();
+        v8::Local<v8::Script> script = v8::Script::Compile(context, source).ToLocalChecked();
+
+        v8::TryCatch try_catch(isolate);
+        v8::Local<v8::Value> result = script->Run(context).ToLocalChecked();
+
+        if (try_catch.HasCaught()) {
+            v8::Local<v8::Value> exception = try_catch.Exception();
+            v8::String::Utf8Value exception_str(isolate, exception);
+            std::cout << "Caught JavaScript exception: " << *exception_str << "\n\n";
+        }
+        else {
+            v8::String::Utf8Value utf8(isolate, result);
+            std::cout << "Result: " << *utf8 << "\n\n";
+        }
+    }
+
+    void runCppFunctionExample(v8::Local<v8::Context> context) {
+        std::cout << "5. C++ Function Integration:\n";
+
+        // Create a template for the global object
+        v8::Local<v8::ObjectTemplate> global = v8::ObjectTemplate::New(isolate);
+
+        // Bind the print function
+        global->Set(v8::String::NewFromUtf8Literal(isolate, "print"),
+            v8::FunctionTemplate::New(isolate, Print));
+
+        // Bind the add function
+        global->Set(v8::String::NewFromUtf8Literal(isolate, "add"),
+            v8::FunctionTemplate::New(isolate, Add));
+
+        // Create a new context with the global template
+        v8::Local<v8::Context> new_context = v8::Context::New(isolate, nullptr, global);
+        v8::Context::Scope context_scope(new_context);
+
+        const char* js_code = R"(
+            print('Hello from C++ function!');
+            var result = add(15, 25);
+            print('15 + 25 = ' + result);
+            result;
+        )";
+
+        v8::Local<v8::String> source = v8::String::NewFromUtf8(isolate, js_code).ToLocalChecked();
+        v8::Local<v8::Script> script = v8::Script::Compile(new_context, source).ToLocalChecked();
+        v8::Local<v8::Value> result = script->Run(new_context).ToLocalChecked();
+
+        v8::String::Utf8Value utf8(isolate, result);
+        std::cout << "Final result: " << *utf8 << "\n\n";
+    }
+
+    // C++ function to be called from JavaScript
+    static void Print(const v8::FunctionCallbackInfo<v8::Value>& args) {
+        bool first = true;
+        for (int i = 0; i < args.Length(); i++) {
+            v8::HandleScope handle_scope(args.GetIsolate());
+            if (first) {
+                first = false;
+            }
+            else {
+                std::cout << " ";
+            }
+            v8::String::Utf8Value str(args.GetIsolate(), args[i]);
+            std::cout << *str;
+        }
+        std::cout << std::endl;
+    }
+
+    // C++ function to add two numbers
+    static void Add(const v8::FunctionCallbackInfo<v8::Value>& args) {
+        if (args.Length() < 2) {
+            args.GetIsolate()->ThrowException(
+                v8::String::NewFromUtf8Literal(args.GetIsolate(), "Wrong number of arguments"));
+            return;
         }
 
-        ctx = JS_NewContext(rt);
-        if (!ctx) {
-            JS_FreeRuntime(rt);
-            throw std::runtime_error("Failed to create QuickJS context");
-        }
-    }
-
-    ~QuickJSWrapper() {
-        if (ctx) {
-            JS_FreeContext(ctx);
-        }
-        if (rt) {
-            JS_FreeRuntime(rt);
-        }
-    }
-
-    // Execute JavaScript code and return result as string
-    std::string eval(const std::string& code) {
-        JSValue result = JS_Eval(ctx, code.c_str(), code.length(), "<eval>", JS_EVAL_TYPE_GLOBAL);
-
-        if (JS_IsException(result)) {
-            JSValue exception = JS_GetException(ctx);
-            const char* str = JS_ToCString(ctx, exception);
-            std::string error = str ? str : "Unknown error";
-            JS_FreeCString(ctx, str);
-            JS_FreeValue(ctx, exception);
-            JS_FreeValue(ctx, result);
-            throw std::runtime_error("JavaScript error: " + error);
+        if (!args[0]->IsNumber() || !args[1]->IsNumber()) {
+            args.GetIsolate()->ThrowException(
+                v8::String::NewFromUtf8Literal(args.GetIsolate(), "Arguments must be numbers"));
+            return;
         }
 
-        const char* str = JS_ToCString(ctx, result);
-        std::string resultStr = str ? str : "";
-        JS_FreeCString(ctx, str);
-        JS_FreeValue(ctx, result);
+        double value_a = args[0]->NumberValue(args.GetIsolate()->GetCurrentContext()).FromJust();
+        double value_b = args[1]->NumberValue(args.GetIsolate()->GetCurrentContext()).FromJust();
+        double result = value_a + value_b;
 
-        return resultStr;
+        args.GetReturnValue().Set(v8::Number::New(args.GetIsolate(), result));
     }
-
-    // Set a global variable
-    void setGlobal(const std::string& name, const std::string& value) {
-        JSValue jsValue = JS_NewString(ctx, value.c_str());
-        JS_SetPropertyStr(ctx, JS_GetGlobalObject(ctx), name.c_str(), jsValue);
-    }
-
-    void setGlobal(const std::string& name, double value) {
-        JSValue jsValue = JS_NewFloat64_(ctx, value);
-        JS_SetPropertyStr(ctx, JS_GetGlobalObject(ctx), name.c_str(), jsValue);
-    }
-
-    // Get a global variable as string
-    std::string getGlobalString(const std::string& name) {
-        JSValue global = JS_GetGlobalObject(ctx);
-        JSValue prop = JS_GetPropertyStr(ctx, global, name.c_str());
-
-        const char* str = JS_ToCString(ctx, prop);
-        std::string result = str ? str : "";
-        JS_FreeCString(ctx, str);
-        JS_FreeValue(ctx, prop);
-        JS_FreeValue(ctx, global);
-
-        return result;
-    }
-
-    // Register a C++ function to be callable from JavaScript
-    void registerFunction(const std::string& name, JSCFunction* func) {
-        JSValue global = JS_GetGlobalObject(ctx);
-        JSValue jsFunc = JS_NewCFunction(ctx, func, name.c_str(), 0);
-        JS_SetPropertyStr(ctx, global, name.c_str(), jsFunc);
-        JS_FreeValue(ctx, global);
-    }
-
-    JSContext* getContext() { return ctx; }
 };
 
-// Example C++ function to be called from JavaScript
-static JSValue js_hello(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-    if (argc > 0) {
-        const char* name = JS_ToCString(ctx, argv[0]);
-        std::string message = "Hello, " + std::string(name) + " from C++!";
-        JS_FreeCString(ctx, name);
-        return JS_NewString(ctx, message.c_str());
-    }
-    return JS_NewString(ctx, "Hello from C++!");
+// Helper function to set global variables from C++
+void SetGlobalVariable(v8::Local<v8::Context> context, const std::string& name, const std::string& value) {
+    v8::Isolate* isolate = context->GetIsolate();
+    v8::Local<v8::String> key = v8::String::NewFromUtf8(isolate, name.c_str()).ToLocalChecked();
+    v8::Local<v8::String> val = v8::String::NewFromUtf8(isolate, value.c_str()).ToLocalChecked();
+    context->Global()->Set(context, key, val).FromJust();
 }
 
-// Example function that takes multiple parameters
-static JSValue js_add_numbers(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-    if (argc < 2) {
-        return JS_ThrowTypeError(ctx, "Expected 2 arguments");
-    }
-
-    double a, b;
-    if (JS_ToFloat64(ctx, &a, argv[0]) < 0 || JS_ToFloat64(ctx, &b, argv[1]) < 0) {
-        return JS_ThrowTypeError(ctx, "Arguments must be numbers");
-    }
-
-    return JS_NewFloat64_(ctx, a + b);
-}
-
-// Example function that returns an object
-static JSValue js_create_object(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
-    JSValue obj = JS_NewObject(ctx);
-
-    JS_SetPropertyStr(ctx, obj, "name", JS_NewString(ctx, "Sample Object"));
-    JS_SetPropertyStr(ctx, obj, "value", JS_NewInt32_(ctx, 42));
-    JS_SetPropertyStr(ctx, obj, "timestamp", JS_NewFloat64_(ctx, 1234567890.123));
-
-    return obj;
+// Helper function to get global variables from JavaScript
+std::string GetGlobalVariable(v8::Local<v8::Context> context, const std::string& name) {
+    v8::Isolate* isolate = context->GetIsolate();
+    v8::Local<v8::String> key = v8::String::NewFromUtf8(isolate, name.c_str()).ToLocalChecked();
+    v8::Local<v8::Value> value = context->Global()->Get(context, key).ToLocalChecked();
+    v8::String::Utf8Value utf8_value(isolate, value);
+    return std::string(*utf8_value);
 }
 
 int main() {
     try {
-        QuickJSWrapper js;
+        V8HelloWorld v8_app;
+        v8_app.runHelloWorld();
 
-        std::cout << "=== QuickJS C++ Integration Example ===\n\n";
-
-        // 1. Basic JavaScript execution
-        std::cout << "1. Basic Math:\n";
-        std::cout << "2 + 3 = " << js.eval("2 + 3") << "\n";
-        std::cout << "Math.PI = " << js.eval("Math.PI") << "\n\n";
-
-        // 2. String operations
-        std::cout << "2. String Operations:\n";
-        std::cout << js.eval("'Hello ' + 'World!'") << "\n";
-        std::cout << js.eval("'JavaScript'.toUpperCase()") << "\n\n";
-
-        // 3. Working with variables
-        std::cout << "3. Variables:\n";
-        js.setGlobal("myName", "QuickJS User");
-        js.setGlobal("myAge", 25.5);
-        std::cout << "Name: " << js.getGlobalString("myName") << "\n";
-        std::cout << "Age: " << js.eval("myAge") << "\n\n";
-
-        // 4. Complex JavaScript code
-        std::cout << "4. Complex Code (Fibonacci):\n";
-        std::string fibCode = R"(
-            function fibonacci(n) {
-                if (n <= 1) return n;
-                return fibonacci(n - 1) + fibonacci(n - 2);
-            }
-            fibonacci(10);
-        )";
-        std::cout << "fibonacci(10) = " << js.eval(fibCode) << "\n\n";
-
-        // 5. Register C++ functions
-        std::cout << "5. C++ Functions in JavaScript:\n";
-        js.registerFunction("hello", js_hello);
-        js.registerFunction("addNumbers", js_add_numbers);
-        js.registerFunction("createObject", js_create_object);
-
-        std::cout << js.eval("hello()") << "\n";
-        std::cout << js.eval("hello('Alice')") << "\n";
-        std::cout << "5 + 7 = " << js.eval("addNumbers(5, 7)") << "\n\n";
-
-        // 6. Working with objects
-        std::cout << "6. Object Handling:\n";
-        std::string objCode = R"(
-            var obj = createObject();
-            'Name: ' + obj.name + ', Value: ' + obj.value;
-        )";
-        std::cout << js.eval(objCode) << "\n\n";
-
-        // 7. Arrays and loops
-        std::cout << "7. Arrays and Loops:\n";
-        std::string arrayCode = R"(
-            var arr = [1, 2, 3, 4, 5];
-            var sum = 0;
-            for (var i = 0; i < arr.length; i++) {
-                sum += arr[i];
-            }
-            'Array: [' + arr.join(', ') + '], Sum: ' + sum;
-        )";
-        std::cout << js.eval(arrayCode) << "\n\n";
-
-        // 8. JSON handling
-        std::cout << "8. JSON Handling:\n";
-        std::string jsonCode = R"(
-            var data = { users: [
-                { name: 'John', age: 30 },
-                { name: 'Jane', age: 25 }
-            ]};
-            JSON.stringify(data, null, 2);
-        )";
-        std::cout << "JSON Data:\n" << js.eval(jsonCode) << "\n\n";
-
-        // 9. Error handling example
-        std::cout << "9. Error Handling:\n";
-        try {
-            js.eval("nonExistentFunction()");
-        }
-        catch (const std::exception& e) {
-            std::cout << "Caught error: " << e.what() << "\n\n";
-        }
-
-        // 10. Performance test
-        std::cout << "10. Performance Test:\n";
-        std::string perfCode = R"(
-    async function fetchData() {
-        // QuickJS supports modern async syntax
-        return await new Promise(resolve => resolve("data"));
-    }
-            var start = Date.now();
-            var result = 0;
-            for (var i = 0; i < 1000000; i++) {
-                result += i;
-            }
-            var end = Date.now();
-            'Calculated sum of 1M numbers in ' + (end - start) + 'ms, Result: ' + result;
-        )";
-        std::cout << js.eval(perfCode) << "\n";
+        std::cout << "V8 Hello World completed successfully!\n";
 
     }
     catch (const std::exception& e) {

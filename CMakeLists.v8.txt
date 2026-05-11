@@ -1,0 +1,42 @@
+SET(PROJECT_NAME "cocosTS-Wrapper")
+SET(PROJECT_VERSION "0.1.0")
+cmake_minimum_required(VERSION 3.10)
+project(${PROJECT_NAME} VERSION ${PROJECT_VERSION} LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_BUILD_TYPE "Release")
+
+add_executable(${PROJECT_NAME} Main.cpp)
+
+add_definitions(-DPLATFORM_WINDOWS)
+# add_definitions(-DPLATFORM_WINDOWS)
+
+# link dynamic library (with v8_libplatform support)
+target_link_directories(${PROJECT_NAME} PUBLIC "V8/Lib/Win64DLL")
+target_link_libraries(${PROJECT_NAME} PRIVATE v8.dll.lib v8_libplatform.dll.lib winmm.lib dbghelp.lib shlwapi.lib )
+target_include_directories(${PROJECT_NAME} PUBLIC "V8/Inc")
+
+# Copy DLLs to output directory
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_SOURCE_DIR}/V8/Lib/Win64DLL/v8.dll"
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_SOURCE_DIR}/V8/Lib/Win64DLL/v8_libplatform.dll"
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_SOURCE_DIR}/V8/Lib/Win64DLL/v8_libbase.dll"
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_SOURCE_DIR}/V8/Lib/Win64DLL/third_party_abseil-cpp_absl.dll"
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_SOURCE_DIR}/V8/Lib/Win64DLL/third_party_zlib.dll"
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>
+)
+
+if(MSVC)
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
+endif()
