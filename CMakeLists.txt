@@ -141,10 +141,7 @@ target_compile_definitions(${APP_NAME} PRIVATE
 )
 
 if(WINDOWS)
-    set(V8_DIR ${CMAKE_CURRENT_SOURCE_DIR}/V8)
-    target_include_directories(${APP_NAME} PRIVATE ${V8_DIR}/Inc)
-    target_link_directories(${APP_NAME} PRIVATE ${V8_DIR}/Lib/WIN32)
-    target_link_libraries(${APP_NAME} v8_monolith.lib winmm.lib dbghelp.lib shlwapi.lib)
+    # V8 and jsb headers/libs flow transitively through cocos2d -> jsb
 endif()
 
 # mark app resources

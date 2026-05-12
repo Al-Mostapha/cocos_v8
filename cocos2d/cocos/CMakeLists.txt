@@ -107,7 +107,7 @@ add_library(cocos2d ${COCOS_SRC})
 
 # use external libs
 add_subdirectory(${COCOS2DX_ROOT_PATH}/external ${ENGINE_BINARY_PATH}/external)
-target_link_libraries(cocos2d external)
+target_link_libraries(cocos2d external jsb)
 
 # add base macro define and compile options
 use_cocos2dx_compile_define(cocos2d)
@@ -139,6 +139,9 @@ set_target_properties(cocos2d
 if(BUILD_LUA_LIBS)
     add_subdirectory(${COCOS2DX_ROOT_PATH}/cocos/scripting/lua-bindings ${ENGINE_BINARY_PATH}/cocos/lua-bindings)
 endif()
+
+## JS bindings lib (V8)
+add_subdirectory(${COCOS2DX_ROOT_PATH}/cocos/scripting/js-bindings ${ENGINE_BINARY_PATH}/cocos/js-bindings)
 
 if(XCODE OR VS)
     cocos_mark_code_files("cocos2d")
