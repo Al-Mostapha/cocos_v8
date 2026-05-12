@@ -23,8 +23,6 @@ enum class MessageLoopBehavior : bool {
   kWaitForWork = true
 };
 
-enum class PriorityMode : bool { kDontApply, kApply };
-
 /**
  * Returns a new instance of the default v8::Platform implementation.
  *
@@ -37,17 +35,13 @@ enum class PriorityMode : bool { kDontApply, kApply };
  * calling v8::platform::RunIdleTasks to process the idle tasks.
  * If |tracing_controller| is nullptr, the default platform will create a
  * v8::platform::TracingController instance and use it.
- * If |priority_mode| is PriorityMode::kApply, the default platform will use
- * multiple task queues executed by threads different system-level priorities
- * (where available) to schedule tasks.
  */
 V8_PLATFORM_EXPORT std::unique_ptr<v8::Platform> NewDefaultPlatform(
     int thread_pool_size = 0,
     IdleTaskSupport idle_task_support = IdleTaskSupport::kDisabled,
     InProcessStackDumping in_process_stack_dumping =
         InProcessStackDumping::kDisabled,
-    std::unique_ptr<v8::TracingController> tracing_controller = {},
-    PriorityMode priority_mode = PriorityMode::kDontApply);
+    std::unique_ptr<v8::TracingController> tracing_controller = {});
 
 /**
  * The same as NewDefaultPlatform but disables the worker thread pool.
@@ -109,30 +103,4 @@ V8_PLATFORM_EXPORT void NotifyIsolateShutdown(v8::Platform* platform,
 }  // namespace platform
 }  // namespace v8
 
-
-    namespace v8 {
-    namespace platform {
-
-
-    V8_PLATFORM_EXPORT v8::Platform* NewDefaultPlatform_Without_Stl(
-        int thread_pool_size = 0,
-        IdleTaskSupport idle_task_support = IdleTaskSupport::kDisabled,
-        InProcessStackDumping in_process_stack_dumping =
-            InProcessStackDumping::kDisabled,
-        v8::TracingController* tracing_controller = nullptr, 
-        PriorityMode priority_mode = PriorityMode::kDontApply
-        );
-
-    V8_PLATFORM_EXPORT v8::Platform*
-    NewSingleThreadedDefaultPlatform_Without_Stl(
-        IdleTaskSupport idle_task_support = IdleTaskSupport::kDisabled,
-        InProcessStackDumping in_process_stack_dumping =
-            InProcessStackDumping::kDisabled,
-        v8::TracingController* tracing_controller = nullptr);
-
-    V8_PLATFORM_EXPORT void DeletePlatform_Without_Stl(v8::Platform*);
-
-    }  // namespace platform
-    }  // namespace v8
-
-    #endif  // V8_LIBPLATFORM_LIBPLATFORM_H_
+#endif  // V8_LIBPLATFORM_LIBPLATFORM_H_

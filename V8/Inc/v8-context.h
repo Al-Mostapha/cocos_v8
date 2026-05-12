@@ -438,8 +438,7 @@ template <class T>
 MaybeLocal<T> Context::GetDataFromSnapshotOnce(size_t index) {
   auto slot = GetDataFromSnapshotOnce(index);
   if (slot) {
-    internal::PerformCastCheck(
-        internal::ValueHelper::SlotAsValue<T, false>(slot));
+    internal::PerformCastCheck(internal::ValueHelper::SlotAsValue<T>(slot));
   }
   return Local<T>::FromSlot(slot);
 }

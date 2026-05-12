@@ -135,6 +135,18 @@ target_include_directories(${APP_NAME}
         PRIVATE ${COCOS2DX_ROOT_PATH}/cocos/audio/include/
 )
 
+target_compile_definitions(${APP_NAME} PRIVATE
+    $<$<CONFIG:Debug>:COCOS2D_DEBUG=1>
+    $<$<NOT:$<CONFIG:Debug>>:COCOS2D_DEBUG=1>
+)
+
+if(WINDOWS)
+    set(V8_DIR ${CMAKE_CURRENT_SOURCE_DIR}/V8)
+    target_include_directories(${APP_NAME} PRIVATE ${V8_DIR}/Inc)
+    target_link_directories(${APP_NAME} PRIVATE ${V8_DIR}/Lib/WIN32)
+    target_link_libraries(${APP_NAME} v8_monolith.lib winmm.lib dbghelp.lib shlwapi.lib)
+endif()
+
 # mark app resources
 setup_cocos_app_config(${APP_NAME})
 if(APPLE)

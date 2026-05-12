@@ -24,6 +24,8 @@
 
 #include "AppDelegate.h"
 #include "HelloWorldScene.h"
+#include "v8.h"
+#include "libplatform/libplatform.h"
 
 // #define USE_AUDIO_ENGINE 1
 
@@ -106,6 +108,41 @@ bool AppDelegate::applicationDidFinishLaunching() {
     }
 
     register_all_packages();
+
+    // V8 smoke test — init, run a tiny JS script, log the result, then tear down
+    {
+        v8::V8::InitializeICU();
+        std::unique_ptr<v8::Platform> platform = v8::platform::NewDefaultPlatform();
+        v8::V8::InitializePlatform(platform.get());
+        v8::V8::Initialize();
+
+        v8::Isolate::CreateParams create_params;
+        create_params.array_buffer_allocator = v8::ArrayBuffer::Allocator::NewDefaultAllocator();
+        v8::Isolate* isolate = v8::Isolate::New(create_params);
+        {
+            v8::Isolate::Scope isolate_scope(isolate);
+            v8::HandleScope handle_scope(isolate);
+            v8::Local<v8::Context> context = v8::Context::New(isolate);
+            v8::Context::Scope context_scope(context);
+
+            auto source = v8::String::NewFromUtf8Literal(isolate,
+                "'V8 + Cocos2d running! Result: ' + (6 * 7)");
+            v8::TryCatch try_catch(isolate);
+            auto script = v8::Script::Compile(context, source).ToLocalChecked();
+            auto maybeResult = script->Run(context);
+            if (try_catch.HasCaught()) {
+                v8::String::Utf8Value err(isolate, try_catch.Exception());
+                cocos2d::log("[V8] ERROR: %s", *err);
+            } else {
+                v8::String::Utf8Value utf8(isolate, maybeResult.ToLocalChecked());
+                cocos2d::log("[V8] %s", *utf8);
+            }
+        }
+        isolate->Dispose();
+        delete create_params.array_buffer_allocator;
+        v8::V8::Dispose();
+        v8::V8::DisposePlatform();
+    }
 
     // create a scene. it's an autorelease object
     auto scene = HelloWorld::createScene();

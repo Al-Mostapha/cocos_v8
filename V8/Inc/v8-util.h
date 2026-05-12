@@ -302,9 +302,9 @@ class PersistentValueMapBase {
   }
 
   static PersistentContainerValue ClearAndLeak(Global<V>* persistent) {
-    internal::Address* address = persistent->slot();
+    V* v = persistent->template value<V>();
     persistent->Clear();
-    return reinterpret_cast<PersistentContainerValue>(address);
+    return reinterpret_cast<PersistentContainerValue>(v);
   }
 
   static PersistentContainerValue Leak(Global<V>* persistent) {
