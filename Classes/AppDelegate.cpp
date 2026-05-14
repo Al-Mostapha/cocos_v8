@@ -113,7 +113,7 @@ bool AppDelegate::applicationDidFinishLaunching()
     // Start the JS engine and run a smoke test
     auto *js = ScriptEngine::getInstance();
 
-    jsb_register_all_modules();
+    // jsb_register_all_modules();
 
     if (js->start())
     {

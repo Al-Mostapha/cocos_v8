@@ -134,6 +134,9 @@ target_include_directories(${APP_NAME}
         PRIVATE Classes
         PRIVATE ${COCOS2DX_ROOT_PATH}/cocos/audio/include/
 )
+# add path of jsb path 
+# add_subdirectory(${COCOS2DX_ROOT_PATH}/cocos/scripting/js-bindings ${ENGINE_BINARY_PATH}/cocos/js-bindings)
+target_link_libraries(${APP_NAME} jsb)
 
 target_compile_definitions(${APP_NAME} PRIVATE
     $<$<CONFIG:Debug>:COCOS2D_DEBUG=1>
@@ -143,6 +146,8 @@ target_compile_definitions(${APP_NAME} PRIVATE
 if(WINDOWS)
     # V8 and jsb headers/libs flow transitively through cocos2d -> jsb
 endif()
+
+
 
 # mark app resources
 setup_cocos_app_config(${APP_NAME})
