@@ -2,6 +2,8 @@ set(V8_DIR ${COCOS2DX_ROOT_PATH}/external/V8)
 
 set(JSB_SRC
     ScriptEngine.cpp
+    JsbUtils.cpp
+    Core/jsb_module_register.cpp
 )
 
 set(JSB_HEADERS
@@ -9,6 +11,7 @@ set(JSB_HEADERS
     JsbConfig.h
     HelperMacros.h
     ScriptEngine.hpp
+    Core/jsb_module_register.hpp
 )
 
 add_library(jsb STATIC ${JSB_SRC} ${JSB_HEADERS})

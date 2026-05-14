@@ -10,9 +10,9 @@ class ScriptEngine
 public:
   static ScriptEngine *getInstance();
   static void destroyInstance();
-  ScriptEngine();
 
-  bool init();
+  bool start();
+
   void cleanup();
 
   // Evaluate a JS string. Optionally writes the result to *result.
@@ -20,24 +20,30 @@ public:
   bool evalString(const char *script, std::string *result = nullptr);
 
   v8::Isolate *getIsolate() const { return _isolate; }
+  // std::string stackTraceToString(v8::Local<v8::StackTrace> stackTrace);
+  std::string getCurrentStackTrace();
 
 private:
-  ScriptEngine() = default;
+  ScriptEngine();
   ~ScriptEngine();
+  bool init();
 
-  static void onFatalErrorCallback(const char* location, const char* message);
-  static void onOOMErrorCallback(const char* location, bool is_heap_oom);
+  static void onFatalErrorCallback(const char *location, const char *message);
+  static void onOOMErrorCallback(const char *location,
+                                 const v8::OOMDetails &details);
   static void onMessageCallback(v8::Local<v8::Message> message, v8::Local<v8::Value> data);
   static void onPromiseRejectCallback(v8::PromiseRejectMessage msg);
-  void callExceptionCallback(const char*, const char*, const char*);
+  void callExceptionCallback(const char *, const char *, const char *);
+
+  void _InstallConsole();
 
   v8::Platform *_platform;
   v8::Isolate *_isolate = nullptr;
-  v8::Persistent<v8::Context> _context;
+  v8::Global<v8::Context> _context;
   v8::HandleScope *_handleScope;
 
   std::chrono::steady_clock::time_point _startTime;
-  std::vector<std::function<bool(v8::Object *)>> _registerCallbackArray;
+  std::vector<std::function<bool(v8::Local<v8::Object>)>> _registerCallbackArray;
   std::vector<std::function<void()>> _beforeInitHookArray;
   std::vector<std::function<void()>> _afterInitHookArray;
   std::vector<std::function<void()>> _beforeCleanupHookArray;
@@ -50,7 +56,7 @@ private:
   bool _isWaitForConnect;
 
   uint32_t _vmId;
-  v8::Object *_globalObj;
+  v8::Global<v8::Object> _globalObj;
 
   bool _isValid;
   bool _isGarbageCollecting;
@@ -58,6 +64,6 @@ private:
   bool _isErrorHandleWorking;
 
   static ScriptEngine *_instance;
-  std::function<void(const char*, const char*, const char*)> _nativeExceptionCallback = nullptr;
-  std::function<void(const char*, const char*, const char*)> _jsExceptionCallback = nullptr;
+  std::function<void(const char *, const char *, const char *)> _nativeExceptionCallback = nullptr;
+  std::function<void(const char *, const char *, const char *)> _jsExceptionCallback = nullptr;
 };
