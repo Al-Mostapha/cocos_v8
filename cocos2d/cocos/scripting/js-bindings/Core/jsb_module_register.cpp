@@ -24,6 +24,8 @@
  ****************************************************************************/
 
 // #include "cocos2d.h"
+#include "cocos2d.h"
+#include "ScriptEngine.hpp"
 
 // #include "cocos/scripting/js-bindings/manual/jsb_module_register.hpp"
 // #include "cocos/scripting/js-bindings/jswrapper/SeApi.h"
@@ -107,102 +109,108 @@ using namespace cocos2d;
 
 bool jsb_register_all_modules()
 {
-//     se::ScriptEngine* se = se::ScriptEngine::getInstance();
+    //     se::ScriptEngine* se = se::ScriptEngine::getInstance();
+    ScriptEngine *engine = ScriptEngine::getInstance();
+    engine->addBeforeInitHook([]()
+                              {
+                                  //         JSBClassType::init();
+                              });
 
-//     se->addBeforeInitHook([](){
-//         JSBClassType::init();
-//     });
+    //     se->addBeforeCleanupHook([se](){
 
-//     se->addBeforeCleanupHook([se](){
-//         se->garbageCollect();
-//         PoolManager::getInstance()->getCurrentPool()->clear();
-//         se->garbageCollect();
-//         PoolManager::getInstance()->getCurrentPool()->clear();
-//     });
+    //     });
+    engine->addBeforeCleanupHook([]()
+                                 {
+                                     // TODO:
+                                     //         se->garbageCollect();
+                                     //         PoolManager::getInstance()->getCurrentPool()->clear();
+                                     //         se->garbageCollect();
+                                     //         PoolManager::getInstance()->getCurrentPool()->clear();
+                                 });
 
-//     se->addRegisterCallback(jsb_register_global_variables);
-//     se->addRegisterCallback(JSB_register_opengl);
-//     se->addRegisterCallback(register_all_engine);
-//     se->addRegisterCallback(register_all_cocos2dx_manual);
-//     se->addRegisterCallback(register_platform_bindings);
-    
-//     se->addRegisterCallback(register_all_network);
-//     se->addRegisterCallback(register_all_cocos2dx_network_manual);
-//     se->addRegisterCallback(register_all_xmlhttprequest);
-//     // extension depend on network
-//     se->addRegisterCallback(register_all_extension);
+    //     se->addRegisterCallback(jsb_register_global_variables);
+    //     se->addRegisterCallback(JSB_register_opengl);
+    //     se->addRegisterCallback(register_all_engine);
+    //     se->addRegisterCallback(register_all_cocos2dx_manual);
+    //     se->addRegisterCallback(register_platform_bindings);
 
-// #if USE_GFX_RENDERER
-//     se->addRegisterCallback(register_all_gfx);
-//     se->addRegisterCallback(jsb_register_gfx_manual);
-//     se->addRegisterCallback(register_all_renderer);
-//     se->addRegisterCallback(jsb_register_renderer_manual);
-// #endif
+    //     se->addRegisterCallback(register_all_network);
+    //     se->addRegisterCallback(register_all_cocos2dx_network_manual);
+    //     se->addRegisterCallback(register_all_xmlhttprequest);
+    //     // extension depend on network
+    //     se->addRegisterCallback(register_all_extension);
 
-// #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
-//     se->addRegisterCallback(register_javascript_objc_bridge);
-// #endif
+    // #if USE_GFX_RENDERER
+    //     se->addRegisterCallback(register_all_gfx);
+    //     se->addRegisterCallback(jsb_register_gfx_manual);
+    //     se->addRegisterCallback(register_all_renderer);
+    //     se->addRegisterCallback(jsb_register_renderer_manual);
+    // #endif
 
-// #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-//     se->addRegisterCallback(register_javascript_java_bridge);
-// #endif
+    // #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
+    //     se->addRegisterCallback(register_javascript_objc_bridge);
+    // #endif
 
-// #if (CC_TARGET_PLATFORM == CC_PLATFORM_OPENHARMONY)
-//     se->addRegisterCallback(register_javascript_arkTs_bridge);
-// #endif
+    // #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+    //     se->addRegisterCallback(register_javascript_java_bridge);
+    // #endif
 
-// #if USE_AUDIO
-//     se->addRegisterCallback(register_all_audioengine);
-// #endif
-    
-// #if USE_SOCKET
-//     se->addRegisterCallback(register_all_websocket);
-//     se->addRegisterCallback(register_all_socketio);
-// #if USE_WEBSOCKET_SERVER
-//     se->addRegisterCallback(register_all_websocket_server);
-// #endif
-// #endif
+    // #if (CC_TARGET_PLATFORM == CC_PLATFORM_OPENHARMONY)
+    //     se->addRegisterCallback(register_javascript_arkTs_bridge);
+    // #endif
 
-// #if USE_GFX_RENDERER && USE_MIDDLEWARE
-//     se->addRegisterCallback(register_all_cocos2dx_editor_support);
+    // #if USE_AUDIO
+    //     se->addRegisterCallback(register_all_audioengine);
+    // #endif
 
-// #if USE_SPINE
-//     se->addRegisterCallback(register_all_cocos2dx_spine);
-//     se->addRegisterCallback(register_all_spine_manual);
-// #endif
+    // #if USE_SOCKET
+    //     se->addRegisterCallback(register_all_websocket);
+    //     se->addRegisterCallback(register_all_socketio);
+    // #if USE_WEBSOCKET_SERVER
+    //     se->addRegisterCallback(register_all_websocket_server);
+    // #endif
+    // #endif
 
-// #if USE_DRAGONBONES
-//     se->addRegisterCallback(register_all_cocos2dx_dragonbones);
-//     se->addRegisterCallback(register_all_dragonbones_manual);
-// #endif
+    // #if USE_GFX_RENDERER && USE_MIDDLEWARE
+    //     se->addRegisterCallback(register_all_cocos2dx_editor_support);
 
-// #if USE_PARTICLE
-//     se->addRegisterCallback(register_all_cocos2dx_particle);
-// #endif
+    // #if USE_SPINE
+    //     se->addRegisterCallback(register_all_cocos2dx_spine);
+    //     se->addRegisterCallback(register_all_spine_manual);
+    // #endif
 
-// #endif // USE_MIDDLEWARE
+    // #if USE_DRAGONBONES
+    //     se->addRegisterCallback(register_all_cocos2dx_dragonbones);
+    //     se->addRegisterCallback(register_all_dragonbones_manual);
+    // #endif
 
-// #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+    // #if USE_PARTICLE
+    //     se->addRegisterCallback(register_all_cocos2dx_particle);
+    // #endif
 
-// #if USE_VIDEO
-//     se->addRegisterCallback(register_all_video);
-// #endif
+    // #endif // USE_MIDDLEWARE
 
-// #if USE_WEB_VIEW
-//     se->addRegisterCallback(register_all_webview);
-// #endif
+    // #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
 
-// #elif (CC_TARGET_PLATFORM == CC_PLATFORM_OPENHARMONY)
+    // #if USE_VIDEO
+    //     se->addRegisterCallback(register_all_video);
+    // #endif
 
-// #if USE_WEB_VIEW
-//     se->addRegisterCallback(register_all_webview);
-// #endif
+    // #if USE_WEB_VIEW
+    //     se->addRegisterCallback(register_all_webview);
+    // #endif
 
-// #endif // (CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+    // #elif (CC_TARGET_PLATFORM == CC_PLATFORM_OPENHARMONY)
 
-//     se->addAfterCleanupHook([](){
-//         PoolManager::getInstance()->getCurrentPool()->clear();
-//         JSBClassType::destroy();
-//     });
+    // #if USE_WEB_VIEW
+    //     se->addRegisterCallback(register_all_webview);
+    // #endif
+
+    // #endif // (CC_TARGET_PLATFORM == CC_PLATFORM_IOS || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+
+    //     se->addAfterCleanupHook([](){
+    //         PoolManager::getInstance()->getCurrentPool()->clear();
+    //         JSBClassType::destroy();
+    //     });
     return true;
 }

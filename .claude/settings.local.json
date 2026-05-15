@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"D:\\\\Mustapha\\\\XGame\\\\cocos_v8\" -Depth 2 -Force)",
+      "Bash(Select-Object -Property Name, FullName, PSIsContainer)",
+      "Bash(Format-Table -AutoSize)",
+      "Bash(dir \"D:/Mustapha/XGame/cocos_v8/V8/Lib/Win64DLL\")",
+      "Bash(dir \"D:/Mustapha/XGame/cocos_v8/V8/Lib/Win32\")",
+      "Bash(dir \"D:/Mustapha/XGame/cocos_v8/V8/Lib/Win64\")",
+      "WebFetch(domain:github.com)",
+      "WebSearch",
+      "Bash(gh api *)",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); import base64; print\\(base64.b64decode\\(d['content']\\).decode\\(\\)\\)\")",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); import base64; print\\(base64.b64decode\\(d['content']\\).decode\\('utf-8'\\)\\)\")",
+      "Bash(python3 -c ' *)"
+    ]
+  }
+}

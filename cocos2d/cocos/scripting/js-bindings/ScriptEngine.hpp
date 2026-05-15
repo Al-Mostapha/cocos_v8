@@ -8,6 +8,44 @@
 class ScriptEngine
 {
 public:
+  class FileOperationDelegate
+  {
+  public:
+    FileOperationDelegate()
+        : onGetDataFromFile(nullptr), onGetStringFromFile(nullptr), onCheckFileExist(nullptr), onGetFullPath(nullptr)
+    {
+    }
+
+    /**
+     *  @brief Tests whether delegate is valid.
+     */
+    bool isValid() const
+    {
+      return onGetDataFromFile != nullptr && onGetStringFromFile != nullptr && onCheckFileExist != nullptr && onGetFullPath != nullptr;
+    }
+
+    // path, buffer, buffer size
+    std::function<void(const std::string &, const std::function<void(const uint8_t *, size_t)> &)> onGetDataFromFile;
+    // path, return file string content.
+    std::function<std::string(const std::string &)> onGetStringFromFile;
+    // path
+    std::function<bool(const std::string &)> onCheckFileExist;
+    // path, return full path
+    std::function<std::string(const std::string &)> onGetFullPath;
+  };
+
+  /**
+   *  @brief Sets the delegate for file operation.
+   *  @param delegate[in] The delegate instance for file operation.
+   */
+  void setFileOperationDelegate(const FileOperationDelegate &delegate);
+
+  /**
+   *  @brief Gets the delegate for file operation.
+   *  @return The delegate for file operation
+   */
+  const FileOperationDelegate &getFileOperationDelegate() const;
+
   static ScriptEngine *getInstance();
   static void destroyInstance();
 
@@ -15,13 +53,32 @@ public:
 
   void cleanup();
 
+  /**
+   *  @brief Enables JavaScript debugger
+   *  @param[in] serverAddr The address of debugger server.
+   *  @param[in] isWait Whether wait debugger attach when loading.
+   */
+  void enableDebugger(const std::string &serverAddr, uint32_t port, bool isWait = false);
+
+  /**
+   *  @brief Main loop update trigger, it's need to invoked in main thread every frame.
+   */
+  void mainLoopUpdate();
+
+  v8::Local<v8::Object> getGlobalObject() const;
+
   // Evaluate a JS string. Optionally writes the result to *result.
   // Returns false and logs on compile/runtime error.
-  bool evalString(const char *script, std::string *result = nullptr);
+  bool evalString(const char *scriptStr, size_t length = -1, v8::Local<v8::Value> *rval = nullptr, const char *fileName = nullptr);
+
+  bool runScript(const std::string &filePath, v8::Local<v8::Value> *rval = nullptr);
 
   v8::Isolate *getIsolate() const { return _isolate; }
   // std::string stackTraceToString(v8::Local<v8::StackTrace> stackTrace);
   std::string getCurrentStackTrace();
+
+  void addBeforeInitHook(std::function<void()>);
+  void addBeforeCleanupHook(std::function<void()>);
 
 private:
   ScriptEngine();

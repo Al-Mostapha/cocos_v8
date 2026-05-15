@@ -3,7 +3,8 @@ set(V8_DIR ${COCOS2DX_ROOT_PATH}/external/V8)
 set(JSB_SRC
     ScriptEngine.cpp
     JsbUtils.cpp
-    # Core/jsb_module_register.cpp
+    Core/jsb_module_register.cpp
+    Core/jsb_global.cpp
 )
 
 set(JSB_HEADERS
@@ -11,13 +12,14 @@ set(JSB_HEADERS
     JsbConfig.h
     HelperMacros.h
     ScriptEngine.hpp
-    # Core/jsb_module_register.hpp
+    Core/jsb_module_register.hpp
+    Core/jsb_global.hpp
 )
 
 add_library(jsb STATIC ${JSB_SRC} ${JSB_HEADERS})
 
 # target_link_libraries(jsb cocos2d)
-# add_dependencies(jsb cocos2d)
+add_dependencies(jsb cocos2d)
 
 # PUBLIC: consumers of jsb (cocos2d, app) get V8 and jsb headers automatically
 target_include_directories(jsb

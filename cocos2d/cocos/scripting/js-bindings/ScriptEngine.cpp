@@ -475,6 +475,32 @@ bool ScriptEngine::start()
     return ok;
 }
 
+bool ScriptEngine::runScript(const std::string &filePath, v8::Local<v8::Value> *rval)
+{
+    SE_LOGD("ScriptEngine::runScript() called with filePath: %s\n", filePath.c_str());
+    if (!_isolate)
+    {
+        fprintf(stderr, "[JSB] runScript called before init()\n");
+        return false;
+    }
+
+    v8::Isolate::Scope isolate_scope(_isolate);
+    v8::HandleScope handle_scope(_isolate);
+    v8::Local<v8::Context> ctx = v8::Local<v8::Context>::New(_isolate, _context);
+    v8::Context::Scope context_scope(ctx);
+
+    v8::TryCatch try_catch(_isolate);
+
+    std::string maybeSource = JsbUtils::GetStringFromFile(_isolate, filePath);
+    if (maybeSource.empty())
+    {
+        fprintf(stderr, "[JSB] Failed to load script file: %s\n", filePath.c_str());
+        return false;
+    }
+
+    return evalString(maybeSource.c_str(), nullptr);
+}
+
 void ScriptEngine::cleanup()
 {
     SE_LOGD("ScriptEngine::cleanup() called\n");
@@ -546,49 +572,78 @@ void ScriptEngine::cleanup()
     SE_LOGD("ScriptEngine::cleanup end ...\n");
 }
 
-bool ScriptEngine::evalString(const char *script, std::string *result)
+bool ScriptEngine::evalString(const char *script, size_t length /* = -1 */, v8::Local<v8::Value> *ret /* = nullptr */, const char *fileName /* = nullptr */)
 {
-    if (!_isolate)
+    if (_engineThreadId != std::this_thread::get_id())
     {
-        fprintf(stderr, "[JSB] evalString called before init()\n");
+        // `evalString` should run in main thread
+        assert(false);
         return false;
     }
 
-    v8::Isolate::Scope isolate_scope(_isolate);
-    v8::HandleScope handle_scope(_isolate);
-    v8::Local<v8::Context> ctx = v8::Local<v8::Context>::New(_isolate, _context);
-    v8::Context::Scope context_scope(ctx);
+    assert(script != nullptr);
+    if (length < 0)
+        length = strlen(script);
 
-    v8::TryCatch try_catch(_isolate);
+    if (fileName == nullptr)
+        fileName = "(no filename)";
 
-    auto maybeSource = v8::String::NewFromUtf8(_isolate, script);
-    if (maybeSource.IsEmpty())
+    // Fix the source url is too long displayed in Chrome debugger.
+    std::string sourceUrl = fileName;
+    static const std::string prefixKey = "/temp/quick-scripts/";
+    size_t prefixPos = sourceUrl.find(prefixKey);
+    if (prefixPos != std::string::npos)
     {
-        fprintf(stderr, "[JSB] Failed to create source string\n");
+        sourceUrl = sourceUrl.substr(prefixPos + prefixKey.length());
+    }
+
+    // It is needed, or will crash if invoked from non C++ context, such as invoked from objective-c context(for example, handler of UIKit).
+    v8::EscapableHandleScope handle_scope(_isolate);
+
+    std::string scriptStr(script, length);
+    v8::MaybeLocal<v8::String> source = v8::String::NewFromUtf8(_isolate, scriptStr.c_str(), v8::NewStringType::kNormal);
+    if (source.IsEmpty())
         return false;
-    }
 
-    auto maybeScript = v8::Script::Compile(ctx, maybeSource.ToLocalChecked());
-    if (maybeScript.IsEmpty())
-    {
-        v8::String::Utf8Value err(_isolate, try_catch.Exception());
-        fprintf(stderr, "[JSB] Compile error: %s\n", *err);
+    v8::MaybeLocal<v8::String> originStr = v8::String::NewFromUtf8(_isolate, sourceUrl.c_str(), v8::NewStringType::kNormal);
+    if (originStr.IsEmpty())
         return false;
-    }
 
-    auto maybeResult = maybeScript.ToLocalChecked()->Run(ctx);
-    if (try_catch.HasCaught())
+    v8::ScriptOrigin origin(_isolate, originStr.ToLocalChecked());
+    v8::MaybeLocal<v8::Script> maybeScript = v8::Script::Compile(_context.Get(_isolate), source.ToLocalChecked(), &origin);
+
+    bool success = false;
+
+    if (!maybeScript.IsEmpty())
     {
-        v8::String::Utf8Value err(_isolate, try_catch.Exception());
-        fprintf(stderr, "[JSB] Runtime error: %s\n", *err);
-        return false;
+        v8::TryCatch block(_isolate);
+
+        v8::Local<v8::Script> v8Script = maybeScript.ToLocalChecked();
+        v8::MaybeLocal<v8::Value> maybeResult = v8Script->Run(_context.Get(_isolate));
+
+        if (!maybeResult.IsEmpty())
+        {
+            v8::Local<v8::Value> result = maybeResult.ToLocalChecked();
+
+            if (!result->IsUndefined() && ret != nullptr)
+            {
+                *ret = handle_scope.Escape(result);
+            }
+
+            success = true;
+        }
+
+        if (block.HasCaught())
+        {
+            v8::Local<v8::Message> message = block.Message();
+            SE_LOGE("ScriptEngine::evalString catch exception:\n");
+            onMessageCallback(message, v8::Undefined(_isolate));
+        }
     }
 
-    if (result && !maybeResult.IsEmpty())
+    if (!success)
     {
-        v8::String::Utf8Value utf8(_isolate, maybeResult.ToLocalChecked());
-        *result = *utf8;
+        SE_LOGE("ScriptEngine::evalString script %s, failed!\n", fileName);
     }
-
-    return true;
+    return success;
 }
