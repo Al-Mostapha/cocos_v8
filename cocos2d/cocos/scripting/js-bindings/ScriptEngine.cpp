@@ -477,28 +477,18 @@ bool ScriptEngine::start()
 
 bool ScriptEngine::runScript(const std::string &filePath, v8::Local<v8::Value> *rval)
 {
-    SE_LOGD("ScriptEngine::runScript() called with filePath: %s\n", filePath.c_str());
-    if (!_isolate)
+    assert(!filePath.empty());
+    assert(_fileOperationDelegate.isValid());
+
+    std::string scriptBuffer = _fileOperationDelegate.onGetStringFromFile(filePath);
+
+    if (!scriptBuffer.empty())
     {
-        fprintf(stderr, "[JSB] runScript called before init()\n");
-        return false;
+        return evalString(scriptBuffer.c_str(), scriptBuffer.length(), rval, filePath.c_str());
     }
 
-    v8::Isolate::Scope isolate_scope(_isolate);
-    v8::HandleScope handle_scope(_isolate);
-    v8::Local<v8::Context> ctx = v8::Local<v8::Context>::New(_isolate, _context);
-    v8::Context::Scope context_scope(ctx);
-
-    v8::TryCatch try_catch(_isolate);
-
-    std::string maybeSource = JsbUtils::GetStringFromFile(_isolate, filePath);
-    if (maybeSource.empty())
-    {
-        fprintf(stderr, "[JSB] Failed to load script file: %s\n", filePath.c_str());
-        return false;
-    }
-
-    return evalString(maybeSource.c_str(), nullptr);
+    SE_LOGE("ScriptEngine::runScript script %s, buffer is empty!\n", filePath.c_str());
+    return false;
 }
 
 void ScriptEngine::cleanup()

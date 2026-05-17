@@ -78,6 +78,7 @@ set(COCOS_BASE_HEADER
     base/ccCArray.h
     base/CCEventListener.h
     base/CCScheduler.h
+    base/CCThreadPool.h
     base/CCEventType.h
     base/CCIMEDispatcher.h
     )
@@ -114,6 +115,7 @@ set(COCOS_BASE_SRC
     base/CCProperties.cpp
     base/CCRef.cpp
     base/CCScheduler.cpp
+    base/CCThreadPool.cpp
     base/CCScriptSupport.cpp
     base/CCTouch.cpp
     base/CCUserDefault.cpp

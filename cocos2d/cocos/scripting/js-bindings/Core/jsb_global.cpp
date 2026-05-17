@@ -33,28 +33,34 @@
 #include "xxtea/xxtea.h"
 
 #include "base/CCScheduler.h"
-// #include "base/CCThreadPool.h"
+#include "base/CCThreadPool.h"
 #include "network/HttpClient.h"
 #include "platform/CCApplication.h"
 #include "network/CCDownloader.h"
 #include <map>
-// #include "ui/edit-box/EditBox.h"
+#include "UIEditBox/UIEditBox.h"
 
-#if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
-#include "platform/android/jni/JniImp.h"
-#endif
-#if CC_TARGET_PLATFORM == CC_PLATFORM_OPENHARMONY && (SCRIPT_ENGINE_TYPE == SCRIPT_ENGINE_V8 || SCRIPT_ENGINE_TYPE == SCRIPT_ENGINE_JSVM)
-// #include "platform/openharmony/napi/NapiHelper.h"
-#endif
-
+// #if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
+// #include "platform/android/jni/JniImp.h"
+// #endif
+// #if CC_TARGET_PLATFORM == CC_PLATFORM_OPENHARMONY && (SCRIPT_ENGINE_TYPE == SCRIPT_ENGINE_V8 || SCRIPT_ENGINE_TYPE == SCRIPT_ENGINE_JSVM)
+// // #include "platform/openharmony/napi/NapiHelper.h"
+// #endif
+#include "CCFileUtils.h"
+#include "ZipUtils.h"
 #include <regex>
+#include "HelperMacros.h"
+#include "jsb_conversions.hpp"
+#include "platform/CCGL.h"
+#include "platform/CCImage.h"
+#include "platform/CCApplication.h"
 
 using namespace cocos2d;
 
 v8::Object *__jsbObj = nullptr;
 v8::Object *__glObj = nullptr;
 
-// static std::shared_ptr<ThreadPool> g_threadPool;
+static std::shared_ptr<ThreadPool> g_threadPool;
 
 static std::shared_ptr<cocos2d::network::Downloader> g_localDownloader = nullptr;
 static std::map<std::string, std::function<void(const std::string &, unsigned char *, int, const std::string &)>> g_localDownloaderHandlers;
@@ -347,24 +353,46 @@ bool jsb_set_extend_property(const char *ns, const char *clsName)
 namespace
 {
 
-    std::unordered_map<std::string, v8::Value> __moduleCache;
+    std::unordered_map<std::string, v8::Global<v8::Value>> __moduleCache;
 
-    static bool require(v8::FunctionCallbackInfo<v8::Value> const &s)
+    static void require(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
     {
-        const auto &args = s.args();
-        int argc = (int)args.size();
-        assert(argc >= 1);
-        assert(args[0].isString());
-        return jsb_run_script(args[0].toString(), &s.GetReturnValue());
+        ++__jsbInvocationCount;
+        bool ret = false;
+        v8::Isolate *_isolate = _v8args.GetIsolate();
+        v8::HandleScope _hs(_isolate);
+        SE_UNUSED unsigned argc = (unsigned)_v8args.Length();
+        // se::ValueArray args;
+        // args.reserve(10);
+        // se::internal::jsToSeArgs(_v8args, &args);
+        void *nativeThisObject = JsbUtils::GetPrivate(_isolate, _v8args.This());
+        // se::State state(nativeThisObject, args);
+        // ret = funcName(state); \
+        // const auto &args = s.args();
+        // int argc = (int)args.size();
+
+        // assert(argc >= 1);
+        assert(argc >= 1 && _v8args[0]->IsString());
+        // assert(args[0].isString());
+        assert(_v8args[0]->IsString());
+        // return jsb_run_script(args[0].toString(), &s.GetReturnValue());
+        bool ret = jsb_run_script(JsbUtils::FromV8String(_isolate, _v8args[0]), &_v8args.GetReturnValue());
+        if (!ret)
+        {
+            SE_LOGE("[ERROR] Failed to invoke %s, location: %s:%d\n", #funcName, __FILE__, __LINE__);
+        }
+        // se::internal::setReturnValue(state.rval(), _v8args);
+        // return ret;
     }
-    SE_BIND_FUNC(require)
+    // SE_BIND_FUNC(require)
 
-    static bool doModuleRequire(const std::string &path, se::Value *ret, const std::string &prevScriptFileDir)
+    static bool doModuleRequire(const std::string &path, v8::Local<v8::Value> *ret, const std::string &prevScriptFileDir)
     {
-        se::AutoHandleScope hs;
+        v8::Isolate *isolate = ScriptEngine::getInstance()->getIsolate();
+        v8::EscapableHandleScope handleScope(isolate);
         assert(!path.empty());
 
-        const auto &fileOperationDelegate = se::ScriptEngine::getInstance()->getFileOperationDelegate();
+        const auto &fileOperationDelegate = ScriptEngine::getInstance()->getFileOperationDelegate();
         assert(fileOperationDelegate.isValid());
 
         std::string fullPath;
@@ -442,29 +470,33 @@ namespace
 
             //            RENDERER_LOGD("Evaluate: %s", fullPath.c_str());
 
-            auto se = se::ScriptEngine::getInstance();
+            auto se = ScriptEngine::getInstance();
             bool succeed = se->evalString(scriptBuffer.c_str(), scriptBuffer.length(), nullptr, reletivePath.c_str());
-            se::Value moduleVal;
-            if (succeed && se->getGlobalObject()->getProperty("module", &moduleVal) && moduleVal.isObject())
+            v8::Local<v8::Value> moduleVal;
+            ;
+            if (succeed && JsbUtils::GetProperty(isolate, se->getGlobalObject(), "module", &moduleVal) && moduleVal->IsObject())
             {
-                se::Value exportsVal;
-                if (moduleVal.toObject()->getProperty("exports", &exportsVal))
+                v8::Local<v8::Value> exportsVal;
+                if (moduleVal->ToObject(isolate->GetCurrentContext()).ToLocalChecked()->Get(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "exports").ToLocalChecked()).ToLocal(&exportsVal))
                 {
                     if (ret != nullptr)
-                        *ret = exportsVal;
-
-                    __moduleCache[fullPath] = std::move(exportsVal);
+                        *ret = handleScope.Escape(exportsVal);
+                    v8::Global<v8::Value> persistent(isolate, exportsVal);
+                    __moduleCache[fullPath] = std::move(persistent);
                 }
                 else
                 {
-                    __moduleCache[fullPath] = se::Value::Undefined;
+                    v8::Global<v8::Value> persistent(isolate, se::Value::Undefined);
+                    __moduleCache[fullPath] = std::move(persistent);
                 }
                 // clear module.exports
-                moduleVal.toObject()->setProperty("exports", se::Value::Undefined);
+                // moduleVal.toObject()->setProperty("exports", se::Value::Undefined);
+                moduleVal->ToObject(isolate->GetCurrentContext()).ToLocalChecked()->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "exports").ToLocalChecked(), v8::Undefined(isolate)).FromJust();
             }
             else
             {
-                __moduleCache[fullPath] = se::Value::Undefined;
+                v8::Global<v8::Value> persistent(isolate, se::Value::Undefined);
+                __moduleCache[fullPath] = std::move(persistent);
             }
             assert(succeed);
             return succeed;
@@ -474,18 +506,35 @@ namespace
         assert(false);
         return false;
     }
-#if (CC_TARGET_PLATFORM != CC_PLATFORM_OPENHARMONY || SCRIPT_ENGINE_TYPE == SCRIPT_ENGINE_V8 || SCRIPT_ENGINE_TYPE == SCRIPT_ENGINE_JSVM)
-    static bool moduleRequire(se::State &s)
+
+    static void moduleRequire(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
     {
-        const auto &args = s.args();
-        int argc = (int)args.size();
+        ++__jsbInvocationCount;
+        bool ret = false;
+        v8::Isolate *_isolate = _v8args.GetIsolate();
+        v8::HandleScope _hs(_isolate);
+        SE_UNUSED unsigned argc = (unsigned)_v8args.Length();
+
+        void *nativeThisObject = JsbUtils::GetPrivate(_isolate, _v8args.This());
+        // void* nativeThisObject = se::internal::getPrivate(_isolate, _v8args.This());
+        // se::State state(nativeThisObject, args);
+        // ret = funcName(state);
+
         assert(argc >= 2);
-        assert(args[0].isString());
-        assert(args[1].isString());
-        return doModuleRequire(args[0].toString(), &s.rval(), args[1].toString());
+        assert(_v8args[0]->IsString());
+        assert(_v8args[1]->IsString());
+        v8::Local<v8::Value> retVal;
+        bool ret = doModuleRequire(JsbUtils::FromV8String(_isolate, _v8args[0]), &retVal, JsbUtils::FromV8String(_isolate, _v8args[1]));
+        _v8args.GetReturnValue().Set(retVal);
+        if (!ret)
+        {
+            SE_LOGE("[ERROR] Failed to invoke %s, location: %s:%d\n", #funcName, __FILE__, __LINE__);
+        }
+        // se::internal::setReturnValue(state.rval(), _v8args);
+        // return ret;
     }
-    SE_BIND_FUNC(moduleRequire)
-#endif
+    // SE_BIND_FUNC(moduleRequire)
+
 } // namespace {
 
 bool jsb_run_script(const std::string &filePath, v8::Local<v8::Value> *rval /* = nullptr */)
@@ -500,73 +549,92 @@ bool jsb_run_script_module(const std::string &filePath, v8::Local<v8::Value> *rv
     return doModuleRequire(filePath, rval, "");
 }
 
-static bool jsc_garbageCollect(se::State &s)
+static bool jsc_garbageCollect(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
-    se::ScriptEngine::getInstance()->garbageCollect();
+    ++__jsbInvocationCount;
+    bool ret = false;
+    v8::Isolate *_isolate = _v8args.GetIsolate();
+    v8::HandleScope _hs(_isolate);
+    SE_UNUSED unsigned argc = (unsigned)_v8args.Length();
+    void *nativeThisObject = JsbUtils::GetPrivate(_isolate, _v8args.This());
+    // se::State state(nativeThisObject, args);
+    // ret = funcName(state);
+    ret = ScriptEngine::getInstance()->garbageCollect();
+    if (!ret)
+    {
+        SE_LOGE("[ERROR] Failed to invoke %s, location: %s:%d\n", #funcName, __FILE__, __LINE__);
+    }
+    // se::internal::setReturnValue(state.rval(), _v8args);
+    _v8args.GetReturnValue().Set(v8::Boolean::New(_isolate, ret));
     return true;
 }
-SE_BIND_FUNC(jsc_garbageCollect)
+// SE_BIND_FUNC(jsc_garbageCollect)
 
-static bool jsc_dumpNativePtrToSeObjectMap(se::State &s)
+static bool jsc_dumpNativePtrToSeObjectMap(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
-    cocos2d::log(">>> total: %d, Dump (native -> jsobj) map begin", (int)se::NativePtrToObjectMap::size());
+    // cocos2d::log(">>> total: %d, Dump (native -> jsobj) map begin", (int)se::NativePtrToObjectMap::size());
 
-    struct NamePtrStruct
-    {
-        const char *name;
-        void *ptr;
-    };
+    // struct NamePtrStruct
+    // {
+    //     const char *name;
+    //     void *ptr;
+    // };
 
-    std::vector<NamePtrStruct> namePtrArray;
+    // std::vector<NamePtrStruct> namePtrArray;
 
-    for (const auto &e : se::NativePtrToObjectMap::instance())
-    {
-        se::Object *jsobj = e.second;
-        assert(jsobj->_getClass() != nullptr);
-        NamePtrStruct tmp;
-        tmp.name = jsobj->_getClass()->getName();
-        tmp.ptr = e.first;
-        namePtrArray.push_back(tmp);
-    }
+    // for (const auto &e : se::NativePtrToObjectMap::instance())
+    // {
+    //     se::Object *jsobj = e.second;
+    //     assert(jsobj->_getClass() != nullptr);
+    //     NamePtrStruct tmp;
+    //     tmp.name = jsobj->_getClass()->getName();
+    //     tmp.ptr = e.first;
+    //     namePtrArray.push_back(tmp);
+    // }
 
-    std::sort(namePtrArray.begin(), namePtrArray.end(), [](const NamePtrStruct &a, const NamePtrStruct &b) -> bool
-              {
-        std::string left = a.name;
-        std::string right = b.name;
-        for( std::string::const_iterator lit = left.begin(), rit = right.begin(); lit != left.end() && rit != right.end(); ++lit, ++rit )
-            if( ::tolower( *lit ) < ::tolower( *rit ) )
-                return true;
-            else if( ::tolower( *lit ) > ::tolower( *rit ) )
-                return false;
-        if( left.size() < right.size() )
-            return true;
-        return false; });
+    // std::sort(namePtrArray.begin(), namePtrArray.end(), [](const NamePtrStruct &a, const NamePtrStruct &b) -> bool
+    //           {
+    //     std::string left = a.name;
+    //     std::string right = b.name;
+    //     for( std::string::const_iterator lit = left.begin(), rit = right.begin(); lit != left.end() && rit != right.end(); ++lit, ++rit )
+    //         if( ::tolower( *lit ) < ::tolower( *rit ) )
+    //             return true;
+    //         else if( ::tolower( *lit ) > ::tolower( *rit ) )
+    //             return false;
+    //     if( left.size() < right.size() )
+    //         return true;
+    //     return false; });
 
-    for (const auto &e : namePtrArray)
-    {
-        cocos2d::log("%s: %p", e.name, e.ptr);
-    }
-    cocos2d::log(">>> total: %d, nonRefMap: %d, Dump (native -> jsobj) map end", (int)se::NativePtrToObjectMap::size(), (int)se::NonRefNativePtrCreatedByCtorMap::size());
+    // for (const auto &e : namePtrArray)
+    // {
+    //     cocos2d::log("%s: %p", e.name, e.ptr);
+    // }
+    // cocos2d::log(">>> total: %d, nonRefMap: %d, Dump (native -> jsobj) map end", (int)se::NativePtrToObjectMap::size(), (int)se::NonRefNativePtrCreatedByCtorMap::size());
     return true;
 }
-SE_BIND_FUNC(jsc_dumpNativePtrToSeObjectMap)
+// SE_BIND_FUNC(jsc_dumpNativePtrToSeObjectMap)
 
-static bool jsc_dumpRoot(se::State &s)
+static bool jsc_dumpRoot(const v8::FunctionCallbackInfo<v8::Value> &s)
 {
     assert(false);
     return true;
 }
-SE_BIND_FUNC(jsc_dumpRoot)
+// SE_BIND_FUNC(jsc_dumpRoot)
 
-static bool JSBCore_platform(se::State &s)
+static bool JSBCore_platform(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
+    ++__jsbInvocationCount;
+    bool ret = false;
+    v8::Isolate *_isolate = _v8args.GetIsolate();
+    v8::HandleScope _hs(_isolate);
+    SE_UNUSED unsigned argc = (unsigned)_v8args.Length();
     Application::Platform platform = Application::getInstance()->getPlatform();
-    s.rval().setInt32((int32_t)platform);
+    _v8args.GetReturnValue().Set(v8::Int32::New(_v8args.GetIsolate(), (int32_t)platform));
     return true;
 }
-SE_BIND_FUNC(JSBCore_platform)
+// SE_BIND_FUNC(JSBCore_platform)
 
-static bool JSBCore_version(se::State &s)
+static bool JSBCore_version(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
     // cjh    char version[256];
     //     snprintf(version, sizeof(version)-1, "%s", cocos2dVersion());
@@ -574,44 +642,54 @@ static bool JSBCore_version(se::State &s)
     //     s.rval().setString(version);
     return true;
 }
-SE_BIND_FUNC(JSBCore_version)
+// SE_BIND_FUNC(JSBCore_version)
 
-static bool JSBCore_os(se::State &s)
+static bool JSBCore_os(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
-    se::Value os;
+    // se::Value os;
+    v8::Local<v8::String> os;
+    v8::Isolate *_isolate = _v8args.GetIsolate();
+    v8::HandleScope _hs(_isolate);
+    SE_UNUSED unsigned argc = (unsigned)_v8args.Length();
 
     // osx, ios, android, windows, linux, etc..
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-    os.setString("iOS");
+    os = JsbUtils::ToV8String(_isolate, "iOS");
 #elif (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-    os.setString("Android");
+    os = JsbUtils::ToV8String(_isolate, "Android");
 #elif (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
-    os.setString("Windows");
+    os = JsbUtils::ToV8String(_isolate, "Windows");
 #elif (CC_TARGET_PLATFORM == CC_PLATFORM_MARMALADE)
-    os.setString("Marmalade");
+    os = JsbUtils::ToV8String(_isolate, "Marmalade");
 #elif (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
-    os.setString("Linux");
+    os = JsbUtils::ToV8String(_isolate, "Linux");
 #elif (CC_TARGET_PLATFORM == CC_PLATFORM_BADA)
-    os.setString("Bada");
+    os = JsbUtils::ToV8String(_isolate, "Bada");
 #elif (CC_TARGET_PLATFORM == CC_PLATFORM_BLACKBERRY)
-    os.setString("Blackberry");
+    os = JsbUtils::ToV8String(_isolate, "Blackberry");
 #elif (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
-    os.setString("OS X");
+    os = JsbUtils::ToV8String(_isolate, "OS X");
 #elif (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
-    os.setString("WINRT");
+    os = JsbUtils::ToV8String(_isolate, "WINRT");
 #elif (CC_TARGET_PLATFORM == CC_PLATFORM_OPENHARMONY)
-    os.setString("OpenHarmony");
+    os = JsbUtils::ToV8String(_isolate, "OpenHarmony");
 #else
-    os.setString("Unknown");
+    os = JsbUtils::ToV8String(_isolate, "Unknown");
 #endif
 
-    s.rval() = os;
+    _v8args.GetReturnValue().Set(os);
     return true;
 }
-SE_BIND_FUNC(JSBCore_os)
+// SE_BIND_FUNC(JSBCore_os)
 
-static bool JSBCore_getCurrentLanguage(se::State &s)
+static bool JSBCore_getCurrentLanguage(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
+    ++__jsbInvocationCount;
+    bool ret = false;
+    v8::Isolate *_isolate = _v8args.GetIsolate();
+    v8::HandleScope _hs(_isolate);
+    SE_UNUSED unsigned argc = (unsigned)_v8args.Length();
+
     std::string languageStr;
     Application::LanguageType language = Application::getInstance()->getCurrentLanguage();
     switch (language)
@@ -677,94 +755,123 @@ static bool JSBCore_getCurrentLanguage(se::State &s)
         languageStr = "unknown";
         break;
     }
-    s.rval().setString(languageStr);
+
+    if (!ret)
+    {
+        SE_LOGE("[ERROR] Failed to invoke %s, location: %s:%d\n", #funcName, __FILE__, __LINE__);
+    }
+
+    _v8args.GetReturnValue().Set(JsbUtils::ToV8String(_isolate, languageStr));
     return true;
 }
-SE_BIND_FUNC(JSBCore_getCurrentLanguage)
+// SE_BIND_FUNC(JSBCore_getCurrentLanguage)
 
-static bool JSBCore_getCurrentLanguageCode(se::State &s)
+static bool JSBCore_getCurrentLanguageCode(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
+    ++__jsbInvocationCount;
+    bool ret = false;
+    v8::Isolate *_isolate = _v8args.GetIsolate();
+    v8::HandleScope _hs(_isolate);
+    SE_UNUSED unsigned argc = (unsigned)_v8args.Length();
+    // se::ValueArray args;
+    // args.reserve(10);
+    // se::internal::jsToSeArgs(_v8args, &args);
+    // void* nativeThisObject = se::internal::getPrivate(_isolate, _v8args.This());
+    // se::State state(nativeThisObject, args);
+    // ret = funcName(state);
+
+    // se::internal::setReturnValue(state.rval(), _v8args); \
+
+
     std::string language = Application::getInstance()->getCurrentLanguageCode();
-    s.rval().setString(language);
+    _v8args.GetReturnValue().Set(JsbUtils::ToV8String(_isolate, language));
     return true;
 }
-SE_BIND_FUNC(JSBCore_getCurrentLanguageCode)
+// SE_BIND_FUNC(JSBCore_getCurrentLanguageCode)
 
-static bool JSB_getOSVersion(se::State &s)
+static bool JSB_getOSVersion(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
+    v8::Isolate *_isolate = _v8args.GetIsolate();
+    v8::HandleScope _hs(_isolate);
+
     std::string systemVersion = Application::getInstance()->getSystemVersion();
-    s.rval().setString(systemVersion);
+    _v8args.GetReturnValue().Set(JsbUtils::ToV8String(_isolate, systemVersion));
     return true;
 }
-SE_BIND_FUNC(JSB_getOSVersion)
+// SE_BIND_FUNC(JSB_getOSVersion)
 
-static bool JSB_cleanScript(se::State &s)
+static bool JSB_cleanScript(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
     assert(false); // IDEA:
     return true;
 }
-SE_BIND_FUNC(JSB_cleanScript)
+// SE_BIND_FUNC(JSB_cleanScript)
 
-static bool JSB_core_restartVM(se::State &s)
+static bool JSB_core_restartVM(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
     // REFINE: release AudioEngine, waiting HttpClient & WebSocket threads to exit.
     Application::getInstance()->restart();
     return true;
 }
-SE_BIND_FUNC(JSB_core_restartVM)
+// SE_BIND_FUNC(JSB_core_restartVM)
 
-static bool JSB_closeWindow(se::State &s)
+static bool JSB_closeWindow(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
     Application::getInstance()->end();
     return true;
 }
-SE_BIND_FUNC(JSB_closeWindow)
+// SE_BIND_FUNC(JSB_closeWindow)
 
-static bool JSB_isObjectValid(se::State &s)
+static bool JSB_isObjectValid(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
-    const auto &args = s.args();
-    int argc = (int)args.size();
+    v8::Isolate *_isolate = _v8args.GetIsolate();
+    v8::HandleScope _hs(_isolate);
+
+    int argc = (int)_v8args.Length();
     if (argc == 1)
     {
         void *nativePtr = nullptr;
-        seval_to_native_ptr(args[0], &nativePtr);
-        s.rval().setBoolean(nativePtr != nullptr);
+        seval_to_native_ptr(_v8args[0], &nativePtr);
+        _v8args.GetReturnValue().Set(v8::Boolean::New(_v8args.GetIsolate(), nativePtr != nullptr));
         return true;
     }
 
     SE_REPORT_ERROR("Invalid number of arguments: %d. Expecting: 1", argc);
     return false;
 }
-SE_BIND_FUNC(JSB_isObjectValid)
+// SE_BIND_FUNC(JSB_isObjectValid)
 
-static bool getOrCreatePlainObject_r(const char *name, se::Object *parent, se::Object **outObj)
+// static bool getOrCreatePlainObject_r(const char *name, se::Object *parent, se::Object **outObj)
+// {
+//     assert(parent != nullptr);
+//     assert(outObj != nullptr);
+//     se::Value tmp;
+
+//     if (parent->getProperty(name, &tmp) && tmp.isObject())
+//     {
+//         *outObj = tmp.toObject();
+//         (*outObj)->incRef();
+//     }
+//     else
+//     {
+//         *outObj = se::Object::createPlainObject();
+//         parent->setProperty(name, se::Value(*outObj));
+//     }
+
+//     return true;
+// }
+
+static bool js_performance_now(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
-    assert(parent != nullptr);
-    assert(outObj != nullptr);
-    se::Value tmp;
+    v8::Isolate *_isolate = _v8args.GetIsolate();
+    v8::HandleScope _hs(_isolate);
 
-    if (parent->getProperty(name, &tmp) && tmp.isObject())
-    {
-        *outObj = tmp.toObject();
-        (*outObj)->incRef();
-    }
-    else
-    {
-        *outObj = se::Object::createPlainObject();
-        parent->setProperty(name, se::Value(*outObj));
-    }
-
-    return true;
-}
-
-static bool js_performance_now(se::State &s)
-{
     auto now = std::chrono::steady_clock::now();
-    auto micro = std::chrono::duration_cast<std::chrono::microseconds>(now - se::ScriptEngine::getInstance()->getStartTime()).count();
-    s.rval().setNumber((double)micro * 0.001);
+    auto micro = std::chrono::duration_cast<std::chrono::microseconds>(now - ScriptEngine::getInstance()->getStartTime()).count();
+    _v8args.GetReturnValue().Set(v8::Number::New(_isolate, (double)micro * 0.001));
     return true;
 }
-SE_BIND_FUNC(js_performance_now)
+// SE_BIND_FUNC(js_performance_now)
 
 namespace
 {
@@ -889,207 +996,217 @@ namespace
         return imgInfo;
     }
 }
-bool jsb_global_load_image(const std::string &path, const se::Value &callbackVal)
+bool jsb_global_load_image(const std::string &path, const v8::Local<v8::Function> &callbackVal)
 {
-    if (path.empty())
-    {
-        se::ValueArray seArgs;
-        callbackVal.toObject()->call(seArgs, nullptr);
-        return true;
-    }
+    // TODO
+    assert(false);
+    // if (path.empty())
+    // {
+    //     v8::Isolate *isolate = ScriptEngine::getInstance()->getIsolate();
+    //     v8::HandleScope handleScope(isolate);
 
-    std::shared_ptr<se::Value> callbackPtr = std::make_shared<se::Value>(callbackVal);
+    //     // se::ValueArray seArgs;
+    //     callbackVal->Call(isolate->GetCurrentContext(), v8::Undefined(isolate), 0, nullptr).ToLocalChecked();
+    //     return true;
+    // }
 
-    auto initImageFunc = [path, callbackPtr](const std::string &fullPath, unsigned char *imageData, int imageBytes, const std::string &errorMsg)
-    {
-        std::shared_ptr<uint8_t> imageDataGuard(imageData, free);
+    // // std::shared_ptr<se::Value> callbackPtr = std::make_shared<se::Value>(callbackVal);
 
-        auto pool = g_threadPool;
-        if (!pool)
-            return;
-        pool->pushTask([=](int tid) mutable
-                       {
-                           // NOTE: FileUtils::getInstance()->fullPathForFilename isn't a threadsafe method,
-                           // Image::initWithImageFile will call fullPathForFilename internally which may
-                           // cause thread race issues. Therefore, we get the full path of file before
-                           // going into task callback.
-                           // Be careful of invoking any Cocos2d-x interface in a sub-thread.
-                           bool loadSucceed = false;
-                           std::shared_ptr<Image> img(new Image(), [](Image *image)
-                                                      { image->release(); });
+    // auto initImageFunc = [path, callbackPtr](const std::string &fullPath, unsigned char *imageData, int imageBytes, const std::string &errorMsg)
+    // {
+    //     std::shared_ptr<uint8_t> imageDataGuard(imageData, free);
 
-                           if (!errorMsg.empty())
-                           {
-                               loadSucceed = false;
-                           }
-                           else if (fullPath.empty())
-                           {
-                               loadSucceed = img->initWithImageData(imageDataGuard.get(), imageBytes);
-                               imageDataGuard = nullptr;
-                           }
-                           else
-                           {
-                               loadSucceed = img->initWithImageFile(fullPath);
-                           }
+    //     auto pool = g_threadPool;
+    //     if (!pool)
+    //         return;
+    //     pool->pushTask([=](int tid) mutable
+    //                    {
+    //                        // NOTE: FileUtils::getInstance()->fullPathForFilename isn't a threadsafe method,
+    //                        // Image::initWithImageFile will call fullPathForFilename internally which may
+    //                        // cause thread race issues. Therefore, we get the full path of file before
+    //                        // going into task callback.
+    //                        // Be careful of invoking any Cocos2d-x interface in a sub-thread.
+    //                        bool loadSucceed = false;
+    //                        std::shared_ptr<Image> img(new Image(), [](Image *image)
+    //                                                   { image->release(); });
 
-                           std::shared_ptr<ImageInfo> imgInfo;
-                           if (loadSucceed)
-                           {
-                               imgInfo.reset(createImageInfo(img.get()));
-                           }
+    //                        if (!errorMsg.empty())
+    //                        {
+    //                            loadSucceed = false;
+    //                        }
+    //                        else if (fullPath.empty())
+    //                        {
+    //                            loadSucceed = img->initWithImageData(imageDataGuard.get(), imageBytes);
+    //                            imageDataGuard = nullptr;
+    //                        }
+    //                        else
+    //                        {
+    //                            loadSucceed = img->initWithImageFile(fullPath);
+    //                        }
 
-                           Application::getInstance()->getScheduler()->performFunctionInCocosThread([=]() mutable
-                                                                                                    {
-                se::AutoHandleScope hs;
-                se::ValueArray seArgs;
-                se::Value dataVal;
-                
-                std::vector< se::Object* > refs;
-                if (loadSucceed)
-                {
-                    se::Object* retObj = se::Object::createPlainObject();
-                    retObj->root();
-                    refs.push_back(retObj);
-                    
-                    Data data;
-                    data.fastSet(imgInfo->data, imgInfo->length); 
-                    Data_to_seval(data, &dataVal);
-                    data.takeBuffer();
-                    retObj->setProperty("data", dataVal);
-                    retObj->setProperty("width", se::Value(imgInfo->width));
-                    retObj->setProperty("height", se::Value(imgInfo->height));
-                    retObj->setProperty("premultiplyAlpha", se::Value(imgInfo->hasPremultipliedAlpha));
-                    retObj->setProperty("bpp", se::Value(imgInfo->bpp));
-                    retObj->setProperty("hasAlpha", se::Value(imgInfo->hasAlpha));
-                    retObj->setProperty("compressed", se::Value(imgInfo->compressed));
-                    retObj->setProperty("numberOfMipmaps", se::Value(imgInfo->numberOfMipmaps));
-                    if (imgInfo->numberOfMipmaps > 0)
-                    {
-                        se::Object* mipmapArray = se::Object::createArrayObject(imgInfo->numberOfMipmaps);
-                        mipmapArray->root();
-                        refs.push_back(mipmapArray);
-                        
-                        retObj->setProperty("mipmaps", se::Value(mipmapArray));
-                        auto mipmapInfo = img->getMipmaps();
-                        for (int i = 0; i < imgInfo->numberOfMipmaps; ++i)
-                        {
-                            se::Object* info = se::Object::createPlainObject();
-                            info->root();
-                            refs.push_back(info);
-                            
-                            info->setProperty("offset", se::Value(mipmapInfo[i].offset));
-                            info->setProperty("length", se::Value(mipmapInfo[i].len));
-                            mipmapArray->setArrayElement(i, se::Value(info));
-                        }
-                    }
+    //                        std::shared_ptr<ImageInfo> imgInfo;
+    //                        if (loadSucceed)
+    //                        {
+    //                            imgInfo.reset(createImageInfo(img.get()));
+    //                        }
 
-                    retObj->setProperty("glFormat", se::Value(imgInfo->glFormat));
-                    retObj->setProperty("glInternalFormat", se::Value(imgInfo->glInternalFormat));
-                    retObj->setProperty("glType", se::Value(imgInfo->type));
+    //                        Application::getInstance()->getScheduler()->performFunctionInCocosThread([=]() mutable
+    //                                                                                                 {
+    //             se::AutoHandleScope hs;
+    //             se::ValueArray seArgs;
+    //             se::Value dataVal;
 
-                    seArgs.push_back(se::Value(retObj));
+    //             std::vector< se::Object* > refs;
+    //             if (loadSucceed)
+    //             {
+    //                 se::Object* retObj = se::Object::createPlainObject();
+    //                 retObj->root();
+    //                 refs.push_back(retObj);
 
-                    imgInfo = nullptr;
-                }
-                else
-                {
-                    SE_REPORT_ERROR("initWithImageFile: %s failed!", path.c_str());
-                }
+    //                 Data data;
+    //                 data.fastSet(imgInfo->data, imgInfo->length);
+    //                 Data_to_seval(data, &dataVal);
+    //                 data.takeBuffer();
+    //                 retObj->setProperty("data", dataVal);
+    //                 retObj->setProperty("width", se::Value(imgInfo->width));
+    //                 retObj->setProperty("height", se::Value(imgInfo->height));
+    //                 retObj->setProperty("premultiplyAlpha", se::Value(imgInfo->hasPremultipliedAlpha));
+    //                 retObj->setProperty("bpp", se::Value(imgInfo->bpp));
+    //                 retObj->setProperty("hasAlpha", se::Value(imgInfo->hasAlpha));
+    //                 retObj->setProperty("compressed", se::Value(imgInfo->compressed));
+    //                 retObj->setProperty("numberOfMipmaps", se::Value(imgInfo->numberOfMipmaps));
+    //                 if (imgInfo->numberOfMipmaps > 0)
+    //                 {
+    //                     se::Object* mipmapArray = se::Object::createArrayObject(imgInfo->numberOfMipmaps);
+    //                     mipmapArray->root();
+    //                     refs.push_back(mipmapArray);
 
-                if (!errorMsg.empty()) {
-                    se::Object* retObj = se::Object::createPlainObject();
-                    retObj->root();
-                    refs.push_back(retObj);
-                    
-                    retObj->setProperty("errorMsg", se::Value(errorMsg));
-                    seArgs.push_back(se::Value(retObj));
-                }
+    //                     retObj->setProperty("mipmaps", se::Value(mipmapArray));
+    //                     auto mipmapInfo = img->getMipmaps();
+    //                     for (int i = 0; i < imgInfo->numberOfMipmaps; ++i)
+    //                     {
+    //                         se::Object* info = se::Object::createPlainObject();
+    //                         info->root();
+    //                         refs.push_back(info);
 
-                callbackPtr->toObject()->call(seArgs, nullptr);
-                img = nullptr;
-                
-                for (auto obj : refs) {
-                    obj->unroot();
-                    obj->decRef();
-                } }); });
-    };
+    //                         info->setProperty("offset", se::Value(mipmapInfo[i].offset));
+    //                         info->setProperty("length", se::Value(mipmapInfo[i].len));
+    //                         mipmapArray->setArrayElement(i, se::Value(info));
+    //                     }
+    //                 }
 
-    size_t pos = std::string::npos;
-    if (path.find("http://") == 0 || path.find("https://") == 0)
-    {
-        localDownloaderCreateTask(path, initImageFunc);
-    }
-    else if (path.find("data:") == 0 && (pos = path.find("base64,")) != std::string::npos)
-    {
-        int imageBytes = 0;
-        unsigned char *imageData = nullptr;
-        size_t dataStartPos = pos + strlen("base64,");
-        const char *base64Data = path.data() + dataStartPos;
-        size_t dataLen = path.length() - dataStartPos;
-        imageBytes = base64Decode((const unsigned char *)base64Data, (unsigned int)dataLen, &imageData);
-        if (imageBytes <= 0 || imageData == nullptr)
-        {
-            SE_REPORT_ERROR("Decode base64 image data failed!");
-            return false;
-        }
-        initImageFunc("", imageData, imageBytes, "");
-    }
-    else
-    {
-        std::string fullPath(FileUtils::getInstance()->fullPathForFilename(path));
-        if (0 == path.find("file://"))
-            fullPath = FileUtils::getInstance()->fullPathForFilename(path.substr(strlen("file://")));
+    //                 retObj->setProperty("glFormat", se::Value(imgInfo->glFormat));
+    //                 retObj->setProperty("glInternalFormat", se::Value(imgInfo->glInternalFormat));
+    //                 retObj->setProperty("glType", se::Value(imgInfo->type));
 
-        if (fullPath.empty())
-        {
-            SE_REPORT_ERROR("File (%s) doesn't exist!", path.c_str());
-            return false;
-        }
-        initImageFunc(fullPath, nullptr, 0, "");
-    }
+    //                 seArgs.push_back(se::Value(retObj));
+
+    //                 imgInfo = nullptr;
+    //             }
+    //             else
+    //             {
+    //                 SE_REPORT_ERROR("initWithImageFile: %s failed!", path.c_str());
+    //             }
+
+    //             if (!errorMsg.empty()) {
+    //                 se::Object* retObj = se::Object::createPlainObject();
+    //                 retObj->root();
+    //                 refs.push_back(retObj);
+
+    //                 retObj->setProperty("errorMsg", se::Value(errorMsg));
+    //                 seArgs.push_back(se::Value(retObj));
+    //             }
+
+    //             callbackPtr->toObject()->call(seArgs, nullptr);
+    //             img = nullptr;
+
+    //             for (auto obj : refs) {
+    //                 obj->unroot();
+    //                 obj->decRef();
+    //             } }); });
+    // };
+
+    // size_t pos = std::string::npos;
+    // if (path.find("http://") == 0 || path.find("https://") == 0)
+    // {
+    //     localDownloaderCreateTask(path, initImageFunc);
+    // }
+    // else if (path.find("data:") == 0 && (pos = path.find("base64,")) != std::string::npos)
+    // {
+    //     int imageBytes = 0;
+    //     unsigned char *imageData = nullptr;
+    //     size_t dataStartPos = pos + strlen("base64,");
+    //     const char *base64Data = path.data() + dataStartPos;
+    //     size_t dataLen = path.length() - dataStartPos;
+    //     imageBytes = base64Decode((const unsigned char *)base64Data, (unsigned int)dataLen, &imageData);
+    //     if (imageBytes <= 0 || imageData == nullptr)
+    //     {
+    //         SE_REPORT_ERROR("Decode base64 image data failed!");
+    //         return false;
+    //     }
+    //     initImageFunc("", imageData, imageBytes, "");
+    // }
+    // else
+    // {
+    //     std::string fullPath(FileUtils::getInstance()->fullPathForFilename(path));
+    //     if (0 == path.find("file://"))
+    //         fullPath = FileUtils::getInstance()->fullPathForFilename(path.substr(strlen("file://")));
+
+    //     if (fullPath.empty())
+    //     {
+    //         SE_REPORT_ERROR("File (%s) doesn't exist!", path.c_str());
+    //         return false;
+    //     }
+    //     initImageFunc(fullPath, nullptr, 0, "");
+    // }
     return true;
 }
 
-static bool js_loadImage(se::State &s)
+static bool js_loadImage(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
-    const auto &args = s.args();
-    size_t argc = args.size();
+    v8::Isolate *_isolate = _v8args.GetIsolate();
+    v8::HandleScope _hs(_isolate);
+
+    size_t argc = _v8args.Length();
     CC_UNUSED bool ok = true;
     if (argc == 2)
     {
-        std::string path;
-        ok &= seval_to_std_string(args[0], &path);
-        SE_PRECONDITION2(ok, false, "js_loadImage : Error processing arguments");
+        std::string path = JsbUtils::FromV8String(_isolate, _v8args[0]);
+        // SE_PRECONDITION2(ok, false, "js_loadImage : Error processing arguments");
 
-        se::Value callbackVal = args[1];
-        assert(callbackVal.isObject());
-        assert(callbackVal.toObject()->isFunction());
+        v8::Local<v8::Value> callbackVal = _v8args[1];
+        assert(callbackVal->IsObject());
+        assert(callbackVal->IsFunction());
 
         return jsb_global_load_image(path, callbackVal);
     }
     SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 2);
     return false;
 }
-SE_BIND_FUNC(js_loadImage)
+// SE_BIND_FUNC(js_loadImage)
 
 // pixels(RGBA), width, height, fullFilePath(*.png/*.jpg)
-static bool js_saveImageData(se::State &s)
+static bool js_saveImageData(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
-    const auto &args = s.args();
-    size_t argc = args.size();
+    v8::Isolate *_isolate = _v8args.GetIsolate();
+    v8::HandleScope _hs(_isolate);
+
+    size_t argc = _v8args.Length();
     CC_UNUSED bool ok = true;
     if (argc == 4)
     {
         cocos2d::Data data;
-        ok &= seval_to_Data(args[0], &data);
+        ok &= seval_to_Data(_v8args[0], &data);
 
         uint32_t width, height;
-        ok &= seval_to_uint32(args[1], &width);
-        ok &= seval_to_uint32(args[2], &height);
+        // ok &= seval_to_uint32(_v8args[1], &width);
+        width = _v8args[1]->Uint32Value(_isolate->GetCurrentContext()).FromJust();
+        // ok &= seval_to_uint32(_v8args[2], &height);
+        height = _v8args[2]->Uint32Value(_isolate->GetCurrentContext()).FromJust();
 
         std::string filePath;
-        ok &= seval_to_std_string(args[3], &filePath);
-        SE_PRECONDITION2(ok, false, "js_saveImageData : Error processing arguments");
+        filePath = JsbUtils::FromV8String(_isolate, _v8args[3]);
+        // SE_PRECONDITION2(ok, false, "js_saveImageData : Error processing arguments");
 
         Image *img = new Image();
         img->initWithRawData(data.getBytes(), data.getSize(), width, height, 8);
@@ -1103,22 +1220,23 @@ static bool js_saveImageData(se::State &s)
     SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 2);
     return false;
 }
-SE_BIND_FUNC(js_saveImageData)
+// SE_BIND_FUNC(js_saveImageData)
 
-static bool js_setDebugViewText(se::State &s)
+static bool js_setDebugViewText(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
-    const auto &args = s.args();
-    size_t argc = args.size();
+    v8::Isolate *_isolate = _v8args.GetIsolate();
+    v8::HandleScope _hs(_isolate);
+
+    size_t argc = _v8args.Length();
     CC_UNUSED bool ok = true;
     if (argc == 2)
     {
         int32_t index;
-        ok = seval_to_int32(args[0], &index);
-        SE_PRECONDITION2(ok, false, "Convert arg0 index failed!");
+        index = _v8args[0]->Int32Value(_isolate->GetCurrentContext()).FromJust();
+        // SE_PRECONDITION2(ok, false, "Convert arg0 index failed!");
 
-        std::string text;
-        ok = seval_to_std_string(args[1], &text);
-        SE_PRECONDITION2(ok, false, "Convert arg1 text failed!");
+        std::string text = JsbUtils::FromV8String(_isolate, _v8args[1]);
+        // SE_PRECONDITION2(ok, false, "Convert arg1 text failed!");
 
 #if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
         setGameInfoDebugViewTextJNI(index, text);
@@ -1129,36 +1247,37 @@ static bool js_setDebugViewText(se::State &s)
     SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 2);
     return false;
 }
-SE_BIND_FUNC(js_setDebugViewText)
+// SE_BIND_FUNC(js_setDebugViewText)
 
-static bool js_openDebugView(se::State &s)
+static bool js_openDebugView(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
 #if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
     openDebugViewJNI();
 #endif
     return true;
 }
-SE_BIND_FUNC(js_openDebugView)
+// SE_BIND_FUNC(js_openDebugView)
 
-static bool js_disableBatchGLCommandsToNative(se::State &s)
+static bool js_disableBatchGLCommandsToNative(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
 #if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
     disableBatchGLCommandsToNativeJNI();
 #endif
     return true;
 }
-SE_BIND_FUNC(js_disableBatchGLCommandsToNative)
+// SE_BIND_FUNC(js_disableBatchGLCommandsToNative)
 
-static bool JSB_openURL(se::State &s)
+static bool JSB_openURL(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
-    const auto &args = s.args();
-    size_t argc = args.size();
+    v8::Isolate *_isolate = _v8args.GetIsolate();
+    v8::HandleScope _hs(_isolate);
+
+    size_t argc = _v8args.Length();
     CC_UNUSED bool ok = true;
     if (argc > 0)
     {
-        std::string url;
-        ok = seval_to_std_string(args[0], &url);
-        SE_PRECONDITION2(ok, false, "url is invalid!");
+        std::string url = JsbUtils::FromV8String(_isolate, _v8args[0]);
+        // SE_PRECONDITION2(ok, false, "url is invalid!");
         Application::getInstance()->openURL(url);
         return true;
     }
@@ -1166,18 +1285,19 @@ static bool JSB_openURL(se::State &s)
     SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 1);
     return false;
 }
-SE_BIND_FUNC(JSB_openURL)
+// SE_BIND_FUNC(JSB_openURL)
 
-static bool JSB_copyTextToClipboard(se::State &s)
+static bool JSB_copyTextToClipboard(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
-    const auto &args = s.args();
-    size_t argc = args.size();
+    v8::Isolate *_isolate = _v8args.GetIsolate();
+    v8::HandleScope _hs(_isolate);
+
+    size_t argc = _v8args.Length();
     CC_UNUSED bool ok = true;
     if (argc > 0)
     {
-        std::string text;
-        ok = seval_to_std_string(args[0], &text);
-        SE_PRECONDITION2(ok, false, "text is invalid!");
+        std::string text = JsbUtils::FromV8String(_isolate, _v8args[0]);
+        // SE_PRECONDITION2(ok, false, "text is invalid!");
         Application::getInstance()->copyTextToClipboard(text);
         return true;
     }
@@ -1185,18 +1305,19 @@ static bool JSB_copyTextToClipboard(se::State &s)
     SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 1);
     return false;
 }
-SE_BIND_FUNC(JSB_copyTextToClipboard)
+// SE_BIND_FUNC(JSB_copyTextToClipboard)
 
-static bool JSB_setPreferredFramesPerSecond(se::State &s)
+static bool JSB_setPreferredFramesPerSecond(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
-    const auto &args = s.args();
-    size_t argc = args.size();
+    v8::Isolate *_isolate = _v8args.GetIsolate();
+    v8::HandleScope _hs(_isolate);
+
+    size_t argc = _v8args.Length();
     CC_UNUSED bool ok = true;
     if (argc > 0)
     {
-        int32_t fps;
-        ok = seval_to_int32(args[0], &fps);
-        SE_PRECONDITION2(ok, false, "fps is invalid!");
+        int32_t fps = _v8args[0]->Int32Value(_isolate->GetCurrentContext()).FromJust();
+        // SE_PRECONDITION2(ok, false, "fps is invalid!");
         Application::getInstance()->setPreferredFramesPerSecond(fps);
         return true;
     }
@@ -1204,80 +1325,82 @@ static bool JSB_setPreferredFramesPerSecond(se::State &s)
     SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 1);
     return false;
 }
-SE_BIND_FUNC(JSB_setPreferredFramesPerSecond)
+// SE_BIND_FUNC(JSB_setPreferredFramesPerSecond)
 
-static bool JSB_showInputBox(se::State &s)
+static bool JSB_showInputBox(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
-    const auto &args = s.args();
-    size_t argc = args.size();
+    v8::Isolate *_isolate = _v8args.GetIsolate();
+    v8::HandleScope _hs(_isolate);
+
+    size_t argc = _v8args.Length();
     CC_UNUSED bool ok = true;
     if (argc == 1)
     {
         bool ok;
-        se::Value tmp;
-        const auto &obj = args[0].toObject();
+        v8::Local<v8::Value> tmp;
+        const auto &obj = _v8args[0]->ToObject(_isolate->GetCurrentContext()).ToLocalChecked();
 
         cocos2d::EditBox::ShowInfo showInfo;
 
-        ok = obj->getProperty("defaultValue", &tmp);
-        SE_PRECONDITION2(ok && tmp.isString(), false, "defaultValue is invalid!");
-        showInfo.defaultValue = tmp.toString();
+        ok = obj->Get(_isolate->GetCurrentContext(), v8::String::NewFromUtf8(_isolate, "defaultValue").ToLocalChecked()).ToLocal(&tmp);
 
-        ok = obj->getProperty("maxLength", &tmp);
-        SE_PRECONDITION2(ok && tmp.isNumber(), false, "maxLength is invalid!");
-        showInfo.maxLength = tmp.toInt32();
+        // SE_PRECONDITION2(ok && tmp.isString(), false, "defaultValue is invalid!");
+        showInfo.defaultValue = tmp->ToString(_isolate->GetCurrentContext()).ToLocalChecked();
 
-        ok = obj->getProperty("multiple", &tmp);
-        SE_PRECONDITION2(ok && tmp.isBoolean(), false, "multiple is invalid!");
-        showInfo.isMultiline = tmp.toBoolean();
+        ok = obj->Get(_isolate->GetCurrentContext(), v8::String::NewFromUtf8(_isolate, "maxLength").ToLocalChecked()).ToLocal(&tmp);
+        // SE_PRECONDITION2(ok && tmp->IsNumber(), false, "maxLength is invalid!");
+        showInfo.maxLength = tmp->Int32Value(_isolate->GetCurrentContext()).FromJust();
 
-        if (obj->getProperty("confirmHold", &tmp))
+        ok = obj->Get(_isolate->GetCurrentContext(), v8::String::NewFromUtf8(_isolate, "multiple").ToLocalChecked()).ToLocal(&tmp);
+        // SE_PRECONDITION2(ok && tmp.isBoolean(), false, "multiple is invalid!");
+        showInfo.isMultiline = tmp->BooleanValue(_isolate);
+
+        if (obj->Get(_isolate->GetCurrentContext(), v8::String::NewFromUtf8(_isolate, "confirmHold").ToLocalChecked()).ToLocal(&tmp))
         {
-            SE_PRECONDITION2(tmp.isBoolean(), false, "confirmHold is invalid!");
-            if (!tmp.isUndefined())
-                showInfo.confirmHold = tmp.toBoolean();
+            // SE_PRECONDITION2(tmp.isBoolean(), false, "confirmHold is invalid!");
+            if (!tmp->IsUndefined())
+                showInfo.confirmHold = tmp->BooleanValue(_isolate);
         }
 
-        if (obj->getProperty("confirmType", &tmp))
+        if (obj->Get(_isolate->GetCurrentContext(), v8::String::NewFromUtf8(_isolate, "confirmType").ToLocalChecked()).ToLocal(&tmp))
         {
-            SE_PRECONDITION2(tmp.isString(), false, "confirmType is invalid!");
-            if (!tmp.isUndefined())
-                showInfo.confirmType = tmp.toString();
+            // SE_PRECONDITION2(tmp.isString(), false, "confirmType is invalid!");
+            if (!tmp->IsUndefined())
+                showInfo.confirmType = tmp->ToString(_isolate->GetCurrentContext()).ToLocalChecked();
+        };
+        if (JsbUtils::GetProperty(obj, "confirmType", &tmp))
+        {
+            // SE_PRECONDITION2(tmp.isString(), false, "inputType is invalid!");
+            if (!tmp->IsUndefined())
+                showInfo.inputType = tmp->ToString(_isolate->GetCurrentContext()).ToLocalChecked();
         }
 
-        if (obj->getProperty("inputType", &tmp))
+        if (JsbUtils::GetProperty(obj, "originX", &tmp))
         {
-            SE_PRECONDITION2(tmp.isString(), false, "inputType is invalid!");
-            if (!tmp.isUndefined())
-                showInfo.inputType = tmp.toString();
+            SE_PRECONDITION2(tmp->IsNumber(), false, "originX is invalid!");
+            if (!tmp->IsUndefined())
+                showInfo.x = tmp->Int32Value(_isolate->GetCurrentContext()).FromJust();
         }
 
-        if (obj->getProperty("originX", &tmp))
+        if (JsbUtils::GetProperty(obj, "originY", &tmp))
         {
-            SE_PRECONDITION2(tmp.isNumber(), false, "originX is invalid!");
-            if (!tmp.isUndefined())
-                showInfo.x = tmp.toInt32();
+            SE_PRECONDITION2(tmp->IsNumber(), false, "originY is invalid!");
+            if (!tmp->IsUndefined())
+                showInfo.y = tmp->Int32Value(_isolate->GetCurrentContext()).FromJust();
         }
 
-        if (obj->getProperty("originY", &tmp))
+        if (JsbUtils::GetProperty(obj, "width", &tmp))
         {
-            SE_PRECONDITION2(tmp.isNumber(), false, "originY is invalid!");
-            if (!tmp.isUndefined())
-                showInfo.y = tmp.toInt32();
+            SE_PRECONDITION2(tmp->IsNumber(), false, "width is invalid!");
+            if (!tmp->IsUndefined())
+                showInfo.width = tmp->Int32Value(_isolate->GetCurrentContext()).FromJust();
         }
 
-        if (obj->getProperty("width", &tmp))
+        if (JsbUtils::GetProperty(obj, "height", &tmp))
         {
-            SE_PRECONDITION2(tmp.isNumber(), false, "width is invalid!");
-            if (!tmp.isUndefined())
-                showInfo.width = tmp.toInt32();
-        }
-
-        if (obj->getProperty("height", &tmp))
-        {
-            SE_PRECONDITION2(tmp.isNumber(), false, "height is invalid!");
-            if (!tmp.isUndefined())
-                showInfo.height = tmp.toInt32();
+            SE_PRECONDITION2(tmp->IsNumber(), false, "height is invalid!");
+            if (!tmp->IsUndefined())
+                showInfo.height = tmp->Int32Value(_isolate->GetCurrentContext()).FromJust();
         }
 
         EditBox::show(showInfo);
@@ -1288,25 +1411,24 @@ static bool JSB_showInputBox(se::State &s)
     SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 1);
     return false;
 }
-SE_BIND_FUNC(JSB_showInputBox);
+// SE_BIND_FUNC(JSB_showInputBox);
 
-static bool JSB_updateInputBoxRect(se::State &s)
+static bool JSB_updateInputBoxRect(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
-    const auto &args = s.args();
-    size_t argc = args.size();
+    size_t argc = args.Length();
     if (argc == 4)
     {
-        SE_PRECONDITION2(args[0].isNumber(), false, "x is invalid!");
-        const auto &x = args[0].toInt32();
+        SE_PRECONDITION2(args[0]->IsNumber(), false, "x is invalid!");
+        const auto x = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromJust();
 
-        SE_PRECONDITION2(args[1].isNumber(), false, "y is invalid!");
-        const auto &y = args[1].toInt32();
+        SE_PRECONDITION2(args[1]->IsNumber(), false, "y is invalid!");
+        const auto y = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromJust();
 
-        SE_PRECONDITION2(args[2].isNumber(), false, "width is invalid!");
-        const auto &width = args[2].toInt32();
+        SE_PRECONDITION2(args[2]->IsNumber(), false, "width is invalid!");
+        const auto width = args[2]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromJust();
 
-        SE_PRECONDITION2(args[3].isNumber(), false, "height is invalid!");
-        const auto &height = args[3].toInt32();
+        SE_PRECONDITION2(args[3]->IsNumber(), false, "height is invalid!");
+        const auto height = args[3]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromJust();
 
         EditBox::updateRect(x, y, width, height);
         return true;
@@ -1315,247 +1437,244 @@ static bool JSB_updateInputBoxRect(se::State &s)
     SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 4);
     return false;
 }
-SE_BIND_FUNC(JSB_updateInputBoxRect);
+// SE_BIND_FUNC(JSB_updateInputBoxRect);
 
-static bool JSB_hideInputBox(se::State &s)
+static bool JSB_hideInputBox(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
     EditBox::hide();
     return true;
 }
-SE_BIND_FUNC(JSB_hideInputBox)
+// SE_BIND_FUNC(JSB_hideInputBox)
 
-#if CC_TARGET_PLATFORM == CC_PLATFORM_OPENHARMONY && (SCRIPT_ENGINE_TYPE == SCRIPT_ENGINE_V8 || SCRIPT_ENGINE_TYPE == SCRIPT_ENGINE_JSVM)
-static bool sevalue_to_napivalue(const se::Value &seVal, Napi::Value *napiVal, Napi::Env env);
+// #if CC_TARGET_PLATFORM == CC_PLATFORM_OPENHARMONY && (SCRIPT_ENGINE_TYPE == SCRIPT_ENGINE_V8 || SCRIPT_ENGINE_TYPE == SCRIPT_ENGINE_JSVM)
+// static bool sevalue_to_napivalue(const se::Value &seVal, Napi::Value *napiVal, Napi::Env env);
 
-static bool seobject_to_napivalue(se::Object *seObj, Napi::Value *napiVal, Napi::Env env)
-{
-    auto napiObj = Napi::Object::New(env);
-    std::vector<std::string> allKeys;
-    bool ok = seObj->getAllKeys(&allKeys);
-    if (ok && !allKeys.empty())
-    {
-        for (const auto &key : allKeys)
-        {
-            Napi::Value napiProp;
-            se::Value prop;
-            ok = seObj->getProperty(key.c_str(), &prop);
-            if (ok)
-            {
-                ok = sevalue_to_napivalue(prop, &napiProp, env);
-                if (ok)
-                {
-                    napiObj.Set(key.c_str(), napiProp);
-                }
-            }
-        }
-    }
-    *napiVal = napiObj;
-    return true;
-}
+// static bool seobject_to_napivalue(se::Object *seObj, Napi::Value *napiVal, Napi::Env env)
+// {
+//     auto napiObj = Napi::Object::New(env);
+//     std::vector<std::string> allKeys;
+//     bool ok = seObj->getAllKeys(&allKeys);
+//     if (ok && !allKeys.empty())
+//     {
+//         for (const auto &key : allKeys)
+//         {
+//             Napi::Value napiProp;
+//             se::Value prop;
+//             ok = seObj->getProperty(key.c_str(), &prop);
+//             if (ok)
+//             {
+//                 ok = sevalue_to_napivalue(prop, &napiProp, env);
+//                 if (ok)
+//                 {
+//                     napiObj.Set(key.c_str(), napiProp);
+//                 }
+//             }
+//         }
+//     }
+//     *napiVal = napiObj;
+//     return true;
+// }
 
-static bool sevalue_to_napivalue(const se::Value &seVal, Napi::Value *napiVal, Napi::Env env)
-{
-    // Only supports number or {tag: number, url: string} now
-    if (seVal.isNumber())
-    {
-        *napiVal = Napi::Number::New(env, seVal.toDouble());
-    }
-    else if (seVal.isString())
-    {
-        *napiVal = Napi::String::New(env, seVal.toString().c_str());
-    }
-    else if (seVal.isBoolean())
-    {
-        *napiVal = Napi::Boolean::New(env, seVal.toBoolean());
-    }
-    else if (seVal.isObject())
-    {
-        seobject_to_napivalue(seVal.toObject(), napiVal, env);
-    }
-    else
-    {
-        LOGW("sevalue_to_napivalue, Unsupported type: %d", static_cast<int32_t>(seVal.getType()));
-        return false;
-    }
+// static bool sevalue_to_napivalue(const se::Value &seVal, Napi::Value *napiVal, Napi::Env env)
+// {
+//     // Only supports number or {tag: number, url: string} now
+//     if (seVal.isNumber())
+//     {
+//         *napiVal = Napi::Number::New(env, seVal.toDouble());
+//     }
+//     else if (seVal.isString())
+//     {
+//         *napiVal = Napi::String::New(env, seVal.toString().c_str());
+//     }
+//     else if (seVal.isBoolean())
+//     {
+//         *napiVal = Napi::Boolean::New(env, seVal.toBoolean());
+//     }
+//     else if (seVal.isObject())
+//     {
+//         seobject_to_napivalue(seVal.toObject(), napiVal, env);
+//     }
+//     else
+//     {
+//         LOGW("sevalue_to_napivalue, Unsupported type: %d", static_cast<int32_t>(seVal.getType()));
+//         return false;
+//     }
 
-    return true;
-}
+//     return true;
+// }
 
-static bool JSB_openharmony_postMessage(se::State &s)
-{ // NOLINT(readability-identifier-naming)
-    LOGI("[0111] enter JSB_openharmony_postMessage");
-    const auto &args = s.args();
-    size_t argc = args.size();
+// static bool JSB_openharmony_postMessage(se::State &s)
+// { // NOLINT(readability-identifier-naming)
+//     LOGI("[0111] enter JSB_openharmony_postMessage");
+//     const auto &args = s.args();
+//     size_t argc = args.size();
 
-    if (argc == 2)
-    {
-        bool ok = false;
-        std::string msgType;
-        ok = seval_to_std_string(args[0], &msgType);
-        SE_PRECONDITION2(ok, false, "Error processing arguments");
+//     if (argc == 2)
+//     {
+//         bool ok = false;
+//         std::string msgType;
+//         ok = seval_to_std_string(args[0], &msgType);
+//         SE_PRECONDITION2(ok, false, "Error processing arguments");
 
-        const auto &arg1 = args[1];
-        auto env = NapiHelper::getWorkerEnv();
+//         const auto &arg1 = args[1];
+//         auto env = NapiHelper::getWorkerEnv();
 
-        Napi::Value napiArg1 = env.Undefined();
+//         Napi::Value napiArg1 = env.Undefined();
 
-        if (arg1.isNumber())
-        {
-            napiArg1 = Napi::Number::New(env, arg1.toDouble());
-        }
-        else if (arg1.isString())
-        {
-            napiArg1 = Napi::String::New(env, arg1.toString());
-        }
-        else if (arg1.isObject())
-        {
-            seobject_to_napivalue(arg1.toObject(), &napiArg1, env);
-        }
-        else
-        {
-            SE_REPORT_ERROR("postMessage, Unsupported type");
-            return false;
-        }
+//         if (arg1.isNumber())
+//         {
+//             napiArg1 = Napi::Number::New(env, arg1.toDouble());
+//         }
+//         else if (arg1.isString())
+//         {
+//             napiArg1 = Napi::String::New(env, arg1.toString());
+//         }
+//         else if (arg1.isObject())
+//         {
+//             seobject_to_napivalue(arg1.toObject(), &napiArg1, env);
+//         }
+//         else
+//         {
+//             SE_REPORT_ERROR("postMessage, Unsupported type");
+//             return false;
+//         }
 
-        NapiHelper::postMessageToUIThread(msgType.c_str(), napiArg1);
-        return true;
-    }
+//         NapiHelper::postMessageToUIThread(msgType.c_str(), napiArg1);
+//         return true;
+//     }
 
-    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 2);
-    return false;
-}
-SE_BIND_FUNC(JSB_openharmony_postMessage)
+//     SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 2);
+//     return false;
+// }
+// SE_BIND_FUNC(JSB_openharmony_postMessage)
 
-static bool JSB_empty_promise_then(se::State &s)
-{
-    return true;
-}
-SE_BIND_FUNC(JSB_empty_promise_then)
+// static bool JSB_empty_promise_then(se::State &s)
+// {
+//     return true;
+// }
+// SE_BIND_FUNC(JSB_empty_promise_then)
 
-static bool JSB_openharmony_postSyncMessage(se::State &s)
-{ // NOLINT(readability-identifier-naming)
-    const auto &args = s.args();
-    size_t argc = args.size();
+// static bool JSB_openharmony_postSyncMessage(se::State &s)
+// { // NOLINT(readability-identifier-naming)
+//     const auto &args = s.args();
+//     size_t argc = args.size();
 
-    if (argc == 2)
-    {
-        bool ok = false;
-        std::string msgType;
-        ok = seval_to_std_string(args[0], &msgType);
-        SE_PRECONDITION2(ok, false, "Error processing arguments");
+//     if (argc == 2)
+//     {
+//         bool ok = false;
+//         std::string msgType;
+//         ok = seval_to_std_string(args[0], &msgType);
+//         SE_PRECONDITION2(ok, false, "Error processing arguments");
 
-        const auto &arg1 = args[1];
-        auto env = NapiHelper::getWorkerEnv();
+//         const auto &arg1 = args[1];
+//         auto env = NapiHelper::getWorkerEnv();
 
-        Napi::Value napiArg1 = env.Undefined();
+//         Napi::Value napiArg1 = env.Undefined();
 
-        if (arg1.isNumber())
-        {
-            napiArg1 = Napi::Number::New(env, arg1.toDouble());
-        }
-        else if (arg1.isString())
-        {
-            napiArg1 = Napi::String::New(env, arg1.toString());
-        }
-        else if (arg1.isObject())
-        {
-            seobject_to_napivalue(arg1.toObject(), &napiArg1, env);
-        }
-        else
-        {
-            SE_REPORT_ERROR("postMessage, Unsupported type");
-            return false;
-        }
+//         if (arg1.isNumber())
+//         {
+//             napiArg1 = Napi::Number::New(env, arg1.toDouble());
+//         }
+//         else if (arg1.isString())
+//         {
+//             napiArg1 = Napi::String::New(env, arg1.toString());
+//         }
+//         else if (arg1.isObject())
+//         {
+//             seobject_to_napivalue(arg1.toObject(), &napiArg1, env);
+//         }
+//         else
+//         {
+//             SE_REPORT_ERROR("postMessage, Unsupported type");
+//             return false;
+//         }
 
-        Napi::Value napiPromise = NapiHelper::postSyncMessageToUIThread(msgType.c_str(), napiArg1);
+//         Napi::Value napiPromise = NapiHelper::postSyncMessageToUIThread(msgType.c_str(), napiArg1);
 
-        // TODO(cjh): Implement Promise for se
-        se::HandleObject retObj(se::Object::createPlainObject());
-        retObj->defineFunction("then", _SE(JSB_empty_promise_then));
-        s.rval().setObject(retObj);
-        //
-        return true;
-    }
+//         // TODO(cjh): Implement Promise for se
+//         se::HandleObject retObj(se::Object::createPlainObject());
+//         retObj->defineFunction("then", _SE(JSB_empty_promise_then));
+//         s.rval().setObject(retObj);
+//         //
+//         return true;
+//     }
 
-    SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 2);
-    return false;
-}
-SE_BIND_FUNC(JSB_openharmony_postSyncMessage)
-#endif
+//     SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 2);
+//     return false;
+// }
+// SE_BIND_FUNC(JSB_openharmony_postSyncMessage)
+// #endif
 
-bool jsb_register_global_variables(se::Object *global)
+bool jsb_register_global_variables(v8::Local<v8::Object> global)
 {
     g_threadPool.reset(ThreadPool::newFixedThreadPool(3));
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_OPENHARMONY && SCRIPT_ENGINE_TYPE == SCRIPT_ENGINE_NAPI)
-    global->defineFunction("run_script", _SE(require));
-#else
-    global->defineFunction("require", _SE(require));
-    global->defineFunction("requireModule", _SE(moduleRequire));
-#endif
 
-    getOrCreatePlainObject_r("jsb", global, &__jsbObj);
+    JsbUtils::DefineFunction(global, "require", require);
+    JsbUtils::DefineFunction(global, "requireModule", moduleRequire);
 
-    auto glContextCls = se::Class::create("WebGLRenderingContext", global, nullptr, nullptr);
-    glContextCls->install();
+//     getOrCreatePlainObject_r("jsb", global, &__jsbObj);
 
-    SAFE_DEC_REF(__glObj);
-    __glObj = se::Object::createObjectWithClass(glContextCls);
-    global->setProperty("__gl", se::Value(__glObj));
+//     auto glContextCls = se::Class::create("WebGLRenderingContext", global, nullptr, nullptr);
+//     glContextCls->install();
 
-    __jsbObj->defineFunction("garbageCollect", _SE(jsc_garbageCollect));
-    __jsbObj->defineFunction("dumpNativePtrToSeObjectMap", _SE(jsc_dumpNativePtrToSeObjectMap));
+//     SAFE_DEC_REF(__glObj);
+//     __glObj = se::Object::createObjectWithClass(glContextCls);
+//     global->setProperty("__gl", se::Value(__glObj));
 
-    __jsbObj->defineFunction("loadImage", _SE(js_loadImage));
-    __jsbObj->defineFunction("saveImageData", _SE(js_saveImageData));
-    __jsbObj->defineFunction("setDebugViewText", _SE(js_setDebugViewText));
-    __jsbObj->defineFunction("openDebugView", _SE(js_openDebugView));
-    __jsbObj->defineFunction("disableBatchGLCommandsToNative", _SE(js_disableBatchGLCommandsToNative));
-    __jsbObj->defineFunction("openURL", _SE(JSB_openURL));
-    __jsbObj->defineFunction("copyTextToClipboard", _SE(JSB_copyTextToClipboard));
+//     __jsbObj->defineFunction("garbageCollect", _SE(jsc_garbageCollect));
+//     __jsbObj->defineFunction("dumpNativePtrToSeObjectMap", _SE(jsc_dumpNativePtrToSeObjectMap));
 
-    __jsbObj->defineFunction("setPreferredFramesPerSecond", _SE(JSB_setPreferredFramesPerSecond));
-    __jsbObj->defineFunction("showInputBox", _SE(JSB_showInputBox));
-    __jsbObj->defineFunction("hideInputBox", _SE(JSB_hideInputBox));
-    __jsbObj->defineFunction("updateInputBoxRect", _SE(JSB_updateInputBoxRect));
+//     __jsbObj->defineFunction("loadImage", _SE(js_loadImage));
+//     __jsbObj->defineFunction("saveImageData", _SE(js_saveImageData));
+//     __jsbObj->defineFunction("setDebugViewText", _SE(js_setDebugViewText));
+//     __jsbObj->defineFunction("openDebugView", _SE(js_openDebugView));
+//     __jsbObj->defineFunction("disableBatchGLCommandsToNative", _SE(js_disableBatchGLCommandsToNative));
+//     __jsbObj->defineFunction("openURL", _SE(JSB_openURL));
+//     __jsbObj->defineFunction("copyTextToClipboard", _SE(JSB_copyTextToClipboard));
 
-    global->defineFunction("__getPlatform", _SE(JSBCore_platform));
-    global->defineFunction("__getOS", _SE(JSBCore_os));
-    global->defineFunction("__getOSVersion", _SE(JSB_getOSVersion));
-    global->defineFunction("__getCurrentLanguage", _SE(JSBCore_getCurrentLanguage));
-    global->defineFunction("__getCurrentLanguageCode", _SE(JSBCore_getCurrentLanguageCode));
-    global->defineFunction("__getVersion", _SE(JSBCore_version));
-    global->defineFunction("__restartVM", _SE(JSB_core_restartVM));
-    global->defineFunction("__cleanScript", _SE(JSB_cleanScript));
-    global->defineFunction("__isObjectValid", _SE(JSB_isObjectValid));
-    global->defineFunction("close", _SE(JSB_closeWindow));
+//     __jsbObj->defineFunction("setPreferredFramesPerSecond", _SE(JSB_setPreferredFramesPerSecond));
+//     __jsbObj->defineFunction("showInputBox", _SE(JSB_showInputBox));
+//     __jsbObj->defineFunction("hideInputBox", _SE(JSB_hideInputBox));
+//     __jsbObj->defineFunction("updateInputBoxRect", _SE(JSB_updateInputBoxRect));
 
-    se::HandleObject performanceObj(se::Object::createPlainObject());
-    performanceObj->defineFunction("now", _SE(js_performance_now));
-    global->setProperty("performance", se::Value(performanceObj));
+//     global->defineFunction("__getPlatform", _SE(JSBCore_platform));
+//     global->defineFunction("__getOS", _SE(JSBCore_os));
+//     global->defineFunction("__getOSVersion", _SE(JSB_getOSVersion));
+//     global->defineFunction("__getCurrentLanguage", _SE(JSBCore_getCurrentLanguage));
+//     global->defineFunction("__getCurrentLanguageCode", _SE(JSBCore_getCurrentLanguageCode));
+//     global->defineFunction("__getVersion", _SE(JSBCore_version));
+//     global->defineFunction("__restartVM", _SE(JSB_core_restartVM));
+//     global->defineFunction("__cleanScript", _SE(JSB_cleanScript));
+//     global->defineFunction("__isObjectValid", _SE(JSB_isObjectValid));
+//     global->defineFunction("close", _SE(JSB_closeWindow));
 
-#if CC_TARGET_PLATFORM == CC_PLATFORM_OPENHARMONY && (SCRIPT_ENGINE_TYPE == SCRIPT_ENGINE_V8 || SCRIPT_ENGINE_TYPE == SCRIPT_ENGINE_JSVM)
-    se::HandleObject ohObj(se::Object::createPlainObject());
-    global->setProperty("oh", se::Value(ohObj));
-    ohObj->defineFunction("postMessage", _SE(JSB_openharmony_postMessage));
-    ohObj->defineFunction("postSyncMessage", _SE(JSB_openharmony_postSyncMessage));
-#endif
-    se::ScriptEngine::getInstance()->clearException();
+//     se::HandleObject performanceObj(se::Object::createPlainObject());
+//     performanceObj->defineFunction("now", _SE(js_performance_now));
+//     global->setProperty("performance", se::Value(performanceObj));
 
-    se::ScriptEngine::getInstance()->addBeforeCleanupHook([]()
-                                                          {
-        g_threadPool = nullptr;
+// #if CC_TARGET_PLATFORM == CC_PLATFORM_OPENHARMONY && (SCRIPT_ENGINE_TYPE == SCRIPT_ENGINE_V8 || SCRIPT_ENGINE_TYPE == SCRIPT_ENGINE_JSVM)
+//     se::HandleObject ohObj(se::Object::createPlainObject());
+//     global->setProperty("oh", se::Value(ohObj));
+//     ohObj->defineFunction("postMessage", _SE(JSB_openharmony_postMessage));
+//     ohObj->defineFunction("postSyncMessage", _SE(JSB_openharmony_postSyncMessage));
+// #endif
+//     se::ScriptEngine::getInstance()->clearException();
 
-        PoolManager::getInstance()->getCurrentPool()->clear(); });
+//     se::ScriptEngine::getInstance()->addBeforeCleanupHook([]()
+//                                                           {
+//         g_threadPool = nullptr;
 
-    se::ScriptEngine::getInstance()->addAfterCleanupHook([]()
-                                                         {
+//         PoolManager::getInstance()->getCurrentPool()->clear(); });
 
-        PoolManager::getInstance()->getCurrentPool()->clear();
+//     se::ScriptEngine::getInstance()->addAfterCleanupHook([]()
+//                                                          {
 
-        __moduleCache.clear();
+//         PoolManager::getInstance()->getCurrentPool()->clear();
 
-        SAFE_DEC_REF(__jsbObj);
-        SAFE_DEC_REF(__glObj); });
+//         __moduleCache.clear();
+
+//         SAFE_DEC_REF(__jsbObj);
+//         SAFE_DEC_REF(__glObj); });
 
     return true;
 }

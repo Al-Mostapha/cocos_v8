@@ -14,11 +14,12 @@ set(JSB_HEADERS
     ScriptEngine.hpp
     Core/jsb_module_register.hpp
     Core/jsb_global.hpp
+    Core/jsb_conversions.hpp
 )
 
 add_library(jsb STATIC ${JSB_SRC} ${JSB_HEADERS})
 
-# target_link_libraries(jsb cocos2d)
+target_link_libraries(jsb PUBLIC cocos2d)
 add_dependencies(jsb cocos2d)
 
 # PUBLIC: consumers of jsb (cocos2d, app) get V8 and jsb headers automatically
@@ -30,7 +31,7 @@ target_include_directories(jsb
 
 if(WINDOWS)
     target_link_directories(jsb PUBLIC ${V8_DIR}/Lib/Win32)
-    target_link_libraries(jsb PUBLIC v8_monolith.lib winmm.lib dbghelp.lib shlwapi.lib)
+    # target_link_libraries(jsb PUBLIC v8_monolith.lib winmm.lib dbghelp.lib shlwapi.lib)
     # target_compile_definitions(jsb PRIVATE _USRJSSTATIC)
 endif()
 

@@ -48,6 +48,7 @@ public:
 
   static ScriptEngine *getInstance();
   static void destroyInstance();
+  bool garbageCollect();
 
   bool start();
 
@@ -121,6 +122,7 @@ private:
   bool _isErrorHandleWorking;
 
   static ScriptEngine *_instance;
+  FileOperationDelegate _fileOperationDelegate;
   std::function<void(const char *, const char *, const char *)> _nativeExceptionCallback = nullptr;
   std::function<void(const char *, const char *, const char *)> _jsExceptionCallback = nullptr;
 };
