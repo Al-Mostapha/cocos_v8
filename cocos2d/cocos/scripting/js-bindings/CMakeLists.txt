@@ -19,7 +19,13 @@ set(JSB_HEADERS
 
 add_library(jsb STATIC ${JSB_SRC} ${JSB_HEADERS})
 
-target_link_libraries(jsb PUBLIC cocos2d)
+if(WINDOWS)
+    target_link_directories(jsb PUBLIC ${V8_DIR}/Lib/Win32)
+    target_link_libraries(jsb PUBLIC cocos2d v8_monolith.lib winmm.lib dbghelp.lib shlwapi.lib)
+    # target_compile_definitions(jsb PRIVATE _USRJSSTATIC)
+endif()
+
+# target_link_libraries(jsb PUBLIC cocos2d)
 add_dependencies(jsb cocos2d)
 
 # PUBLIC: consumers of jsb (cocos2d, app) get V8 and jsb headers automatically
@@ -29,11 +35,6 @@ target_include_directories(jsb
 )
 
 
-if(WINDOWS)
-    target_link_directories(jsb PUBLIC ${V8_DIR}/Lib/Win32)
-    # target_link_libraries(jsb PUBLIC v8_monolith.lib winmm.lib dbghelp.lib shlwapi.lib)
-    # target_compile_definitions(jsb PRIVATE _USRJSSTATIC)
-endif()
 
 set_target_properties(jsb PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"

@@ -3,5 +3,11 @@
     "*.embeddedhtml": "html",
     "iostream": "cpp",
     "memory": "cpp"
+  },
+  "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+  "C_Cpp.intelliSenseEngine": "default",
+  "cmake.configureOnOpen": true,
+  "cmake.configureSettings": {
+    "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
   }
 }
