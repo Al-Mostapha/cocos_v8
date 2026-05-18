@@ -2,11 +2,12 @@
 #include "JsbConfig.h"
 #include <string>
 #include <v8.h>
+#include "Core/JsbObjectWrap.hpp"
 
 struct JsbPrivateData
 {
     void *data;
-    v8::Local<v8::Object> seObj;
+    JsbObject *seObj;
 };
 
 class JsbUtils
@@ -25,6 +26,9 @@ public:
     static bool GetProperty(v8::Local<v8::Object> obj, const char *key, v8::Local<v8::Value> *value);
 
     static void *GetPrivate(v8::Isolate *isolate, v8::Local<v8::Value> val);
+
+    static void SetPrivate(v8::Isolate *isolate, ObjectWrap &wrap, void *data, JsbPrivateData **outInternalData);
+    static void ClearPrivate(v8::Isolate* isolate, ObjectWrap& wrap);
 
     static bool DefineFunction(v8::Local<v8::Object> obj, const char *name, void (*callback)(const v8::FunctionCallbackInfo<v8::Value> &));
 };

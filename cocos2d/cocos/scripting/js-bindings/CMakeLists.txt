@@ -5,6 +5,12 @@ set(JSB_SRC
     JsbUtils.cpp
     Core/jsb_module_register.cpp
     Core/jsb_global.cpp
+    Core/JsbClass.cpp
+    Core/JsbObject.cpp
+    Core/JsbObjectWrap.cpp
+    Core/RefCounter.cpp
+
+    Utils/MappingUtils.cpp
 )
 
 set(JSB_HEADERS
@@ -15,6 +21,12 @@ set(JSB_HEADERS
     Core/jsb_module_register.hpp
     Core/jsb_global.hpp
     Core/jsb_conversions.hpp
+    Core/JsbClass.hpp
+    Core/JsbObject.hpp
+    Core/JsbObjectWrap.hpp
+    Core/RefCounter.hpp
+
+    Utils/MappingUtils.hpp
 )
 
 add_library(jsb STATIC ${JSB_SRC} ${JSB_HEADERS})

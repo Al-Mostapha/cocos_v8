@@ -18,3 +18,5 @@
 #include <assert.h>
 
 #include "HelperMacros.h"
+
+using V8FinalizeFunc = void (*)(void *nativeObj);

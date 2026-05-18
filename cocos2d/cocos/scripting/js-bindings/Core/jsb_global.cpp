@@ -58,8 +58,8 @@
 
 using namespace cocos2d;
 
-v8::Object *__jsbObj = nullptr;
-v8::Object *__glObj = nullptr;
+v8::Global<v8::Object> __jsbObj;
+v8::Global<v8::Object> __glObj;
 
 static std::shared_ptr<ThreadPool> g_threadPool;
 
@@ -845,25 +845,41 @@ static bool JSB_isObjectValid(const v8::FunctionCallbackInfo<v8::Value> &_v8args
 }
 // SE_BIND_FUNC(JSB_isObjectValid)
 
-// static bool getOrCreatePlainObject_r(const char *name, se::Object *parent, se::Object **outObj)
-// {
-//     assert(parent != nullptr);
-//     assert(outObj != nullptr);
-//     se::Value tmp;
+static bool getOrCreatePlainObject_r(const char *name, v8::Local<v8::Object> parent, v8::Local<v8::Object> *outObj)
+{
+    //     assert(parent != nullptr);
+    assert(name != nullptr);
+    assert(!parent.IsEmpty());
+    //     assert(outObj != nullptr);
+    assert(outObj != nullptr);
+    //     se::Value tmp;
+    v8::Isolate *isolate = ScriptEngine::getInstance()->getIsolate();
+    v8::HandleScope handleScope(isolate);
+    v8::Local<v8::Value> tmp;
+    v8::Local<v8::Context> ctx = isolate->GetCurrentContext();
+    if (parent->Get(ctx, JsbUtils::ToV8String(isolate, name)).ToLocal(&tmp) && tmp->IsObject())
+    {
+        *outObj = tmp->ToObject(ctx).ToLocalChecked();
+        // (*outObj)->incRef();
+    }
+    else
+    {
+        *outObj = v8::Object::New(isolate);
+        parent->Set(ctx, JsbUtils::ToV8String(isolate, name), *outObj).FromJust();
+    }
+    //     if (parent->getProperty(name, &tmp) && tmp.isObject())
+    //     {
+    //         *outObj = tmp.toObject();
+    //         (*outObj)->incRef();
+    //     }
+    //     else
+    //     {
+    //         *outObj = se::Object::createPlainObject();
+    //         parent->setProperty(name, se::Value(*outObj));
+    //     }
 
-//     if (parent->getProperty(name, &tmp) && tmp.isObject())
-//     {
-//         *outObj = tmp.toObject();
-//         (*outObj)->incRef();
-//     }
-//     else
-//     {
-//         *outObj = se::Object::createPlainObject();
-//         parent->setProperty(name, se::Value(*outObj));
-//     }
-
-//     return true;
-// }
+    return true;
+}
 
 static bool js_performance_now(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
@@ -951,10 +967,10 @@ namespace
         imgInfo->data = img->getData();
         // TODO
         assert(false);
-        //const auto &pixelFormatInfo = img->getPixelFormatInfo();
-        //imgInfo->glFormat = pixelFormatInfo.format;
-        //imgInfo->glInternalFormat = pixelFormatInfo.internalFormat;
-        //imgInfo->type = pixelFormatInfo.type;
+        // const auto &pixelFormatInfo = img->getPixelFormatInfo();
+        // imgInfo->glFormat = pixelFormatInfo.format;
+        // imgInfo->glInternalFormat = pixelFormatInfo.internalFormat;
+        // imgInfo->type = pixelFormatInfo.type;
 
         imgInfo->bpp = img->getBitPerPixel();
         imgInfo->numberOfMipmaps = img->getNumberOfMipmaps();
@@ -1183,7 +1199,7 @@ static bool js_loadImage(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
         assert(callbackVal->IsObject());
         assert(callbackVal->IsFunction());
         assert(false);
-        //return jsb_global_load_image(path, &callbackVal);
+        // return jsb_global_load_image(path, &callbackVal);
     }
     SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 2);
     return false;
@@ -1217,8 +1233,8 @@ static bool js_saveImageData(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
         img->initWithRawData(data.getBytes(), data.getSize(), width, height, 8);
         // isToRGB = false, to keep alpha channel
         bool ret = img->saveToFile(filePath, false);
-        //s.rval().setBoolean(ret);
-		_v8args.GetReturnValue().Set(v8::Boolean::New(_isolate, ret));
+        // s.rval().setBoolean(ret);
+        _v8args.GetReturnValue().Set(v8::Boolean::New(_isolate, ret));
 
         img->release();
         return ret;
@@ -1324,8 +1340,8 @@ static bool JSB_setPreferredFramesPerSecond(const v8::FunctionCallbackInfo<v8::V
     {
         int32_t fps = _v8args[0]->Int32Value(_isolate->GetCurrentContext()).FromJust();
         // SE_PRECONDITION2(ok, false, "fps is invalid!");
-        //Application::getInstance()->setPreferredFramesPerSecond(fps);
-		Director::getInstance()->setAnimationInterval(1.0 / fps);
+        // Application::getInstance()->setPreferredFramesPerSecond(fps);
+        Director::getInstance()->setAnimationInterval(1.0 / fps);
         return true;
     }
 
@@ -1346,73 +1362,73 @@ static bool JSB_showInputBox(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
         bool ok;
         v8::Local<v8::Value> tmp;
         const auto &obj = _v8args[0]->ToObject(_isolate->GetCurrentContext()).ToLocalChecked();
-		CCASSERT(false, "TODO: implement JSB_showInputBox");
-        //cocos2d::EditBox::ShowInfo showInfo;
+        CCASSERT(false, "TODO: implement JSB_showInputBox");
+        // cocos2d::EditBox::ShowInfo showInfo;
 
-        //ok = obj->Get(_isolate->GetCurrentContext(), v8::String::NewFromUtf8(_isolate, "defaultValue").ToLocalChecked()).ToLocal(&tmp);
+        // ok = obj->Get(_isolate->GetCurrentContext(), v8::String::NewFromUtf8(_isolate, "defaultValue").ToLocalChecked()).ToLocal(&tmp);
 
         //// SE_PRECONDITION2(ok && tmp.isString(), false, "defaultValue is invalid!");
-        //showInfo.defaultValue = tmp->ToString(_isolate->GetCurrentContext()).ToLocalChecked();
+        // showInfo.defaultValue = tmp->ToString(_isolate->GetCurrentContext()).ToLocalChecked();
 
-        //ok = obj->Get(_isolate->GetCurrentContext(), v8::String::NewFromUtf8(_isolate, "maxLength").ToLocalChecked()).ToLocal(&tmp);
+        // ok = obj->Get(_isolate->GetCurrentContext(), v8::String::NewFromUtf8(_isolate, "maxLength").ToLocalChecked()).ToLocal(&tmp);
         //// SE_PRECONDITION2(ok && tmp->IsNumber(), false, "maxLength is invalid!");
-        //showInfo.maxLength = tmp->Int32Value(_isolate->GetCurrentContext()).FromJust();
+        // showInfo.maxLength = tmp->Int32Value(_isolate->GetCurrentContext()).FromJust();
 
-        //ok = obj->Get(_isolate->GetCurrentContext(), v8::String::NewFromUtf8(_isolate, "multiple").ToLocalChecked()).ToLocal(&tmp);
+        // ok = obj->Get(_isolate->GetCurrentContext(), v8::String::NewFromUtf8(_isolate, "multiple").ToLocalChecked()).ToLocal(&tmp);
         //// SE_PRECONDITION2(ok && tmp.isBoolean(), false, "multiple is invalid!");
-        //showInfo.isMultiline = tmp->BooleanValue(_isolate);
+        // showInfo.isMultiline = tmp->BooleanValue(_isolate);
 
-        //if (obj->Get(_isolate->GetCurrentContext(), v8::String::NewFromUtf8(_isolate, "confirmHold").ToLocalChecked()).ToLocal(&tmp))
+        // if (obj->Get(_isolate->GetCurrentContext(), v8::String::NewFromUtf8(_isolate, "confirmHold").ToLocalChecked()).ToLocal(&tmp))
         //{
-        //    // SE_PRECONDITION2(tmp.isBoolean(), false, "confirmHold is invalid!");
-        //    if (!tmp->IsUndefined())
-        //        showInfo.confirmHold = tmp->BooleanValue(_isolate);
-        //}
+        //     // SE_PRECONDITION2(tmp.isBoolean(), false, "confirmHold is invalid!");
+        //     if (!tmp->IsUndefined())
+        //         showInfo.confirmHold = tmp->BooleanValue(_isolate);
+        // }
 
-        //if (obj->Get(_isolate->GetCurrentContext(), v8::String::NewFromUtf8(_isolate, "confirmType").ToLocalChecked()).ToLocal(&tmp))
+        // if (obj->Get(_isolate->GetCurrentContext(), v8::String::NewFromUtf8(_isolate, "confirmType").ToLocalChecked()).ToLocal(&tmp))
         //{
-        //    // SE_PRECONDITION2(tmp.isString(), false, "confirmType is invalid!");
-        //    if (!tmp->IsUndefined())
-        //        showInfo.confirmType = tmp->ToString(_isolate->GetCurrentContext()).ToLocalChecked();
-        //};
-        //if (JsbUtils::GetProperty(obj, "confirmType", &tmp))
+        //     // SE_PRECONDITION2(tmp.isString(), false, "confirmType is invalid!");
+        //     if (!tmp->IsUndefined())
+        //         showInfo.confirmType = tmp->ToString(_isolate->GetCurrentContext()).ToLocalChecked();
+        // };
+        // if (JsbUtils::GetProperty(obj, "confirmType", &tmp))
         //{
-        //    // SE_PRECONDITION2(tmp.isString(), false, "inputType is invalid!");
-        //    if (!tmp->IsUndefined())
-        //        showInfo.inputType = tmp->ToString(_isolate->GetCurrentContext()).ToLocalChecked();
-        //}
+        //     // SE_PRECONDITION2(tmp.isString(), false, "inputType is invalid!");
+        //     if (!tmp->IsUndefined())
+        //         showInfo.inputType = tmp->ToString(_isolate->GetCurrentContext()).ToLocalChecked();
+        // }
 
-        //if (JsbUtils::GetProperty(obj, "originX", &tmp))
+        // if (JsbUtils::GetProperty(obj, "originX", &tmp))
         //{
-        //    SE_PRECONDITION2(tmp->IsNumber(), false, "originX is invalid!");
-        //    if (!tmp->IsUndefined())
-        //        showInfo.x = tmp->Int32Value(_isolate->GetCurrentContext()).FromJust();
-        //}
+        //     SE_PRECONDITION2(tmp->IsNumber(), false, "originX is invalid!");
+        //     if (!tmp->IsUndefined())
+        //         showInfo.x = tmp->Int32Value(_isolate->GetCurrentContext()).FromJust();
+        // }
 
-        //if (JsbUtils::GetProperty(obj, "originY", &tmp))
+        // if (JsbUtils::GetProperty(obj, "originY", &tmp))
         //{
-        //    SE_PRECONDITION2(tmp->IsNumber(), false, "originY is invalid!");
-        //    if (!tmp->IsUndefined())
-        //        showInfo.y = tmp->Int32Value(_isolate->GetCurrentContext()).FromJust();
-        //}
+        //     SE_PRECONDITION2(tmp->IsNumber(), false, "originY is invalid!");
+        //     if (!tmp->IsUndefined())
+        //         showInfo.y = tmp->Int32Value(_isolate->GetCurrentContext()).FromJust();
+        // }
 
-        //if (JsbUtils::GetProperty(obj, "width", &tmp))
+        // if (JsbUtils::GetProperty(obj, "width", &tmp))
         //{
-        //    SE_PRECONDITION2(tmp->IsNumber(), false, "width is invalid!");
-        //    if (!tmp->IsUndefined())
-        //        showInfo.width = tmp->Int32Value(_isolate->GetCurrentContext()).FromJust();
-        //}
+        //     SE_PRECONDITION2(tmp->IsNumber(), false, "width is invalid!");
+        //     if (!tmp->IsUndefined())
+        //         showInfo.width = tmp->Int32Value(_isolate->GetCurrentContext()).FromJust();
+        // }
 
-        //if (JsbUtils::GetProperty(obj, "height", &tmp))
+        // if (JsbUtils::GetProperty(obj, "height", &tmp))
         //{
-        //    SE_PRECONDITION2(tmp->IsNumber(), false, "height is invalid!");
-        //    if (!tmp->IsUndefined())
-        //        showInfo.height = tmp->Int32Value(_isolate->GetCurrentContext()).FromJust();
-        //}
+        //     SE_PRECONDITION2(tmp->IsNumber(), false, "height is invalid!");
+        //     if (!tmp->IsUndefined())
+        //         showInfo.height = tmp->Int32Value(_isolate->GetCurrentContext()).FromJust();
+        // }
 
-        //EditBox::show(showInfo);
+        // EditBox::show(showInfo);
 
-        //return true;
+        // return true;
     }
 
     SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 1);
@@ -1425,21 +1441,21 @@ static bool JSB_updateInputBoxRect(const v8::FunctionCallbackInfo<v8::Value> &ar
     size_t argc = args.Length();
     if (argc == 4)
     {
-		CCASSERT(false, "TODO: implement JSB_updateInputBoxRect");
-        //SE_PRECONDITION2(args[0]->IsNumber(), false, "x is invalid!");
-        //const auto x = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromJust();
+        CCASSERT(false, "TODO: implement JSB_updateInputBoxRect");
+        // SE_PRECONDITION2(args[0]->IsNumber(), false, "x is invalid!");
+        // const auto x = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromJust();
 
-        //SE_PRECONDITION2(args[1]->IsNumber(), false, "y is invalid!");
-        //const auto y = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromJust();
+        // SE_PRECONDITION2(args[1]->IsNumber(), false, "y is invalid!");
+        // const auto y = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromJust();
 
-        //SE_PRECONDITION2(args[2]->IsNumber(), false, "width is invalid!");
-        //const auto width = args[2]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromJust();
+        // SE_PRECONDITION2(args[2]->IsNumber(), false, "width is invalid!");
+        // const auto width = args[2]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromJust();
 
-        //SE_PRECONDITION2(args[3]->IsNumber(), false, "height is invalid!");
-        //const auto height = args[3]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromJust();
+        // SE_PRECONDITION2(args[3]->IsNumber(), false, "height is invalid!");
+        // const auto height = args[3]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromJust();
 
-        //EditBox::updateRect(x, y, width, height);
-        //return true;
+        // EditBox::updateRect(x, y, width, height);
+        // return true;
     }
 
     SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 4);
@@ -1449,7 +1465,7 @@ static bool JSB_updateInputBoxRect(const v8::FunctionCallbackInfo<v8::Value> &ar
 
 static bool JSB_hideInputBox(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
-    //EditBox::hide();
+    // EditBox::hide();
 
     return true;
 }
@@ -1616,12 +1632,18 @@ static bool JSB_hideInputBox(const v8::FunctionCallbackInfo<v8::Value> &args)
 
 bool jsb_register_global_variables(v8::Local<v8::Object> global)
 {
+    v8::Isolate *isolate = v8::Isolate::GetCurrent();
+    v8::HandleScope handleScope(isolate);
+
     g_threadPool.reset(ThreadPool::newFixedThreadPool(3));
 
     JsbUtils::DefineFunction(global, "require", require);
     JsbUtils::DefineFunction(global, "requireModule", moduleRequire);
 
+    v8::Local<v8::Object> jsbObj = v8::Object::New(isolate);
     //     getOrCreatePlainObject_r("jsb", global, &__jsbObj);
+    getOrCreatePlainObject_r("jsb", global, &jsbObj);
+    __jsbObj.Reset(isolate, jsbObj);
 
     //     auto glContextCls = se::Class::create("WebGLRenderingContext", global, nullptr, nullptr);
     //     glContextCls->install();

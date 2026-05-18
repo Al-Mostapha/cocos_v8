@@ -5,6 +5,10 @@
 #include <string>
 #include <thread>
 
+class Class;
+
+extern Class *__jsb_CCPrivateData_class;
+
 class ScriptEngine
 {
 public:
@@ -40,6 +44,12 @@ public:
    */
   void setFileOperationDelegate(const FileOperationDelegate &delegate);
 
+  v8::Local<v8::Context> _getContext() const
+  {
+    return _context.Get(_isolate);
+  }
+
+  void clearException() {}
   /**
    *  @brief Gets the delegate for file operation.
    *  @return The delegate for file operation
