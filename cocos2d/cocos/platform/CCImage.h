@@ -131,20 +131,20 @@ public:
     bool initWithRawData(const unsigned char * data, ssize_t dataLen, int width, int height, int bitsPerComponent, bool preMulti = false);
 
     // Getters
-    unsigned char *   getData()               { return _data; }
-    ssize_t           getDataLen()            { return _dataLen; }
-    Format            getFileType()           { return _fileType; }
-    backend::PixelFormat getPixelFormat()  { return _pixelFormat; }
-    int               getWidth()              { return _width; }
-    int               getHeight()             { return _height; }
-    int               getNumberOfMipmaps()    { return _numberOfMipmaps; }
-    MipmapInfo*       getMipmaps()            { return _mipmaps; }
-    bool              hasPremultipliedAlpha() { return _hasPremultipliedAlpha; }
+    unsigned char *   getData()    const           { return _data; }
+    ssize_t           getDataLen()  const          { return _dataLen; }
+    Format            getFileType()  const          { return _fileType; }
+    backend::PixelFormat getPixelFormat()  const          { return _pixelFormat; }
+    int               getWidth()  const              { return _width; }
+    int               getHeight()  const             { return _height; }
+    int               getNumberOfMipmaps()  const    { return _numberOfMipmaps; }
+    MipmapInfo*       getMipmaps()              { return _mipmaps; }
+    bool              hasPremultipliedAlpha()  const { return _hasPremultipliedAlpha; }
     std::string getFilePath() const { return _filePath; }
 
-    int                      getBitPerPixel();
-    bool                     hasAlpha();
-    bool                     isCompressed();
+    int                      getBitPerPixel() const;
+    bool                     hasAlpha() const;
+    bool                     isCompressed() const;
 
 
     /**

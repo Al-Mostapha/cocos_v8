@@ -132,6 +132,15 @@ public:
      */
     static void destroyInstance();
 
+    std::string getFileDir(const std::string& filename) const{
+        std::string fullPath = fullPathForFilename(filename);
+        size_t pos = fullPath.find_last_of("/\\");
+        if (pos != std::string::npos)
+            return fullPath.substr(0, pos + 1);
+        else
+            return "";
+    }
+
     /**
      * You can inherit from platform dependent implementation of FileUtils, such as FileUtilsAndroid,
      * and use this function to set delegate, then FileUtils will invoke delegate's implementation.

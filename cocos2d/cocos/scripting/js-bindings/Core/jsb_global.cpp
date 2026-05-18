@@ -38,7 +38,7 @@
 #include "platform/CCApplication.h"
 #include "network/CCDownloader.h"
 #include <map>
-#include "UIEditBox/UIEditBox.h"
+#include "ui/UIEditBox/UIEditBox.h"
 
 // #if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
 // #include "platform/android/jni/JniImp.h"
@@ -54,6 +54,7 @@
 #include "platform/CCGL.h"
 #include "platform/CCImage.h"
 #include "platform/CCApplication.h"
+#include <chrono>
 
 using namespace cocos2d;
 
@@ -358,7 +359,6 @@ namespace
     static void require(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
     {
         ++__jsbInvocationCount;
-        bool ret = false;
         v8::Isolate *_isolate = _v8args.GetIsolate();
         v8::HandleScope _hs(_isolate);
         SE_UNUSED unsigned argc = (unsigned)_v8args.Length();
@@ -376,10 +376,12 @@ namespace
         // assert(args[0].isString());
         assert(_v8args[0]->IsString());
         // return jsb_run_script(args[0].toString(), &s.GetReturnValue());
-        bool ret = jsb_run_script(JsbUtils::FromV8String(_isolate, _v8args[0]), &_v8args.GetReturnValue());
+        v8::Local<v8::Value> retVal;
+        bool ret = jsb_run_script(JsbUtils::FromV8String(_isolate, _v8args[0]), &retVal);
+        _v8args.GetReturnValue().Set(retVal);
         if (!ret)
         {
-            SE_LOGE("[ERROR] Failed to invoke %s, location: %s:%d\n", #funcName, __FILE__, __LINE__);
+            SE_LOGE("[ERROR] Failed to invoke %s, location: %s:%d\n", __FUNCTION__, __FILE__, __LINE__);
         }
         // se::internal::setReturnValue(state.rval(), _v8args);
         // return ret;
@@ -388,129 +390,129 @@ namespace
 
     static bool doModuleRequire(const std::string &path, v8::Local<v8::Value> *ret, const std::string &prevScriptFileDir)
     {
-        v8::Isolate *isolate = ScriptEngine::getInstance()->getIsolate();
-        v8::EscapableHandleScope handleScope(isolate);
-        assert(!path.empty());
-
-        const auto &fileOperationDelegate = ScriptEngine::getInstance()->getFileOperationDelegate();
-        assert(fileOperationDelegate.isValid());
-
-        std::string fullPath;
-
-        std::string pathWithSuffix = path;
-        if (pathWithSuffix.rfind(".js") != (pathWithSuffix.length() - 3))
-            pathWithSuffix += ".js";
-        std::string scriptBuffer = fileOperationDelegate.onGetStringFromFile(pathWithSuffix);
-
-        if (scriptBuffer.empty() && !prevScriptFileDir.empty())
-        {
-            std::string secondPath = prevScriptFileDir;
-            if (secondPath[secondPath.length() - 1] != '/')
-                secondPath += "/";
-
-            secondPath += path;
-
-            if (FileUtils::getInstance()->isDirectoryExist(secondPath))
-            {
-                if (secondPath[secondPath.length() - 1] != '/')
-                    secondPath += "/";
-                secondPath += "index.js";
-            }
-            else
-            {
-                if (path.rfind(".js") != (path.length() - 3))
-                    secondPath += ".js";
-            }
-
-            fullPath = fileOperationDelegate.onGetFullPath(secondPath);
-            scriptBuffer = fileOperationDelegate.onGetStringFromFile(fullPath);
-        }
-        else
-        {
-            fullPath = fileOperationDelegate.onGetFullPath(pathWithSuffix);
-        }
-
-        if (!scriptBuffer.empty())
-        {
-            const auto &iter = __moduleCache.find(fullPath);
-            if (iter != __moduleCache.end())
-            {
-                *ret = iter->second;
-                //                printf("Found cache: %s, value: %d\n", fullPath.c_str(), (int)ret->getType());
-                return true;
-            }
-            std::string currentScriptFileDir = FileUtils::getInstance()->getFileDir(fullPath);
-
-            // Add closure for evalutate the script
-            char prefix[] = "(function(currentScriptDir){ window.module = window.module || {}; var exports = window.module.exports = {}; ";
-            char suffix[512] = {0};
-            snprintf(suffix, sizeof(suffix), "\nwindow.module.exports = window.module.exports || exports;\n})('%s'); ", currentScriptFileDir.c_str());
-
-            // Add current script path to require function invocation
-            scriptBuffer = prefix + std::regex_replace(scriptBuffer, std::regex("([^A-Za-z0-9]|^)requireModule\\((.*?)\\)"), "$1requireModule($2, currentScriptDir)") + suffix;
-
-            //            FILE* fp = fopen("/Users/james/Downloads/test.txt", "wb");
-            //            fwrite(scriptBuffer.c_str(), scriptBuffer.length(), 1, fp);
-            //            fclose(fp);
-
-            std::string reletivePath = fullPath;
-#if CC_TARGET_PLATFORM == CC_PLATFORM_MAC || CC_TARGET_PLATFORM == CC_PLATFORM_IOS
-#if CC_TARGET_PLATFORM == CC_PLATFORM_MAC
-            const std::string reletivePathKey = "/Contents/Resources";
-#else
-            const std::string reletivePathKey = ".app";
-#endif
-
-            size_t pos = reletivePath.find(reletivePathKey);
-            if (pos != std::string::npos)
-            {
-                reletivePath = reletivePath.substr(pos + reletivePathKey.length() + 1);
-            }
-#endif
-
-            //            RENDERER_LOGD("Evaluate: %s", fullPath.c_str());
-
-            auto se = ScriptEngine::getInstance();
-            bool succeed = se->evalString(scriptBuffer.c_str(), scriptBuffer.length(), nullptr, reletivePath.c_str());
-            v8::Local<v8::Value> moduleVal;
-            ;
-            if (succeed && JsbUtils::GetProperty(isolate, se->getGlobalObject(), "module", &moduleVal) && moduleVal->IsObject())
-            {
-                v8::Local<v8::Value> exportsVal;
-                if (moduleVal->ToObject(isolate->GetCurrentContext()).ToLocalChecked()->Get(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "exports").ToLocalChecked()).ToLocal(&exportsVal))
-                {
-                    if (ret != nullptr)
-                        *ret = handleScope.Escape(exportsVal);
-                    v8::Global<v8::Value> persistent(isolate, exportsVal);
-                    __moduleCache[fullPath] = std::move(persistent);
-                }
-                else
-                {
-                    v8::Global<v8::Value> persistent(isolate, se::Value::Undefined);
-                    __moduleCache[fullPath] = std::move(persistent);
-                }
-                // clear module.exports
-                // moduleVal.toObject()->setProperty("exports", se::Value::Undefined);
-                moduleVal->ToObject(isolate->GetCurrentContext()).ToLocalChecked()->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "exports").ToLocalChecked(), v8::Undefined(isolate)).FromJust();
-            }
-            else
-            {
-                v8::Global<v8::Value> persistent(isolate, se::Value::Undefined);
-                __moduleCache[fullPath] = std::move(persistent);
-            }
-            assert(succeed);
-            return succeed;
-        }
-
-        SE_LOGE("doModuleRequire %s, buffer is empty!\n", path.c_str());
         assert(false);
+        //         v8::Isolate *isolate = ScriptEngine::getInstance()->getIsolate();
+        //         v8::EscapableHandleScope handleScope(isolate);
+        //         assert(!path.empty());
+
+        //         const auto &fileOperationDelegate = ScriptEngine::getInstance()->getFileOperationDelegate();
+        //         assert(fileOperationDelegate.isValid());
+
+        //         std::string fullPath;
+
+        //         std::string pathWithSuffix = path;
+        //         if (pathWithSuffix.rfind(".js") != (pathWithSuffix.length() - 3))
+        //             pathWithSuffix += ".js";
+        //         std::string scriptBuffer = fileOperationDelegate.onGetStringFromFile(pathWithSuffix);
+
+        //         if (scriptBuffer.empty() && !prevScriptFileDir.empty())
+        //         {
+        //             std::string secondPath = prevScriptFileDir;
+        //             if (secondPath[secondPath.length() - 1] != '/')
+        //                 secondPath += "/";
+
+        //             secondPath += path;
+
+        //             if (FileUtils::getInstance()->isDirectoryExist(secondPath))
+        //             {
+        //                 if (secondPath[secondPath.length() - 1] != '/')
+        //                     secondPath += "/";
+        //                 secondPath += "index.js";
+        //             }
+        //             else
+        //             {
+        //                 if (path.rfind(".js") != (path.length() - 3))
+        //                     secondPath += ".js";
+        //             }
+
+        //             fullPath = fileOperationDelegate.onGetFullPath(secondPath);
+        //             scriptBuffer = fileOperationDelegate.onGetStringFromFile(fullPath);
+        //         }
+        //         else
+        //         {
+        //             fullPath = fileOperationDelegate.onGetFullPath(pathWithSuffix);
+        //         }
+
+        //         if (!scriptBuffer.empty())
+        //         {
+        //             const auto &iter = __moduleCache.find(fullPath);
+        //             if (iter != __moduleCache.end())
+        //             {
+        //                 *ret = iter->second.Get(isolate);
+        //                 //                printf("Found cache: %s, value: %d\n", fullPath.c_str(), (int)ret->getType());
+        //                 return true;
+        //             }
+        //             std::string currentScriptFileDir = FileUtils::getInstance()->getFileDir(fullPath);
+
+        //             // Add closure for evalutate the script
+        //             char prefix[] = "(function(currentScriptDir){ window.module = window.module || {}; var exports = window.module.exports = {}; ";
+        //             char suffix[512] = {0};
+        //             snprintf(suffix, sizeof(suffix), "\nwindow.module.exports = window.module.exports || exports;\n})('%s'); ", currentScriptFileDir.c_str());
+
+        //             // Add current script path to require function invocation
+        //             scriptBuffer = prefix + std::regex_replace(scriptBuffer, std::regex("([^A-Za-z0-9]|^)requireModule\\((.*?)\\)"), "$1requireModule($2, currentScriptDir)") + suffix;
+
+        //             //            FILE* fp = fopen("/Users/james/Downloads/test.txt", "wb");
+        //             //            fwrite(scriptBuffer.c_str(), scriptBuffer.length(), 1, fp);
+        //             //            fclose(fp);
+
+        //             std::string reletivePath = fullPath;
+        // #if CC_TARGET_PLATFORM == CC_PLATFORM_MAC || CC_TARGET_PLATFORM == CC_PLATFORM_IOS
+        // #if CC_TARGET_PLATFORM == CC_PLATFORM_MAC
+        //             const std::string reletivePathKey = "/Contents/Resources";
+        // #else
+        //             const std::string reletivePathKey = ".app";
+        // #endif
+
+        //             size_t pos = reletivePath.find(reletivePathKey);
+        //             if (pos != std::string::npos)
+        //             {
+        //                 reletivePath = reletivePath.substr(pos + reletivePathKey.length() + 1);
+        //             }
+        // #endif
+
+        //             //            RENDERER_LOGD("Evaluate: %s", fullPath.c_str());
+
+        //             auto se = ScriptEngine::getInstance();
+        //             bool succeed = se->evalString(scriptBuffer.c_str(), scriptBuffer.length(), nullptr, reletivePath.c_str());
+        //             v8::Local<v8::Value> moduleVal;
+        //             ;
+        //             if (succeed && JsbUtils::GetProperty(isolate, se->getGlobalObject(), "module", &moduleVal) && moduleVal->IsObject())
+        //             {
+        //                 v8::Local<v8::Value> exportsVal;
+        //                 if (moduleVal->ToObject(isolate->GetCurrentContext()).ToLocalChecked()->Get(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "exports").ToLocalChecked()).ToLocal(&exportsVal))
+        //                 {
+        //                     if (ret != nullptr)
+        //                         *ret = handleScope.Escape(exportsVal);
+        //                     v8::Global<v8::Value> persistent(isolate, exportsVal);
+        //                     __moduleCache[fullPath] = std::move(persistent);
+        //                 }
+        //                 else
+        //                 {
+        //                     v8::Global<v8::Value> persistent(isolate, se::Value::Undefined);
+        //                     __moduleCache[fullPath] = std::move(persistent);
+        //                 }
+        //                 // clear module.exports
+        //                 // moduleVal.toObject()->setProperty("exports", se::Value::Undefined);
+        //                 moduleVal->ToObject(isolate->GetCurrentContext()).ToLocalChecked()->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "exports").ToLocalChecked(), v8::Undefined(isolate)).FromJust();
+        //             }
+        //             else
+        //             {
+        //                 v8::Global<v8::Value> persistent(isolate, se::Value::Undefined);
+        //                 __moduleCache[fullPath] = std::move(persistent);
+        //             }
+        //             assert(succeed);
+        //             return succeed;
+        //         }
+
+        //         SE_LOGE("doModuleRequire %s, buffer is empty!\n", path.c_str());
+        //         assert(false);
         return false;
     }
 
     static void moduleRequire(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
     {
         ++__jsbInvocationCount;
-        bool ret = false;
         v8::Isolate *_isolate = _v8args.GetIsolate();
         v8::HandleScope _hs(_isolate);
         SE_UNUSED unsigned argc = (unsigned)_v8args.Length();
@@ -528,7 +530,7 @@ namespace
         _v8args.GetReturnValue().Set(retVal);
         if (!ret)
         {
-            SE_LOGE("[ERROR] Failed to invoke %s, location: %s:%d\n", #funcName, __FILE__, __LINE__);
+            SE_LOGE("[ERROR] Failed to invoke %s, location: %s:%d\n", __FUNCTION__, __FILE__, __LINE__);
         }
         // se::internal::setReturnValue(state.rval(), _v8args);
         // return ret;
@@ -562,7 +564,7 @@ static bool jsc_garbageCollect(const v8::FunctionCallbackInfo<v8::Value> &_v8arg
     ret = ScriptEngine::getInstance()->garbageCollect();
     if (!ret)
     {
-        SE_LOGE("[ERROR] Failed to invoke %s, location: %s:%d\n", #funcName, __FILE__, __LINE__);
+        SE_LOGE("[ERROR] Failed to invoke %s, location: %s:%d\n", __FUNCTION__, __FILE__, __LINE__);
     }
     // se::internal::setReturnValue(state.rval(), _v8args);
     _v8args.GetReturnValue().Set(v8::Boolean::New(_isolate, ret));
@@ -628,7 +630,7 @@ static bool JSBCore_platform(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
     v8::Isolate *_isolate = _v8args.GetIsolate();
     v8::HandleScope _hs(_isolate);
     SE_UNUSED unsigned argc = (unsigned)_v8args.Length();
-    Application::Platform platform = Application::getInstance()->getPlatform();
+    Application::Platform platform = Application::getInstance()->getTargetPlatform();
     _v8args.GetReturnValue().Set(v8::Int32::New(_v8args.GetIsolate(), (int32_t)platform));
     return true;
 }
@@ -691,64 +693,64 @@ static bool JSBCore_getCurrentLanguage(const v8::FunctionCallbackInfo<v8::Value>
     SE_UNUSED unsigned argc = (unsigned)_v8args.Length();
 
     std::string languageStr;
-    Application::LanguageType language = Application::getInstance()->getCurrentLanguage();
+    LanguageType language = Application::getInstance()->getCurrentLanguage();
     switch (language)
     {
-    case Application::LanguageType::ENGLISH:
+    case LanguageType::ENGLISH:
         languageStr = "en";
         break;
-    case Application::LanguageType::CHINESE:
+    case LanguageType::CHINESE:
         languageStr = "zh";
         break;
-    case Application::LanguageType::FRENCH:
+    case LanguageType::FRENCH:
         languageStr = "fr";
         break;
-    case Application::LanguageType::ITALIAN:
+    case LanguageType::ITALIAN:
         languageStr = "it";
         break;
-    case Application::LanguageType::GERMAN:
+    case LanguageType::GERMAN:
         languageStr = "de";
         break;
-    case Application::LanguageType::SPANISH:
+    case LanguageType::SPANISH:
         languageStr = "es";
         break;
-    case Application::LanguageType::DUTCH:
+    case LanguageType::DUTCH:
         languageStr = "du";
         break;
-    case Application::LanguageType::RUSSIAN:
+    case LanguageType::RUSSIAN:
         languageStr = "ru";
         break;
-    case Application::LanguageType::KOREAN:
+    case LanguageType::KOREAN:
         languageStr = "ko";
         break;
-    case Application::LanguageType::JAPANESE:
+    case LanguageType::JAPANESE:
         languageStr = "ja";
         break;
-    case Application::LanguageType::HUNGARIAN:
+    case LanguageType::HUNGARIAN:
         languageStr = "hu";
         break;
-    case Application::LanguageType::PORTUGUESE:
+    case LanguageType::PORTUGUESE:
         languageStr = "pt";
         break;
-    case Application::LanguageType::ARABIC:
+    case LanguageType::ARABIC:
         languageStr = "ar";
         break;
-    case Application::LanguageType::NORWEGIAN:
+    case LanguageType::NORWEGIAN:
         languageStr = "no";
         break;
-    case Application::LanguageType::POLISH:
+    case LanguageType::POLISH:
         languageStr = "pl";
         break;
-    case Application::LanguageType::TURKISH:
+    case LanguageType::TURKISH:
         languageStr = "tr";
         break;
-    case Application::LanguageType::UKRAINIAN:
+    case LanguageType::UKRAINIAN:
         languageStr = "uk";
         break;
-    case Application::LanguageType::ROMANIAN:
+    case LanguageType::ROMANIAN:
         languageStr = "ro";
         break;
-    case Application::LanguageType::BULGARIAN:
+    case LanguageType::BULGARIAN:
         languageStr = "bg";
         break;
     default:
@@ -758,7 +760,7 @@ static bool JSBCore_getCurrentLanguage(const v8::FunctionCallbackInfo<v8::Value>
 
     if (!ret)
     {
-        SE_LOGE("[ERROR] Failed to invoke %s, location: %s:%d\n", #funcName, __FILE__, __LINE__);
+        SE_LOGE("[ERROR] Failed to invoke %s, location: %s:%d\n", __FUNCTION__, __FILE__, __LINE__);
     }
 
     _v8args.GetReturnValue().Set(JsbUtils::ToV8String(_isolate, languageStr));
@@ -794,7 +796,7 @@ static bool JSB_getOSVersion(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
     v8::Isolate *_isolate = _v8args.GetIsolate();
     v8::HandleScope _hs(_isolate);
 
-    std::string systemVersion = Application::getInstance()->getSystemVersion();
+    std::string systemVersion = Application::getInstance()->getVersion();
     _v8args.GetReturnValue().Set(JsbUtils::ToV8String(_isolate, systemVersion));
     return true;
 }
@@ -810,14 +812,16 @@ static bool JSB_cleanScript(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 static bool JSB_core_restartVM(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
     // REFINE: release AudioEngine, waiting HttpClient & WebSocket threads to exit.
-    Application::getInstance()->restart();
+    // Application::getInstance()->restart();
+    Director::getInstance()->restart();
     return true;
 }
 // SE_BIND_FUNC(JSB_core_restartVM)
 
 static bool JSB_closeWindow(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
-    Application::getInstance()->end();
+    // Application::getInstance()->end();
+    Director::getInstance()->end();
     return true;
 }
 // SE_BIND_FUNC(JSB_closeWindow)
@@ -867,8 +871,8 @@ static bool js_performance_now(const v8::FunctionCallbackInfo<v8::Value> &_v8arg
     v8::HandleScope _hs(_isolate);
 
     auto now = std::chrono::steady_clock::now();
-    auto micro = std::chrono::duration_cast<std::chrono::microseconds>(now - ScriptEngine::getInstance()->getStartTime()).count();
-    _v8args.GetReturnValue().Set(v8::Number::New(_isolate, (double)micro * 0.001));
+    auto microSeconds = std::chrono::duration_cast<std::chrono::microseconds>(now - ScriptEngine::getInstance()->getStartTime()).count();
+    _v8args.GetReturnValue().Set(v8::Number::New(_isolate, (double)microSeconds * 0.001));
     return true;
 }
 // SE_BIND_FUNC(js_performance_now)
@@ -945,11 +949,12 @@ namespace
         imgInfo->width = img->getWidth();
         imgInfo->height = img->getHeight();
         imgInfo->data = img->getData();
-
-        const auto &pixelFormatInfo = img->getPixelFormatInfo();
-        imgInfo->glFormat = pixelFormatInfo.format;
-        imgInfo->glInternalFormat = pixelFormatInfo.internalFormat;
-        imgInfo->type = pixelFormatInfo.type;
+        // TODO
+        assert(false);
+        //const auto &pixelFormatInfo = img->getPixelFormatInfo();
+        //imgInfo->glFormat = pixelFormatInfo.format;
+        //imgInfo->glInternalFormat = pixelFormatInfo.internalFormat;
+        //imgInfo->type = pixelFormatInfo.type;
 
         imgInfo->bpp = img->getBitPerPixel();
         imgInfo->numberOfMipmaps = img->getNumberOfMipmaps();
@@ -996,7 +1001,7 @@ namespace
         return imgInfo;
     }
 }
-bool jsb_global_load_image(const std::string &path, const v8::Local<v8::Function> &callbackVal)
+bool jsb_global_load_image(const std::string &path, const v8::Local<v8::Function> *callbackVal)
 {
     // TODO
     assert(false);
@@ -1177,8 +1182,8 @@ static bool js_loadImage(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
         v8::Local<v8::Value> callbackVal = _v8args[1];
         assert(callbackVal->IsObject());
         assert(callbackVal->IsFunction());
-
-        return jsb_global_load_image(path, callbackVal);
+        assert(false);
+        //return jsb_global_load_image(path, &callbackVal);
     }
     SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 2);
     return false;
@@ -1212,7 +1217,8 @@ static bool js_saveImageData(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
         img->initWithRawData(data.getBytes(), data.getSize(), width, height, 8);
         // isToRGB = false, to keep alpha channel
         bool ret = img->saveToFile(filePath, false);
-        s.rval().setBoolean(ret);
+        //s.rval().setBoolean(ret);
+		_v8args.GetReturnValue().Set(v8::Boolean::New(_isolate, ret));
 
         img->release();
         return ret;
@@ -1318,7 +1324,8 @@ static bool JSB_setPreferredFramesPerSecond(const v8::FunctionCallbackInfo<v8::V
     {
         int32_t fps = _v8args[0]->Int32Value(_isolate->GetCurrentContext()).FromJust();
         // SE_PRECONDITION2(ok, false, "fps is invalid!");
-        Application::getInstance()->setPreferredFramesPerSecond(fps);
+        //Application::getInstance()->setPreferredFramesPerSecond(fps);
+		Director::getInstance()->setAnimationInterval(1.0 / fps);
         return true;
     }
 
@@ -1339,73 +1346,73 @@ static bool JSB_showInputBox(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
         bool ok;
         v8::Local<v8::Value> tmp;
         const auto &obj = _v8args[0]->ToObject(_isolate->GetCurrentContext()).ToLocalChecked();
+		CCASSERT(false, "TODO: implement JSB_showInputBox");
+        //cocos2d::EditBox::ShowInfo showInfo;
 
-        cocos2d::EditBox::ShowInfo showInfo;
+        //ok = obj->Get(_isolate->GetCurrentContext(), v8::String::NewFromUtf8(_isolate, "defaultValue").ToLocalChecked()).ToLocal(&tmp);
 
-        ok = obj->Get(_isolate->GetCurrentContext(), v8::String::NewFromUtf8(_isolate, "defaultValue").ToLocalChecked()).ToLocal(&tmp);
+        //// SE_PRECONDITION2(ok && tmp.isString(), false, "defaultValue is invalid!");
+        //showInfo.defaultValue = tmp->ToString(_isolate->GetCurrentContext()).ToLocalChecked();
 
-        // SE_PRECONDITION2(ok && tmp.isString(), false, "defaultValue is invalid!");
-        showInfo.defaultValue = tmp->ToString(_isolate->GetCurrentContext()).ToLocalChecked();
+        //ok = obj->Get(_isolate->GetCurrentContext(), v8::String::NewFromUtf8(_isolate, "maxLength").ToLocalChecked()).ToLocal(&tmp);
+        //// SE_PRECONDITION2(ok && tmp->IsNumber(), false, "maxLength is invalid!");
+        //showInfo.maxLength = tmp->Int32Value(_isolate->GetCurrentContext()).FromJust();
 
-        ok = obj->Get(_isolate->GetCurrentContext(), v8::String::NewFromUtf8(_isolate, "maxLength").ToLocalChecked()).ToLocal(&tmp);
-        // SE_PRECONDITION2(ok && tmp->IsNumber(), false, "maxLength is invalid!");
-        showInfo.maxLength = tmp->Int32Value(_isolate->GetCurrentContext()).FromJust();
+        //ok = obj->Get(_isolate->GetCurrentContext(), v8::String::NewFromUtf8(_isolate, "multiple").ToLocalChecked()).ToLocal(&tmp);
+        //// SE_PRECONDITION2(ok && tmp.isBoolean(), false, "multiple is invalid!");
+        //showInfo.isMultiline = tmp->BooleanValue(_isolate);
 
-        ok = obj->Get(_isolate->GetCurrentContext(), v8::String::NewFromUtf8(_isolate, "multiple").ToLocalChecked()).ToLocal(&tmp);
-        // SE_PRECONDITION2(ok && tmp.isBoolean(), false, "multiple is invalid!");
-        showInfo.isMultiline = tmp->BooleanValue(_isolate);
+        //if (obj->Get(_isolate->GetCurrentContext(), v8::String::NewFromUtf8(_isolate, "confirmHold").ToLocalChecked()).ToLocal(&tmp))
+        //{
+        //    // SE_PRECONDITION2(tmp.isBoolean(), false, "confirmHold is invalid!");
+        //    if (!tmp->IsUndefined())
+        //        showInfo.confirmHold = tmp->BooleanValue(_isolate);
+        //}
 
-        if (obj->Get(_isolate->GetCurrentContext(), v8::String::NewFromUtf8(_isolate, "confirmHold").ToLocalChecked()).ToLocal(&tmp))
-        {
-            // SE_PRECONDITION2(tmp.isBoolean(), false, "confirmHold is invalid!");
-            if (!tmp->IsUndefined())
-                showInfo.confirmHold = tmp->BooleanValue(_isolate);
-        }
+        //if (obj->Get(_isolate->GetCurrentContext(), v8::String::NewFromUtf8(_isolate, "confirmType").ToLocalChecked()).ToLocal(&tmp))
+        //{
+        //    // SE_PRECONDITION2(tmp.isString(), false, "confirmType is invalid!");
+        //    if (!tmp->IsUndefined())
+        //        showInfo.confirmType = tmp->ToString(_isolate->GetCurrentContext()).ToLocalChecked();
+        //};
+        //if (JsbUtils::GetProperty(obj, "confirmType", &tmp))
+        //{
+        //    // SE_PRECONDITION2(tmp.isString(), false, "inputType is invalid!");
+        //    if (!tmp->IsUndefined())
+        //        showInfo.inputType = tmp->ToString(_isolate->GetCurrentContext()).ToLocalChecked();
+        //}
 
-        if (obj->Get(_isolate->GetCurrentContext(), v8::String::NewFromUtf8(_isolate, "confirmType").ToLocalChecked()).ToLocal(&tmp))
-        {
-            // SE_PRECONDITION2(tmp.isString(), false, "confirmType is invalid!");
-            if (!tmp->IsUndefined())
-                showInfo.confirmType = tmp->ToString(_isolate->GetCurrentContext()).ToLocalChecked();
-        };
-        if (JsbUtils::GetProperty(obj, "confirmType", &tmp))
-        {
-            // SE_PRECONDITION2(tmp.isString(), false, "inputType is invalid!");
-            if (!tmp->IsUndefined())
-                showInfo.inputType = tmp->ToString(_isolate->GetCurrentContext()).ToLocalChecked();
-        }
+        //if (JsbUtils::GetProperty(obj, "originX", &tmp))
+        //{
+        //    SE_PRECONDITION2(tmp->IsNumber(), false, "originX is invalid!");
+        //    if (!tmp->IsUndefined())
+        //        showInfo.x = tmp->Int32Value(_isolate->GetCurrentContext()).FromJust();
+        //}
 
-        if (JsbUtils::GetProperty(obj, "originX", &tmp))
-        {
-            SE_PRECONDITION2(tmp->IsNumber(), false, "originX is invalid!");
-            if (!tmp->IsUndefined())
-                showInfo.x = tmp->Int32Value(_isolate->GetCurrentContext()).FromJust();
-        }
+        //if (JsbUtils::GetProperty(obj, "originY", &tmp))
+        //{
+        //    SE_PRECONDITION2(tmp->IsNumber(), false, "originY is invalid!");
+        //    if (!tmp->IsUndefined())
+        //        showInfo.y = tmp->Int32Value(_isolate->GetCurrentContext()).FromJust();
+        //}
 
-        if (JsbUtils::GetProperty(obj, "originY", &tmp))
-        {
-            SE_PRECONDITION2(tmp->IsNumber(), false, "originY is invalid!");
-            if (!tmp->IsUndefined())
-                showInfo.y = tmp->Int32Value(_isolate->GetCurrentContext()).FromJust();
-        }
+        //if (JsbUtils::GetProperty(obj, "width", &tmp))
+        //{
+        //    SE_PRECONDITION2(tmp->IsNumber(), false, "width is invalid!");
+        //    if (!tmp->IsUndefined())
+        //        showInfo.width = tmp->Int32Value(_isolate->GetCurrentContext()).FromJust();
+        //}
 
-        if (JsbUtils::GetProperty(obj, "width", &tmp))
-        {
-            SE_PRECONDITION2(tmp->IsNumber(), false, "width is invalid!");
-            if (!tmp->IsUndefined())
-                showInfo.width = tmp->Int32Value(_isolate->GetCurrentContext()).FromJust();
-        }
+        //if (JsbUtils::GetProperty(obj, "height", &tmp))
+        //{
+        //    SE_PRECONDITION2(tmp->IsNumber(), false, "height is invalid!");
+        //    if (!tmp->IsUndefined())
+        //        showInfo.height = tmp->Int32Value(_isolate->GetCurrentContext()).FromJust();
+        //}
 
-        if (JsbUtils::GetProperty(obj, "height", &tmp))
-        {
-            SE_PRECONDITION2(tmp->IsNumber(), false, "height is invalid!");
-            if (!tmp->IsUndefined())
-                showInfo.height = tmp->Int32Value(_isolate->GetCurrentContext()).FromJust();
-        }
+        //EditBox::show(showInfo);
 
-        EditBox::show(showInfo);
-
-        return true;
+        //return true;
     }
 
     SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 1);
@@ -1418,20 +1425,21 @@ static bool JSB_updateInputBoxRect(const v8::FunctionCallbackInfo<v8::Value> &ar
     size_t argc = args.Length();
     if (argc == 4)
     {
-        SE_PRECONDITION2(args[0]->IsNumber(), false, "x is invalid!");
-        const auto x = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromJust();
+		CCASSERT(false, "TODO: implement JSB_updateInputBoxRect");
+        //SE_PRECONDITION2(args[0]->IsNumber(), false, "x is invalid!");
+        //const auto x = args[0]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromJust();
 
-        SE_PRECONDITION2(args[1]->IsNumber(), false, "y is invalid!");
-        const auto y = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromJust();
+        //SE_PRECONDITION2(args[1]->IsNumber(), false, "y is invalid!");
+        //const auto y = args[1]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromJust();
 
-        SE_PRECONDITION2(args[2]->IsNumber(), false, "width is invalid!");
-        const auto width = args[2]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromJust();
+        //SE_PRECONDITION2(args[2]->IsNumber(), false, "width is invalid!");
+        //const auto width = args[2]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromJust();
 
-        SE_PRECONDITION2(args[3]->IsNumber(), false, "height is invalid!");
-        const auto height = args[3]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromJust();
+        //SE_PRECONDITION2(args[3]->IsNumber(), false, "height is invalid!");
+        //const auto height = args[3]->Int32Value(args.GetIsolate()->GetCurrentContext()).FromJust();
 
-        EditBox::updateRect(x, y, width, height);
-        return true;
+        //EditBox::updateRect(x, y, width, height);
+        //return true;
     }
 
     SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 4);
@@ -1441,7 +1449,8 @@ static bool JSB_updateInputBoxRect(const v8::FunctionCallbackInfo<v8::Value> &ar
 
 static bool JSB_hideInputBox(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
-    EditBox::hide();
+    //EditBox::hide();
+
     return true;
 }
 // SE_BIND_FUNC(JSB_hideInputBox)
@@ -1612,69 +1621,69 @@ bool jsb_register_global_variables(v8::Local<v8::Object> global)
     JsbUtils::DefineFunction(global, "require", require);
     JsbUtils::DefineFunction(global, "requireModule", moduleRequire);
 
-//     getOrCreatePlainObject_r("jsb", global, &__jsbObj);
+    //     getOrCreatePlainObject_r("jsb", global, &__jsbObj);
 
-//     auto glContextCls = se::Class::create("WebGLRenderingContext", global, nullptr, nullptr);
-//     glContextCls->install();
+    //     auto glContextCls = se::Class::create("WebGLRenderingContext", global, nullptr, nullptr);
+    //     glContextCls->install();
 
-//     SAFE_DEC_REF(__glObj);
-//     __glObj = se::Object::createObjectWithClass(glContextCls);
-//     global->setProperty("__gl", se::Value(__glObj));
+    //     SAFE_DEC_REF(__glObj);
+    //     __glObj = se::Object::createObjectWithClass(glContextCls);
+    //     global->setProperty("__gl", se::Value(__glObj));
 
-//     __jsbObj->defineFunction("garbageCollect", _SE(jsc_garbageCollect));
-//     __jsbObj->defineFunction("dumpNativePtrToSeObjectMap", _SE(jsc_dumpNativePtrToSeObjectMap));
+    //     __jsbObj->defineFunction("garbageCollect", _SE(jsc_garbageCollect));
+    //     __jsbObj->defineFunction("dumpNativePtrToSeObjectMap", _SE(jsc_dumpNativePtrToSeObjectMap));
 
-//     __jsbObj->defineFunction("loadImage", _SE(js_loadImage));
-//     __jsbObj->defineFunction("saveImageData", _SE(js_saveImageData));
-//     __jsbObj->defineFunction("setDebugViewText", _SE(js_setDebugViewText));
-//     __jsbObj->defineFunction("openDebugView", _SE(js_openDebugView));
-//     __jsbObj->defineFunction("disableBatchGLCommandsToNative", _SE(js_disableBatchGLCommandsToNative));
-//     __jsbObj->defineFunction("openURL", _SE(JSB_openURL));
-//     __jsbObj->defineFunction("copyTextToClipboard", _SE(JSB_copyTextToClipboard));
+    //     __jsbObj->defineFunction("loadImage", _SE(js_loadImage));
+    //     __jsbObj->defineFunction("saveImageData", _SE(js_saveImageData));
+    //     __jsbObj->defineFunction("setDebugViewText", _SE(js_setDebugViewText));
+    //     __jsbObj->defineFunction("openDebugView", _SE(js_openDebugView));
+    //     __jsbObj->defineFunction("disableBatchGLCommandsToNative", _SE(js_disableBatchGLCommandsToNative));
+    //     __jsbObj->defineFunction("openURL", _SE(JSB_openURL));
+    //     __jsbObj->defineFunction("copyTextToClipboard", _SE(JSB_copyTextToClipboard));
 
-//     __jsbObj->defineFunction("setPreferredFramesPerSecond", _SE(JSB_setPreferredFramesPerSecond));
-//     __jsbObj->defineFunction("showInputBox", _SE(JSB_showInputBox));
-//     __jsbObj->defineFunction("hideInputBox", _SE(JSB_hideInputBox));
-//     __jsbObj->defineFunction("updateInputBoxRect", _SE(JSB_updateInputBoxRect));
+    //     __jsbObj->defineFunction("setPreferredFramesPerSecond", _SE(JSB_setPreferredFramesPerSecond));
+    //     __jsbObj->defineFunction("showInputBox", _SE(JSB_showInputBox));
+    //     __jsbObj->defineFunction("hideInputBox", _SE(JSB_hideInputBox));
+    //     __jsbObj->defineFunction("updateInputBoxRect", _SE(JSB_updateInputBoxRect));
 
-//     global->defineFunction("__getPlatform", _SE(JSBCore_platform));
-//     global->defineFunction("__getOS", _SE(JSBCore_os));
-//     global->defineFunction("__getOSVersion", _SE(JSB_getOSVersion));
-//     global->defineFunction("__getCurrentLanguage", _SE(JSBCore_getCurrentLanguage));
-//     global->defineFunction("__getCurrentLanguageCode", _SE(JSBCore_getCurrentLanguageCode));
-//     global->defineFunction("__getVersion", _SE(JSBCore_version));
-//     global->defineFunction("__restartVM", _SE(JSB_core_restartVM));
-//     global->defineFunction("__cleanScript", _SE(JSB_cleanScript));
-//     global->defineFunction("__isObjectValid", _SE(JSB_isObjectValid));
-//     global->defineFunction("close", _SE(JSB_closeWindow));
+    //     global->defineFunction("__getPlatform", _SE(JSBCore_platform));
+    //     global->defineFunction("__getOS", _SE(JSBCore_os));
+    //     global->defineFunction("__getOSVersion", _SE(JSB_getOSVersion));
+    //     global->defineFunction("__getCurrentLanguage", _SE(JSBCore_getCurrentLanguage));
+    //     global->defineFunction("__getCurrentLanguageCode", _SE(JSBCore_getCurrentLanguageCode));
+    //     global->defineFunction("__getVersion", _SE(JSBCore_version));
+    //     global->defineFunction("__restartVM", _SE(JSB_core_restartVM));
+    //     global->defineFunction("__cleanScript", _SE(JSB_cleanScript));
+    //     global->defineFunction("__isObjectValid", _SE(JSB_isObjectValid));
+    //     global->defineFunction("close", _SE(JSB_closeWindow));
 
-//     se::HandleObject performanceObj(se::Object::createPlainObject());
-//     performanceObj->defineFunction("now", _SE(js_performance_now));
-//     global->setProperty("performance", se::Value(performanceObj));
+    //     se::HandleObject performanceObj(se::Object::createPlainObject());
+    //     performanceObj->defineFunction("now", _SE(js_performance_now));
+    //     global->setProperty("performance", se::Value(performanceObj));
 
-// #if CC_TARGET_PLATFORM == CC_PLATFORM_OPENHARMONY && (SCRIPT_ENGINE_TYPE == SCRIPT_ENGINE_V8 || SCRIPT_ENGINE_TYPE == SCRIPT_ENGINE_JSVM)
-//     se::HandleObject ohObj(se::Object::createPlainObject());
-//     global->setProperty("oh", se::Value(ohObj));
-//     ohObj->defineFunction("postMessage", _SE(JSB_openharmony_postMessage));
-//     ohObj->defineFunction("postSyncMessage", _SE(JSB_openharmony_postSyncMessage));
-// #endif
-//     se::ScriptEngine::getInstance()->clearException();
+    // #if CC_TARGET_PLATFORM == CC_PLATFORM_OPENHARMONY && (SCRIPT_ENGINE_TYPE == SCRIPT_ENGINE_V8 || SCRIPT_ENGINE_TYPE == SCRIPT_ENGINE_JSVM)
+    //     se::HandleObject ohObj(se::Object::createPlainObject());
+    //     global->setProperty("oh", se::Value(ohObj));
+    //     ohObj->defineFunction("postMessage", _SE(JSB_openharmony_postMessage));
+    //     ohObj->defineFunction("postSyncMessage", _SE(JSB_openharmony_postSyncMessage));
+    // #endif
+    //     se::ScriptEngine::getInstance()->clearException();
 
-//     se::ScriptEngine::getInstance()->addBeforeCleanupHook([]()
-//                                                           {
-//         g_threadPool = nullptr;
+    //     se::ScriptEngine::getInstance()->addBeforeCleanupHook([]()
+    //                                                           {
+    //         g_threadPool = nullptr;
 
-//         PoolManager::getInstance()->getCurrentPool()->clear(); });
+    //         PoolManager::getInstance()->getCurrentPool()->clear(); });
 
-//     se::ScriptEngine::getInstance()->addAfterCleanupHook([]()
-//                                                          {
+    //     se::ScriptEngine::getInstance()->addAfterCleanupHook([]()
+    //                                                          {
 
-//         PoolManager::getInstance()->getCurrentPool()->clear();
+    //         PoolManager::getInstance()->getCurrentPool()->clear();
 
-//         __moduleCache.clear();
+    //         __moduleCache.clear();
 
-//         SAFE_DEC_REF(__jsbObj);
-//         SAFE_DEC_REF(__glObj); });
+    //         SAFE_DEC_REF(__jsbObj);
+    //         SAFE_DEC_REF(__glObj); });
 
     return true;
 }

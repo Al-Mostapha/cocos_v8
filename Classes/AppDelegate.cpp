@@ -117,9 +117,14 @@ bool AppDelegate::applicationDidFinishLaunching()
 
     if (js->start())
     {
-        std::string result;
-        js->evalString("'V8 + Cocos2d running! Result: ' + (6 * 7); console.log('Hello from V8');", &result);
-        cocos2d::log("[JSB] %s", result.c_str());
+		v8::Isolate* isolate = js->getIsolate();
+		v8::HandleScope handle_scope(isolate);
+
+		v8::Local<v8::Value> result;
+		std::string script = "'V8 + Cocos2d running! Result: ' + (6 * 7); console.log('Hello from V8');";
+        js->evalString(script.c_str(), script.length(), &result);
+       
+        //cocos2d::log("[JSB] %s", result.As);
     }
     else
     {

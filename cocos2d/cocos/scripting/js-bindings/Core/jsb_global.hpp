@@ -32,8 +32,8 @@ bool jsb_register_global_variables(v8::Object *global);
 void jsb_init_file_operation_delegate();
 bool jsb_enable_debugger(const std::string &debuggerServerAddr, uint32_t port, bool isWaitForConnect = false);
 bool jsb_set_extend_property(const char *ns, const char *clsName);
-bool jsb_run_script(const std::string &filePath, v8::Value *rval = nullptr);
-bool jsb_run_script_module(const std::string &filePath, v8::Value *rval = nullptr);
+bool jsb_run_script(const std::string &filePath, v8::Local<v8::Value> *rval = nullptr);
+bool jsb_run_script_module(const std::string &filePath, v8::Local<v8::Value> *rval = nullptr);
 
 void jsb_set_xxtea_key(const std::string &key);
 

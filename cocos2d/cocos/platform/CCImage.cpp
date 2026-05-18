@@ -729,17 +729,17 @@ Image::Format Image::detectFormat(const unsigned char * data, ssize_t dataLen)
     }
 }
 
-int Image::getBitPerPixel()
+int Image::getBitPerPixel() const
 {
     return Texture2D::getPixelFormatInfoMap().at(_pixelFormat).bpp;
 }
 
-bool Image::hasAlpha()
+bool Image::hasAlpha() const
 {
     return Texture2D::getPixelFormatInfoMap().at(_pixelFormat).alpha;
 }
 
-bool Image::isCompressed()
+bool Image::isCompressed() const
 {
     return Texture2D::getPixelFormatInfoMap().at(_pixelFormat).compressed;
 }
