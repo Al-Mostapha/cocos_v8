@@ -90,6 +90,8 @@ public:
 
   void addBeforeInitHook(std::function<void()>);
   void addBeforeCleanupHook(std::function<void()>);
+
+  void addAfterCleanupHook(std::function<void()>);
   std::chrono::steady_clock::time_point getStartTime() const { return _startTime; }
 
 private:

@@ -794,7 +794,7 @@ bool JsbObject::attachObject(JsbObject *obj)
 
   v8::Local<v8::Value> func;
 
-  if (!JsbUtils::GetProperty(jsbVal, "registerNativeRef", &func))
+  if (!JsbUtils::GetProperty(jsbVal.As<v8::Object>(), "registerNativeRef", &func))
     return false;
 
   std::vector<v8::Local<v8::Value>> args;
@@ -821,7 +821,7 @@ bool JsbObject::detachObject(JsbObject *obj)
 
   v8::Local<v8::Value> func;
 
-  if (!JsbUtils::GetProperty(jsbVal, "unregisterNativeRef", &func))
+  if (!JsbUtils::GetProperty(jsbVal.As<v8::Object>(), "unregisterNativeRef", &func))
     return false;
 
   std::vector<v8::Local<v8::Value>> args;

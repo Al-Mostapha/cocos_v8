@@ -24,34 +24,31 @@
  ****************************************************************************/
 #include "RefCounter.hpp"
 
-namespace se {
+void JsbRefCounter::incRef()
+{
+    ++_refCount;
+}
 
-    void RefCounter::incRef()
+void JsbRefCounter::decRef()
+{
+    --_refCount;
+    if (_refCount == 0)
     {
-        ++_refCount;
+        delete this;
     }
+}
 
-    void RefCounter::decRef()
-    {
-        --_refCount;
-        if (_refCount == 0)
-        {
-            delete this;
-        }
-    }
+unsigned int JsbRefCounter::getRefCount()
+{
+    return _refCount;
+}
 
-    unsigned int RefCounter::getRefCount()
-    {
-        return _refCount;
-    }
+JsbRefCounter::JsbRefCounter()
 
-    RefCounter::RefCounter()
     : _refCount(1)
-    {
-    }
+{
+}
 
-    RefCounter::~RefCounter()
-    {
-    }
-
-} // namespace se {
+JsbRefCounter::~JsbRefCounter()
+{
+}

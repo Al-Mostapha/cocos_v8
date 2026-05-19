@@ -50,9 +50,9 @@ public:
    *  @return A class instance used for creating relevant native binding objects.
    *  @note Don't need to delete the pointer return by this method, it's managed internally.
    */
-  static Class *create(const std::string &clsName, v8::Local<v8::Object> *parent, v8::Local<v8::Object> *parentProto, v8::FunctionCallback ctor, void *data = nullptr);
+  static Class *create(const std::string &clsName, v8::Local<v8::Object> *parent, v8::Local<v8::FunctionTemplate> *parentProto, v8::FunctionCallback ctor, void *data = nullptr);
 
-  static Class *create(const std::initializer_list<const char *> &classPath, v8::Local<v8::Object> *parent, v8::Local<v8::Object> *parentProto, v8::FunctionCallback ctor, void *data = nullptr);
+  static Class *create(const std::initializer_list<const char *> &classPath, v8::Local<v8::Object> *parent, v8::Local<v8::FunctionTemplate> *parentProto, v8::FunctionCallback ctor, void *data = nullptr);
 
   /**
    *  @brief Defines a member function with a callback. Each objects created by class will have this function property.
@@ -108,7 +108,7 @@ public:
    *  @param[in] func The callback to invoke when a JavaScript object is garbage collected.
    *  @return true if succeed, otherwise false.
    */
-  bool defineFinalizeFunction(void (*func)(v8::Local<v8::Object>));
+  bool defineFinalizeFunction(V8FinalizeFunc func); 
 
   /**
    *  @brief Installs class to JavaScript VM.
@@ -122,7 +122,7 @@ public:
    *  @return The proto object of this class.
    *  @note Don't need to be released in user code.
    */
-  v8::Local<v8::Object> getProto() const;
+  v8::Local<v8::Object> *getProto() const;
 
   /**
    *  @brief Gets the class name.
@@ -131,7 +131,7 @@ public:
   const char *getName() const { return _name.c_str(); }
 
   // Private API used in wrapper
-  std::function<void(v8::Local<v8::Object>)> _getFinalizeFunction() const; // NOLINT(readability-identifier-naming)
+  V8FinalizeFunc _getFinalizeFunction() const; // NOLINT(readability-identifier-naming)
   void _setCtor(v8::Local<v8::Function> *obj);                             // NOLINT(readability-identifier-naming)
   inline v8::Local<v8::Function> *_getCtor() const { return _ctor; }       // NOLINT(readability-identifier-naming)
 
@@ -141,7 +141,7 @@ private:
 
   void setCreateProto(bool createProto);
 
-  bool init(const std::string &clsName, v8::Local<v8::Object> *parent, v8::Local<v8::Object> *parentProto, v8::FunctionCallback ctor, void *data = nullptr);
+  bool init(const std::string &clsName, v8::Local<v8::Object> *parent, v8::Local<v8::FunctionTemplate> *parentProto, v8::FunctionCallback ctor, void *data = nullptr);
   void destroy();
 
   static void cleanup();
@@ -151,7 +151,7 @@ private:
 
   std::string _name;
   v8::Local<v8::Object> *_parent{nullptr};
-  v8::Local<v8::Object> *_parentProto{nullptr};
+  v8::Local<v8::FunctionTemplate> *_parentProto{nullptr};
   v8::Local<v8::Object> *_proto{nullptr};
   v8::Local<v8::Function> *_ctor{nullptr};
 

@@ -76,7 +76,7 @@ Class::Class()
 Class::~Class() = default;
 
 /* static */
-Class *Class::create(const std::string &clsName, v8::Local<v8::Object> *parent, v8::Local<v8::Object> *parentProto, v8::FunctionCallback ctor, void *data)
+Class *Class::create(const std::string &clsName, v8::Local<v8::Object> *parent, v8::Local<v8::FunctionTemplate> *parentProto, v8::FunctionCallback ctor, void *data)
 {
   auto *cls = new Class();
   if (cls != nullptr && !cls->init(clsName, parent, parentProto, ctor, data))
@@ -87,7 +87,7 @@ Class *Class::create(const std::string &clsName, v8::Local<v8::Object> *parent, 
   return cls;
 }
 
-Class *Class::create(const std::initializer_list<const char *> &classPath, v8::Local<v8::Object> *parent, v8::Local<v8::Object> *parentProto, v8::FunctionCallback ctor, void *data)
+Class *Class::create(const std::initializer_list<const char *> &classPath, v8::Local<v8::Object> *parent, v8::Local<v8::FunctionTemplate> *parentProto, v8::FunctionCallback ctor, void *data)
 {
   v8::Isolate *isolate = v8::Isolate::GetCurrent();
   v8::HandleScope handleScope(isolate);
@@ -106,7 +106,7 @@ Class *Class::create(const std::initializer_list<const char *> &classPath, v8::L
   return create(*(classPath.end() - 1), &currentParent, parentProto, ctor, data);
 }
 
-bool Class::init(const std::string &clsName, v8::Local<v8::Object> *parent, v8::Local<v8::Object> *parentProto, v8::FunctionCallback ctor, void *data)
+bool Class::init(const std::string &clsName, v8::Local<v8::Object> *parent, v8::Local<v8::FunctionTemplate> *parentProto, v8::FunctionCallback ctor, void *data)
 {
   _name = clsName;
   _parent = parent;
@@ -197,7 +197,9 @@ bool Class::install()
   if (_parentProto != nullptr)
   {
     // get constructor template of parent class and set it as the parent of current class's constructor template, so that current class can inherit parent's prototype properties.
-    _constructorTemplate.Get(__isolate)->Inherit(_parentProto->_getClass()->_constructorTemplate.Get(__isolate));
+    // TODO
+    // _constructorTemplate.Get(__isolate)->Inherit(_parentProto->_getClass()->_constructorTemplate.Get(__isolate));
+    _constructorTemplate.Get(__isolate)->Inherit(*_parentProto);
   }
 
   v8::Local<v8::Context> context = __isolate->GetCurrentContext();
@@ -214,7 +216,7 @@ bool Class::install()
     return false;
   }
 
-  v8::Maybe<bool> result = _parent->_getJSObject()->Set(context, name.ToLocalChecked(), ctorChecked);
+  v8::Maybe<bool> result = (*_parent)->Set(context, name.ToLocalChecked(), ctorChecked);
   if (result.IsNothing())
   {
     return false;
@@ -235,8 +237,9 @@ bool Class::install()
   if (_createProto)
   {
     // Proto object is released in Class::destroy.
-    _proto = JsbObject::_createJSObject(this, v8::Local<v8::Object>::Cast(prototypeObj.ToLocalChecked()));
-    _proto->root();
+    // _proto = JsbObject::_createJSObject(this, v8::Local<v8::Object>::Cast(prototypeObj.ToLocalChecked()));
+    _proto = new v8::Local<v8::Object>(v8::Local<v8::Object>::Cast(prototypeObj.ToLocalChecked()));
+    // _proto->root();
   }
   return true;
 }
@@ -327,7 +330,7 @@ bool Class::defineStaticProperty(const char *name, v8::FunctionCallback getter, 
   return true;
 }
 
-bool Class::defineStaticProperty(const char *name, const Value &value, PropertyAttribute attribute /* = PropertyAttribute::NONE */)
+bool Class::defineStaticProperty(const char *name, v8::Local<v8::Value> value, v8::PropertyAttribute attribute /* = v8::PropertyAttribute::None */)
 {
   v8::MaybeLocal<v8::String> jsName = v8::String::NewFromUtf8(__isolate, name, v8::NewStringType::kNormal);
   if (jsName.IsEmpty())
@@ -335,15 +338,16 @@ bool Class::defineStaticProperty(const char *name, const Value &value, PropertyA
     return false;
   }
 
-  v8::Local<v8::Value> v8Val;
-  internal::seToJsValue(__isolate, value, &v8Val);
-  _constructorTemplate.Get(__isolate)->Set(jsName.ToLocalChecked(), v8Val, static_cast<v8::PropertyAttribute>(attribute));
+  // v8::Local<v8::Value> v8Val;
+  // internal::seToJsValue(__isolate, value, &v8Val);
+
+  _constructorTemplate.Get(__isolate)->Set(jsName.ToLocalChecked(), value, static_cast<v8::PropertyAttribute>(attribute));
   return true;
 }
 
 bool Class::defineFinalizeFunction(V8FinalizeFunc finalizeFunc)
 {
-  CC_ASSERT_NOT_NULL(finalizeFunc);
+  CCASSERT(finalizeFunc != nullptr, "finalize function should not be null");
   _finalizeFunc = finalizeFunc;
   return true;
 }
@@ -368,7 +372,7 @@ v8::Local<v8::Object> Class::_createJSObjectWithClass(Class *cls)
   return ret.ToLocalChecked();
 }
 
-JsbObject *Class::getProto() const
+v8::Local<v8::Object> *Class::getProto() const
 {
   return _proto;
 }

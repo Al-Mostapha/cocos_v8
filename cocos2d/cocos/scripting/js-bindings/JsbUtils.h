@@ -4,6 +4,8 @@
 #include <v8.h>
 #include "Core/JsbObjectWrap.hpp"
 
+class JsbObject;
+
 struct JsbPrivateData
 {
     void *data;
