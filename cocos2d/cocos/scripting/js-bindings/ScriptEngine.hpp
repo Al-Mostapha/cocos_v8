@@ -88,10 +88,18 @@ public:
   // std::string stackTraceToString(v8::Local<v8::StackTrace> stackTrace);
   std::string getCurrentStackTrace();
 
-  void addBeforeInitHook(std::function<void()>);
-  void addBeforeCleanupHook(std::function<void()>);
+  void addBeforeInitHook(const std::function<void()> &hook){
+    _beforeInitHookArray.push_back(hook);
+  }
+  void addBeforeCleanupHook(const std::function<void()> &hook)
+  {
+    _beforeCleanupHookArray.push_back(hook);
+  }
 
-  void addAfterCleanupHook(std::function<void()>);
+  void addAfterCleanupHook(const std::function<void()> &hook)
+  {
+    _afterCleanupHookArray.push_back(hook);
+  }
   std::chrono::steady_clock::time_point getStartTime() const { return _startTime; }
 
 private:

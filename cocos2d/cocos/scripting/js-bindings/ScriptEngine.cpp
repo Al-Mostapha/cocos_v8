@@ -8,6 +8,7 @@
 ScriptEngine *ScriptEngine::_instance = nullptr;
 uint32_t __jsbInvocationCount = 0;
 uint32_t __jsbStackFrameLimit = 20;
+Class *__jsb_CCPrivateData_class = nullptr;
 
 ScriptEngine *ScriptEngine::getInstance()
 {
@@ -636,4 +637,9 @@ bool ScriptEngine::evalString(const char *script, size_t length /* = -1 */, v8::
         SE_LOGE("ScriptEngine::evalString script %s, failed!\n", fileName);
     }
     return success;
+}
+
+v8::Local<v8::Object> ScriptEngine::getGlobalObject() const
+{
+    return _globalObj.Get(_isolate);
 }
