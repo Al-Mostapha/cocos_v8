@@ -39,3 +39,13 @@
 #else
 #define SE_DEPRECATED_ATTRIBUTE
 #endif // SE_DEPRECATED_ATTRIBUTE
+
+#define SAFE_INC_REF(obj) \
+    if (obj != nullptr)   \
+    obj->incRef()
+#define SAFE_DEC_REF(obj) \
+    if ((obj) != nullptr) \
+    {                     \
+        (obj)->decRef();  \
+        (obj) = nullptr;  \
+    }

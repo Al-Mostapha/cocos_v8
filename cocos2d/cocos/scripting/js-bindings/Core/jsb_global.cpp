@@ -50,6 +50,11 @@
 #include "ZipUtils.h"
 #include <regex>
 #include "HelperMacros.h"
+
+#include "JsbClass.hpp"
+#include "JsbObject.hpp"
+#include "JsbUtils.h"
+
 #include "jsb_conversions.hpp"
 #include "platform/CCGL.h"
 #include "platform/CCImage.h"
@@ -59,7 +64,7 @@
 using namespace cocos2d;
 
 v8::Global<v8::Object> __jsbObj;
-v8::Global<v8::Object> __glObj;
+JsbObject *__glObj;
 
 static std::shared_ptr<ThreadPool> g_threadPool;
 
@@ -551,7 +556,7 @@ bool jsb_run_script_module(const std::string &filePath, v8::Local<v8::Value> *rv
     return doModuleRequire(filePath, rval, "");
 }
 
-static bool jsc_garbageCollect(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
+static void jsc_garbageCollect(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
     ++__jsbInvocationCount;
     bool ret = false;
@@ -568,11 +573,10 @@ static bool jsc_garbageCollect(const v8::FunctionCallbackInfo<v8::Value> &_v8arg
     }
     // se::internal::setReturnValue(state.rval(), _v8args);
     _v8args.GetReturnValue().Set(v8::Boolean::New(_isolate, ret));
-    return true;
 }
 // SE_BIND_FUNC(jsc_garbageCollect)
 
-static bool jsc_dumpNativePtrToSeObjectMap(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
+static void jsc_dumpNativePtrToSeObjectMap(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
     // cocos2d::log(">>> total: %d, Dump (native -> jsobj) map begin", (int)se::NativePtrToObjectMap::size());
 
@@ -612,7 +616,7 @@ static bool jsc_dumpNativePtrToSeObjectMap(const v8::FunctionCallbackInfo<v8::Va
     //     cocos2d::log("%s: %p", e.name, e.ptr);
     // }
     // cocos2d::log(">>> total: %d, nonRefMap: %d, Dump (native -> jsobj) map end", (int)se::NativePtrToObjectMap::size(), (int)se::NonRefNativePtrCreatedByCtorMap::size());
-    return true;
+    return;
 }
 // SE_BIND_FUNC(jsc_dumpNativePtrToSeObjectMap)
 
@@ -623,7 +627,7 @@ static bool jsc_dumpRoot(const v8::FunctionCallbackInfo<v8::Value> &s)
 }
 // SE_BIND_FUNC(jsc_dumpRoot)
 
-static bool JSBCore_platform(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
+static void JSBCore_platform(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
     ++__jsbInvocationCount;
     bool ret = false;
@@ -632,21 +636,21 @@ static bool JSBCore_platform(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
     SE_UNUSED unsigned argc = (unsigned)_v8args.Length();
     Application::Platform platform = Application::getInstance()->getTargetPlatform();
     _v8args.GetReturnValue().Set(v8::Int32::New(_v8args.GetIsolate(), (int32_t)platform));
-    return true;
+    return;
 }
 // SE_BIND_FUNC(JSBCore_platform)
 
-static bool JSBCore_version(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
+static void JSBCore_version(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
     // cjh    char version[256];
     //     snprintf(version, sizeof(version)-1, "%s", cocos2dVersion());
     //
     //     s.rval().setString(version);
-    return true;
+    return;
 }
 // SE_BIND_FUNC(JSBCore_version)
 
-static bool JSBCore_os(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
+static void JSBCore_os(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
     // se::Value os;
     v8::Local<v8::String> os;
@@ -680,11 +684,11 @@ static bool JSBCore_os(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 #endif
 
     _v8args.GetReturnValue().Set(os);
-    return true;
+    return;
 }
 // SE_BIND_FUNC(JSBCore_os)
 
-static bool JSBCore_getCurrentLanguage(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
+static void JSBCore_getCurrentLanguage(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
     ++__jsbInvocationCount;
     bool ret = false;
@@ -764,11 +768,11 @@ static bool JSBCore_getCurrentLanguage(const v8::FunctionCallbackInfo<v8::Value>
     }
 
     _v8args.GetReturnValue().Set(JsbUtils::ToV8String(_isolate, languageStr));
-    return true;
+    return;
 }
 // SE_BIND_FUNC(JSBCore_getCurrentLanguage)
 
-static bool JSBCore_getCurrentLanguageCode(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
+static void JSBCore_getCurrentLanguageCode(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
     ++__jsbInvocationCount;
     bool ret = false;
@@ -787,46 +791,46 @@ static bool JSBCore_getCurrentLanguageCode(const v8::FunctionCallbackInfo<v8::Va
 
     std::string language = Application::getInstance()->getCurrentLanguageCode();
     _v8args.GetReturnValue().Set(JsbUtils::ToV8String(_isolate, language));
-    return true;
+    return;
 }
 // SE_BIND_FUNC(JSBCore_getCurrentLanguageCode)
 
-static bool JSB_getOSVersion(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
+static void JSB_getOSVersion(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
     v8::Isolate *_isolate = _v8args.GetIsolate();
     v8::HandleScope _hs(_isolate);
 
     std::string systemVersion = Application::getInstance()->getVersion();
     _v8args.GetReturnValue().Set(JsbUtils::ToV8String(_isolate, systemVersion));
-    return true;
+    return;
 }
 // SE_BIND_FUNC(JSB_getOSVersion)
 
-static bool JSB_cleanScript(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
+static void JSB_cleanScript(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
     assert(false); // IDEA:
-    return true;
+    return;
 }
 // SE_BIND_FUNC(JSB_cleanScript)
 
-static bool JSB_core_restartVM(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
+static void JSB_core_restartVM(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
     // REFINE: release AudioEngine, waiting HttpClient & WebSocket threads to exit.
     // Application::getInstance()->restart();
     Director::getInstance()->restart();
-    return true;
+    return;
 }
 // SE_BIND_FUNC(JSB_core_restartVM)
 
-static bool JSB_closeWindow(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
+static void JSB_closeWindow(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
     // Application::getInstance()->end();
     Director::getInstance()->end();
-    return true;
+    return;
 }
 // SE_BIND_FUNC(JSB_closeWindow)
 
-static bool JSB_isObjectValid(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
+static void JSB_isObjectValid(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
     v8::Isolate *_isolate = _v8args.GetIsolate();
     v8::HandleScope _hs(_isolate);
@@ -837,11 +841,11 @@ static bool JSB_isObjectValid(const v8::FunctionCallbackInfo<v8::Value> &_v8args
         void *nativePtr = nullptr;
         seval_to_native_ptr(_v8args[0], &nativePtr);
         _v8args.GetReturnValue().Set(v8::Boolean::New(_v8args.GetIsolate(), nativePtr != nullptr));
-        return true;
+        return;
     }
 
     SE_REPORT_ERROR("Invalid number of arguments: %d. Expecting: 1", argc);
-    return false;
+    return;
 }
 // SE_BIND_FUNC(JSB_isObjectValid)
 
@@ -881,7 +885,7 @@ static bool getOrCreatePlainObject_r(const char *name, v8::Local<v8::Object> par
     return true;
 }
 
-static bool js_performance_now(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
+static void js_performance_now(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
     v8::Isolate *_isolate = _v8args.GetIsolate();
     v8::HandleScope _hs(_isolate);
@@ -889,7 +893,7 @@ static bool js_performance_now(const v8::FunctionCallbackInfo<v8::Value> &_v8arg
     auto now = std::chrono::steady_clock::now();
     auto microSeconds = std::chrono::duration_cast<std::chrono::microseconds>(now - ScriptEngine::getInstance()->getStartTime()).count();
     _v8args.GetReturnValue().Set(v8::Number::New(_isolate, (double)microSeconds * 0.001));
-    return true;
+    return;
 }
 // SE_BIND_FUNC(js_performance_now)
 
@@ -1183,7 +1187,7 @@ bool jsb_global_load_image(const std::string &path, const v8::Local<v8::Function
     return true;
 }
 
-static bool js_loadImage(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
+static void js_loadImage(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
     v8::Isolate *_isolate = _v8args.GetIsolate();
     v8::HandleScope _hs(_isolate);
@@ -1202,12 +1206,12 @@ static bool js_loadImage(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
         // return jsb_global_load_image(path, &callbackVal);
     }
     SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 2);
-    return false;
+    return;
 }
 // SE_BIND_FUNC(js_loadImage)
 
 // pixels(RGBA), width, height, fullFilePath(*.png/*.jpg)
-static bool js_saveImageData(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
+static void js_saveImageData(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
     v8::Isolate *_isolate = _v8args.GetIsolate();
     v8::HandleScope _hs(_isolate);
@@ -1237,14 +1241,14 @@ static bool js_saveImageData(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
         _v8args.GetReturnValue().Set(v8::Boolean::New(_isolate, ret));
 
         img->release();
-        return ret;
+        return;
     }
     SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 2);
-    return false;
+    return;
 }
 // SE_BIND_FUNC(js_saveImageData)
 
-static bool js_setDebugViewText(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
+static void js_setDebugViewText(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
     v8::Isolate *_isolate = _v8args.GetIsolate();
     v8::HandleScope _hs(_isolate);
@@ -1263,33 +1267,33 @@ static bool js_setDebugViewText(const v8::FunctionCallbackInfo<v8::Value> &_v8ar
 #if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
         setGameInfoDebugViewTextJNI(index, text);
 #endif
-        return true;
+        return;
     }
 
     SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 2);
-    return false;
+    return;
 }
 // SE_BIND_FUNC(js_setDebugViewText)
 
-static bool js_openDebugView(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
+static void js_openDebugView(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
 #if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
     openDebugViewJNI();
 #endif
-    return true;
+    return;
 }
 // SE_BIND_FUNC(js_openDebugView)
 
-static bool js_disableBatchGLCommandsToNative(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
+static void js_disableBatchGLCommandsToNative(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
 #if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
     disableBatchGLCommandsToNativeJNI();
 #endif
-    return true;
+    return;
 }
 // SE_BIND_FUNC(js_disableBatchGLCommandsToNative)
 
-static bool JSB_openURL(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
+static void JSB_openURL(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
     v8::Isolate *_isolate = _v8args.GetIsolate();
     v8::HandleScope _hs(_isolate);
@@ -1301,15 +1305,15 @@ static bool JSB_openURL(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
         std::string url = JsbUtils::FromV8String(_isolate, _v8args[0]);
         // SE_PRECONDITION2(ok, false, "url is invalid!");
         Application::getInstance()->openURL(url);
-        return true;
+        return;
     }
 
     SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 1);
-    return false;
+    return;
 }
 // SE_BIND_FUNC(JSB_openURL)
 
-static bool JSB_copyTextToClipboard(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
+static void JSB_copyTextToClipboard(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
     v8::Isolate *_isolate = _v8args.GetIsolate();
     v8::HandleScope _hs(_isolate);
@@ -1321,15 +1325,15 @@ static bool JSB_copyTextToClipboard(const v8::FunctionCallbackInfo<v8::Value> &_
         std::string text = JsbUtils::FromV8String(_isolate, _v8args[0]);
         // SE_PRECONDITION2(ok, false, "text is invalid!");
         Application::getInstance()->copyTextToClipboard(text);
-        return true;
+        return;
     }
 
     SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 1);
-    return false;
+    return;
 }
 // SE_BIND_FUNC(JSB_copyTextToClipboard)
 
-static bool JSB_setPreferredFramesPerSecond(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
+static void JSB_setPreferredFramesPerSecond(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
     v8::Isolate *_isolate = _v8args.GetIsolate();
     v8::HandleScope _hs(_isolate);
@@ -1342,15 +1346,15 @@ static bool JSB_setPreferredFramesPerSecond(const v8::FunctionCallbackInfo<v8::V
         // SE_PRECONDITION2(ok, false, "fps is invalid!");
         // Application::getInstance()->setPreferredFramesPerSecond(fps);
         Director::getInstance()->setAnimationInterval(1.0 / fps);
-        return true;
+        return;
     }
 
     SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 1);
-    return false;
+    return;
 }
 // SE_BIND_FUNC(JSB_setPreferredFramesPerSecond)
 
-static bool JSB_showInputBox(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
+static void JSB_showInputBox(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
 {
     v8::Isolate *_isolate = _v8args.GetIsolate();
     v8::HandleScope _hs(_isolate);
@@ -1432,11 +1436,11 @@ static bool JSB_showInputBox(const v8::FunctionCallbackInfo<v8::Value> &_v8args)
     }
 
     SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 1);
-    return false;
+    return;
 }
 // SE_BIND_FUNC(JSB_showInputBox);
 
-static bool JSB_updateInputBoxRect(const v8::FunctionCallbackInfo<v8::Value> &args)
+static void JSB_updateInputBoxRect(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
     size_t argc = args.Length();
     if (argc == 4)
@@ -1459,15 +1463,15 @@ static bool JSB_updateInputBoxRect(const v8::FunctionCallbackInfo<v8::Value> &ar
     }
 
     SE_REPORT_ERROR("wrong number of arguments: %d, was expecting %d", (int)argc, 4);
-    return false;
+    return;
 }
 // SE_BIND_FUNC(JSB_updateInputBoxRect);
 
-static bool JSB_hideInputBox(const v8::FunctionCallbackInfo<v8::Value> &args)
+static void JSB_hideInputBox(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
     // EditBox::hide();
 
-    return true;
+    return;
 }
 // SE_BIND_FUNC(JSB_hideInputBox)
 
@@ -1646,42 +1650,72 @@ bool jsb_register_global_variables(v8::Local<v8::Object> global)
     __jsbObj.Reset(isolate, jsbObj);
 
     //     auto glContextCls = se::Class::create("WebGLRenderingContext", global, nullptr, nullptr);
+    Class *glContextCls = Class::create("WebGLRenderingContext", &global, nullptr, nullptr);
+
     //     glContextCls->install();
+    glContextCls->install();
 
-    //     SAFE_DEC_REF(__glObj);
+    SAFE_DEC_REF(__glObj);
+
     //     __glObj = se::Object::createObjectWithClass(glContextCls);
+    __glObj = JsbObject::createObjectWithClass(glContextCls);
     //     global->setProperty("__gl", se::Value(__glObj));
-
+    JsbUtils::SetProperty(isolate, global, "__gl", __glObj->_getJSObject());
     //     __jsbObj->defineFunction("garbageCollect", _SE(jsc_garbageCollect));
+    JsbUtils::DefineFunction(jsbObj, "garbageCollect", jsc_garbageCollect);
     //     __jsbObj->defineFunction("dumpNativePtrToSeObjectMap", _SE(jsc_dumpNativePtrToSeObjectMap));
-
+    JsbUtils::DefineFunction(jsbObj, "dumpNativePtrToSeObjectMap", jsc_dumpNativePtrToSeObjectMap);
     //     __jsbObj->defineFunction("loadImage", _SE(js_loadImage));
+    JsbUtils::DefineFunction(jsbObj, "loadImage", js_loadImage);
     //     __jsbObj->defineFunction("saveImageData", _SE(js_saveImageData));
+    JsbUtils::DefineFunction(jsbObj, "saveImageData", js_saveImageData);
     //     __jsbObj->defineFunction("setDebugViewText", _SE(js_setDebugViewText));
+    JsbUtils::DefineFunction(jsbObj, "setDebugViewText", js_setDebugViewText);
     //     __jsbObj->defineFunction("openDebugView", _SE(js_openDebugView));
+    JsbUtils::DefineFunction(jsbObj, "openDebugView", js_openDebugView);
     //     __jsbObj->defineFunction("disableBatchGLCommandsToNative", _SE(js_disableBatchGLCommandsToNative));
+    JsbUtils::DefineFunction(jsbObj, "disableBatchGLCommandsToNative", js_disableBatchGLCommandsToNative);
     //     __jsbObj->defineFunction("openURL", _SE(JSB_openURL));
+    JsbUtils::DefineFunction(jsbObj, "openURL", JSB_openURL);
     //     __jsbObj->defineFunction("copyTextToClipboard", _SE(JSB_copyTextToClipboard));
+    JsbUtils::DefineFunction(jsbObj, "copyTextToClipboard", JSB_copyTextToClipboard);
 
     //     __jsbObj->defineFunction("setPreferredFramesPerSecond", _SE(JSB_setPreferredFramesPerSecond));
+    JsbUtils::DefineFunction(jsbObj, "setPreferredFramesPerSecond", JSB_setPreferredFramesPerSecond);
     //     __jsbObj->defineFunction("showInputBox", _SE(JSB_showInputBox));
+    JsbUtils::DefineFunction(jsbObj, "showInputBox", JSB_showInputBox);
     //     __jsbObj->defineFunction("hideInputBox", _SE(JSB_hideInputBox));
+    JsbUtils::DefineFunction(jsbObj, "hideInputBox", JSB_hideInputBox);
     //     __jsbObj->defineFunction("updateInputBoxRect", _SE(JSB_updateInputBoxRect));
+    JsbUtils::DefineFunction(jsbObj, "updateInputBoxRect", JSB_updateInputBoxRect);
 
     //     global->defineFunction("__getPlatform", _SE(JSBCore_platform));
+    JsbUtils::DefineFunction(global, "__getPlatform", JSBCore_platform);
     //     global->defineFunction("__getOS", _SE(JSBCore_os));
+    JsbUtils::DefineFunction(global, "__getOS", JSBCore_os);
     //     global->defineFunction("__getOSVersion", _SE(JSB_getOSVersion));
+    JsbUtils::DefineFunction(global, "__getOSVersion", JSB_getOSVersion);
     //     global->defineFunction("__getCurrentLanguage", _SE(JSBCore_getCurrentLanguage));
+    JsbUtils::DefineFunction(global, "__getCurrentLanguage", JSBCore_getCurrentLanguage);
     //     global->defineFunction("__getCurrentLanguageCode", _SE(JSBCore_getCurrentLanguageCode));
+    JsbUtils::DefineFunction(global, "__getCurrentLanguageCode", JSBCore_getCurrentLanguageCode);
     //     global->defineFunction("__getVersion", _SE(JSBCore_version));
+    JsbUtils::DefineFunction(global, "__getVersion", JSBCore_version);
     //     global->defineFunction("__restartVM", _SE(JSB_core_restartVM));
+    JsbUtils::DefineFunction(global, "__restartVM", JSB_core_restartVM);
     //     global->defineFunction("__cleanScript", _SE(JSB_cleanScript));
+    JsbUtils::DefineFunction(global, "__cleanScript", JSB_cleanScript);
     //     global->defineFunction("__isObjectValid", _SE(JSB_isObjectValid));
+    JsbUtils::DefineFunction(global, "__isObjectValid", JSB_isObjectValid);
     //     global->defineFunction("close", _SE(JSB_closeWindow));
+    JsbUtils::DefineFunction(global, "close", JSB_closeWindow);
 
     //     se::HandleObject performanceObj(se::Object::createPlainObject());
+    v8::Local<v8::Object> performanceObj = v8::Object::New(isolate);
     //     performanceObj->defineFunction("now", _SE(js_performance_now));
+    JsbUtils::DefineFunction(performanceObj, "now", js_performance_now);
     //     global->setProperty("performance", se::Value(performanceObj));
+    JsbUtils::SetProperty(isolate, global, "performance", performanceObj);
 
     // #if CC_TARGET_PLATFORM == CC_PLATFORM_OPENHARMONY && (SCRIPT_ENGINE_TYPE == SCRIPT_ENGINE_V8 || SCRIPT_ENGINE_TYPE == SCRIPT_ENGINE_JSVM)
     //     se::HandleObject ohObj(se::Object::createPlainObject());
@@ -1690,12 +1724,14 @@ bool jsb_register_global_variables(v8::Local<v8::Object> global)
     //     ohObj->defineFunction("postSyncMessage", _SE(JSB_openharmony_postSyncMessage));
     // #endif
     //     se::ScriptEngine::getInstance()->clearException();
-
+    ScriptEngine::getInstance()->clearException();
     //     se::ScriptEngine::getInstance()->addBeforeCleanupHook([]()
     //                                                           {
     //         g_threadPool = nullptr;
 
     //         PoolManager::getInstance()->getCurrentPool()->clear(); });
+    ScriptEngine::getInstance()->addBeforeCleanupHook([]()
+                                                      { g_threadPool = nullptr; });
 
     //     se::ScriptEngine::getInstance()->addAfterCleanupHook([]()
     //                                                          {
@@ -1706,6 +1742,13 @@ bool jsb_register_global_variables(v8::Local<v8::Object> global)
 
     //         SAFE_DEC_REF(__jsbObj);
     //         SAFE_DEC_REF(__glObj); });
+    ScriptEngine::getInstance()->addAfterCleanupHook([]()
+                                                     {
+                                                          __moduleCache.clear();
+    //         PoolManager::getInstance()->getCurrentPool()->clear();
+                                                        //   SAFE_DEC_REF(__jsbObj);
+                                                        __jsbObj.Reset();
+                                                          SAFE_DEC_REF(__glObj); });
 
     return true;
 }

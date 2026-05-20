@@ -50,9 +50,9 @@ public:
    *  @return A class instance used for creating relevant native binding objects.
    *  @note Don't need to delete the pointer return by this method, it's managed internally.
    */
-  static Class *create(const std::string &clsName, v8::Local<v8::Object> *parent, v8::Local<v8::FunctionTemplate> *parentProto, v8::FunctionCallback ctor, void *data = nullptr);
+  static Class *create(const std::string &clsName, v8::Local<v8::Object> *parent, v8::Local<v8::FunctionTemplate> *parentProto, v8::FunctionCallback *ctor, void *data = nullptr);
 
-  static Class *create(const std::initializer_list<const char *> &classPath, v8::Local<v8::Object> *parent, v8::Local<v8::FunctionTemplate> *parentProto, v8::FunctionCallback ctor, void *data = nullptr);
+  static Class *create(const std::initializer_list<const char *> &classPath, v8::Local<v8::Object> *parent, v8::Local<v8::FunctionTemplate> *parentProto, v8::FunctionCallback *ctor, void *data = nullptr);
 
   /**
    *  @brief Defines a member function with a callback. Each objects created by class will have this function property.
@@ -141,7 +141,7 @@ private:
 
   void setCreateProto(bool createProto);
 
-  bool init(const std::string &clsName, v8::Local<v8::Object> *parent, v8::Local<v8::FunctionTemplate> *parentProto, v8::FunctionCallback ctor, void *data = nullptr);
+  bool init(const std::string &clsName, v8::Local<v8::Object> *parent, v8::Local<v8::FunctionTemplate> *parentProto, v8::FunctionCallback *ctor, void *data = nullptr);
   void destroy();
 
   static void cleanup();

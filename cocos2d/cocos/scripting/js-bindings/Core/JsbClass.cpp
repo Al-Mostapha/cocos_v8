@@ -76,7 +76,7 @@ Class::Class()
 Class::~Class() = default;
 
 /* static */
-Class *Class::create(const std::string &clsName, v8::Local<v8::Object> *parent, v8::Local<v8::FunctionTemplate> *parentProto, v8::FunctionCallback ctor, void *data)
+Class *Class::create(const std::string &clsName, v8::Local<v8::Object> *parent, v8::Local<v8::FunctionTemplate> *parentProto, v8::FunctionCallback *ctor, void *data)
 {
   auto *cls = new Class();
   if (cls != nullptr && !cls->init(clsName, parent, parentProto, ctor, data))
@@ -87,7 +87,7 @@ Class *Class::create(const std::string &clsName, v8::Local<v8::Object> *parent, 
   return cls;
 }
 
-Class *Class::create(const std::initializer_list<const char *> &classPath, v8::Local<v8::Object> *parent, v8::Local<v8::FunctionTemplate> *parentProto, v8::FunctionCallback ctor, void *data)
+Class *Class::create(const std::initializer_list<const char *> &classPath, v8::Local<v8::Object> *parent, v8::Local<v8::FunctionTemplate> *parentProto, v8::FunctionCallback *ctor, void *data)
 {
   v8::Isolate *isolate = v8::Isolate::GetCurrent();
   v8::HandleScope handleScope(isolate);
@@ -106,7 +106,7 @@ Class *Class::create(const std::initializer_list<const char *> &classPath, v8::L
   return create(*(classPath.end() - 1), &currentParent, parentProto, ctor, data);
 }
 
-bool Class::init(const std::string &clsName, v8::Local<v8::Object> *parent, v8::Local<v8::FunctionTemplate> *parentProto, v8::FunctionCallback ctor, void *data)
+bool Class::init(const std::string &clsName, v8::Local<v8::Object> *parent, v8::Local<v8::FunctionTemplate> *parentProto, v8::FunctionCallback *ctor, void *data)
 {
   _name = clsName;
   _parent = parent;
@@ -121,7 +121,7 @@ bool Class::init(const std::string &clsName, v8::Local<v8::Object> *parent, v8::
     // _parentProto->incRef();
   }
 
-  _constructor = ctor;
+  _constructor = *ctor;
 
   v8::FunctionCallback ctorToSet = _constructor != nullptr ? _constructor : invalidConstructor;
 
