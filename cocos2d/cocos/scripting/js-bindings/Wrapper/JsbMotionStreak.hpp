@@ -1,0 +1,22 @@
+// extern JSClass  *jsb_cocos2d_MotionStreak_class;
+// extern JSObject *jsb_cocos2d_MotionStreak_prototype;
+
+// bool js_cocos2dx_MotionStreak_constructor(JSContext *cx, uint32_t argc, jsval *vp);
+// void js_cocos2dx_MotionStreak_finalize(JSContext *cx, JSObject *obj);
+// void js_register_cocos2dx_MotionStreak(JSContext *cx, JS::HandleObject global);
+// void register_all_cocos2dx(JSContext* cx, JS::HandleObject obj);
+// bool js_cocos2dx_MotionStreak_reset(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_MotionStreak_setTexture(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_MotionStreak_getTexture(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_MotionStreak_tintWithColor(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_MotionStreak_setBlendFunc(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_MotionStreak_setStartingPositionInitialized(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_MotionStreak_getBlendFunc(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_MotionStreak_isStartingPositionInitialized(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_MotionStreak_isFastMode(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_MotionStreak_getStroke(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_MotionStreak_initWithFade(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_MotionStreak_setFastMode(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_MotionStreak_setStroke(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_MotionStreak_create(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_MotionStreak_MotionStreak(JSContext *cx, uint32_t argc, jsval *vp);

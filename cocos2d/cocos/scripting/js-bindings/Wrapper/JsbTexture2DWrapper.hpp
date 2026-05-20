@@ -38,3 +38,35 @@
 // bool js_cocos2dx_Texture2D_setDefaultAlphaPixelFormat(JSContext *cx, uint32_t argc, jsval *vp);
 // bool js_cocos2dx_Texture2D_getDefaultAlphaPixelFormat(JSContext *cx, uint32_t argc, jsval *vp);
 // bool js_cocos2dx_Texture2D_Texture2D(JSContext *cx, uint32_t argc, jsval *vp);
+
+// extern JSClass  *jsb_cocos2d_RenderTexture_class;
+// extern JSObject *jsb_cocos2d_RenderTexture_prototype;
+
+// bool js_cocos2dx_RenderTexture_constructor(JSContext *cx, uint32_t argc, jsval *vp);
+// void js_cocos2dx_RenderTexture_finalize(JSContext *cx, JSObject *obj);
+// void js_register_cocos2dx_RenderTexture(JSContext *cx, JS::HandleObject global);
+// void register_all_cocos2dx(JSContext* cx, JS::HandleObject obj);
+// bool js_cocos2dx_RenderTexture_setVirtualViewport(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_RenderTexture_clearStencil(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_RenderTexture_getClearDepth(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_RenderTexture_getClearStencil(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_RenderTexture_end(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_RenderTexture_setClearStencil(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_RenderTexture_setSprite(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_RenderTexture_getSprite(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_RenderTexture_isAutoDraw(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_RenderTexture_setKeepMatrix(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_RenderTexture_setClearFlags(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_RenderTexture_begin(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_RenderTexture_setAutoDraw(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_RenderTexture_setClearColor(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_RenderTexture_beginWithClear(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_RenderTexture_clearDepth(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_RenderTexture_getClearColor(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_RenderTexture_clear(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_RenderTexture_getClearFlags(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_RenderTexture_newImage(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_RenderTexture_setClearDepth(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_RenderTexture_initWithWidthAndHeight(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_RenderTexture_create(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_RenderTexture_RenderTexture(JSContext *cx, uint32_t argc, jsval *vp);

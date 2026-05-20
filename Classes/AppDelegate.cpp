@@ -25,6 +25,7 @@
 #include "AppDelegate.h"
 #include "HelloWorldScene.h"
 #include "ScriptEngine.hpp"
+#include "JsbUtils.h"
 
 // #define USE_AUDIO_ENGINE 1
 
@@ -117,18 +118,44 @@ bool AppDelegate::applicationDidFinishLaunching()
 
     if (js->start())
     {
-		v8::Isolate* isolate = js->getIsolate();
-		v8::HandleScope handle_scope(isolate);
+        v8::Isolate *isolate = js->getIsolate();
+        v8::HandleScope handle_scope(isolate);
 
-		v8::Local<v8::Value> result;
-		std::string script = "'V8 + Cocos2d running! Result: ' + (6 * 7); console.log('Hello from V8');";
+        v8::Local<v8::Value> result;
+        std::string script = "'V8 + Cocos2d running! Result: ' + (6 * 7); console.log('Hello from V8');";
         js->evalString(script.c_str(), script.length(), &result);
-       
-        //cocos2d::log("[JSB] %s", result.As);
+
+        //     se::HandleObject performanceObj(se::Object::createPlainObject());
+        v8::Local<v8::Object> performanceObj = v8::Object::New(isolate);
+        //     performanceObj->defineFunction("now", _SE(js_performance_now));
+        JsbUtils::DefineFunction(performanceObj, "now", [](const v8::FunctionCallbackInfo<v8::Value> &args) -> void
+                                 {
+            cocos2d::log("[JSB] performance.now() called");
+            auto isolate = args.GetIsolate();
+            auto now = std::chrono::high_resolution_clock::now();
+            auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
+            args.GetReturnValue().Set(v8::Number::New(isolate, static_cast<double>(ms))); });
+        v8::Local<v8::Object> global = isolate->GetCurrentContext()->Global();
+        //     global->setProperty("performance", se::Value(performanceObj));
+        JsbUtils::SetProperty(isolate, global, "performance", performanceObj);
+
+        // cocos2d::log("[JSB] %s", result.As);
     }
     else
     {
         cocos2d::log("[JSB] Failed to start V8");
+    }
+
+    v8::Isolate *isolate = js->getIsolate();
+    v8::HandleScope handle_scope(isolate);
+    v8::Local<v8::Context> context = isolate->GetCurrentContext();
+    std::string script2 = "performance.now();";
+    v8::Local<v8::Value> result2;
+    js->evalString(script2.c_str(), script2.length(), &result2);
+    if (result2->IsNumber())
+    {
+        double now = result2.As<v8::Number>()->Value();
+        cocos2d::log("[JSB] performance.now() returned: %f", now);
     }
 
     // create a scene. it's an autorelease object
