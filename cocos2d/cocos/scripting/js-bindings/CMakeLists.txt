@@ -11,6 +11,8 @@ set(JSB_SRC
     Core/RefCounter.cpp
 
     Utils/MappingUtils.cpp
+
+    Wrapper/JsbCommon.cpp
 )
 
 set(JSB_HEADERS
@@ -27,6 +29,8 @@ set(JSB_HEADERS
     Core/RefCounter.hpp
 
     Utils/MappingUtils.hpp
+
+    Wrapper/JsbCommon.hpp
 )
 
 add_library(jsb STATIC ${JSB_SRC} ${JSB_HEADERS})

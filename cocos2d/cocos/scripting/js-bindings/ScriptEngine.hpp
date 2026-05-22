@@ -4,7 +4,7 @@
 #include <memory>
 #include <string>
 #include <thread>
-
+#include <unordered_map>
 class Class;
 
 extern Class *__jsb_CCPrivateData_class;
@@ -12,6 +12,7 @@ extern Class *__jsb_CCPrivateData_class;
 class ScriptEngine
 {
 public:
+  static std::unordered_map<std::string, v8::Global<v8::FunctionTemplate>> _registeredClasses;
   class FileOperationDelegate
   {
   public:
@@ -88,7 +89,8 @@ public:
   // std::string stackTraceToString(v8::Local<v8::StackTrace> stackTrace);
   std::string getCurrentStackTrace();
 
-  void addBeforeInitHook(const std::function<void()> &hook){
+  void addBeforeInitHook(const std::function<void()> &hook)
+  {
     _beforeInitHookArray.push_back(hook);
   }
   void addBeforeCleanupHook(const std::function<void()> &hook)

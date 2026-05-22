@@ -1,4 +1,4 @@
-
+#include "v8.h"
 
 // extern JSClass  *jsb_cocos2d_ActionCamera_class;
 // extern JSObject *jsb_cocos2d_ActionCamera_prototype;

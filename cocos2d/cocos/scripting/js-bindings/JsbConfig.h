@@ -19,13 +19,13 @@
 
 #define KEY_PRIVATE_DATA "__cc_private_data"
 
-#define SE_PRECONDITION2(cond, ret, msg) \
+#define SE_PRECONDITION2(cond, msg) \
     do                                   \
     {                                    \
         if (!(cond))                     \
         {                                \
             SE_REPORT_ERROR(msg);        \
-            return (ret);                \
+            return;                \
         }                                \
     } while (0)
 

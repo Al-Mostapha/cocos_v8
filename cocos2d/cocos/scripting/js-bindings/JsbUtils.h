@@ -32,5 +32,11 @@ public:
     static void SetPrivate(v8::Isolate *isolate, ObjectWrap &wrap, void *data, JsbPrivateData **outInternalData);
     static void ClearPrivate(v8::Isolate* isolate, ObjectWrap& wrap);
 
+  
+
     static bool DefineFunction(v8::Local<v8::Object> obj, const char *name, void (*callback)(const v8::FunctionCallbackInfo<v8::Value> &));
+
+    static bool SetPrivate(v8::Isolate *isolate, void* nativePtr, v8::Local<v8::Object> obj);
+    static bool CreateJsObjectByTypeName(const char *typeName, v8::Local<v8::Object> *outObj);
+    static bool NativePtrToObject(v8::Isolate *isolate, void *ptr, v8::Local<v8::Object> *outObj);
 };
