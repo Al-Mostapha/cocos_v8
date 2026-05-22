@@ -37,7 +37,7 @@ add_library(jsb STATIC ${JSB_SRC} ${JSB_HEADERS})
 
 if(WINDOWS)
     target_link_directories(jsb PUBLIC ${V8_DIR}/Lib/Win32)
-    target_link_libraries(jsb PUBLIC cocos2d v8_monolith.lib winmm.lib dbghelp.lib shlwapi.lib)
+    target_link_libraries(jsb PUBLIC cocos2d v8_monolith.deb.lib winmm.lib dbghelp.lib shlwapi.lib)
     # target_compile_definitions(jsb PRIVATE _USRJSSTATIC)
 endif()
 

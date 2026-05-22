@@ -140,7 +140,8 @@ bool Class::init(const std::string &clsName, v8::Local<v8::Object> *parent, v8::
 
 void Class::_setCtor(v8::Local<v8::Function> *obj)
 {
-  assert(!_ctor.has_value());
+  assert(false);
+  // assert(_ctor.has_value() == false);
   _ctor = obj;
   if (obj != nullptr)
   {

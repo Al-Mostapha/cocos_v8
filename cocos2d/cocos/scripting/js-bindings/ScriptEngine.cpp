@@ -6,9 +6,11 @@
 #include <sstream>
 
 ScriptEngine *ScriptEngine::_instance = nullptr;
-uint32_t __jsbInvocationCount = 0;
+int __jsbInvocationCount = 0;
 uint32_t __jsbStackFrameLimit = 20;
 Class *__jsb_CCPrivateData_class = nullptr;
+
+std::unordered_map<std::string, v8::Global<v8::FunctionTemplate>> ScriptEngine::_registeredClasses = {};
 
 ScriptEngine *ScriptEngine::getInstance()
 {

@@ -32,6 +32,6 @@
 #endif
 
 
-extern uint32_t __jsbInvocationCount;
+extern int __jsbInvocationCount;
 
 

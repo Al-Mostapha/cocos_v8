@@ -1,5 +1,5 @@
 #include "JsbConfig.h"
-#include "JsbMacros.h"
+#include "HelperMacros.h"
 #include "JsbUtils.h"
 #include "JsbCommon.hpp"
 #include "base/CCConfiguration.h"
@@ -209,7 +209,7 @@ void js_cocos2dx_Configuration_checkForGLExtension(const v8::FunctionCallbackInf
   //     }
   if (args.Length() == 1)
   {
-    std::string arg0 = JsbUtils::FromV8String(isolate, args[0], &arg0);
+    std::string arg0 = JsbUtils::FromV8String(isolate, args[0]);
     SE_PRECONDITION2(!arg0.empty(), "js_cocos2dx_Configuration_checkForGLExtension : Error processing arguments");
     bool ret = cobj->checkForGLExtension(arg0);
     args.GetReturnValue().Set(v8::Boolean::New(isolate, ret));
@@ -287,225 +287,275 @@ void js_cocos2dx_Configuration_supportsNPOT(const v8::FunctionCallbackInfo<v8::V
 
 // bool js_cocos2dx_Configuration_init(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::Configuration* cobj = (cocos2d::Configuration *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_Configuration_init : Invalid Native Object");
-//     if (argc == 0) {
-//         bool ret = cobj->init();
-//         JS::RootedValue jsret(cx);
-//         jsret = BOOLEAN_TO_JSVAL(ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_Configuration_init(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::Configuration* cobj = (cocos2d::Configuration *)(proxy ? proxy->ptr : NULL);
+  //     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_Configuration_init : Invalid Native Object");
+  //     if (argc == 0) {
+  //         bool ret = cobj->init();
+  //         JS::RootedValue jsret(cx);
+  //         jsret = BOOLEAN_TO_JSVAL(ret);
+  //         args.rval().set(jsret);
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_Configuration_init : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_Configuration_init : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
 // bool js_cocos2dx_Configuration_getAnimate3DQuality(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::Configuration* cobj = (cocos2d::Configuration *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_Configuration_getAnimate3DQuality : Invalid Native Object");
-//     if (argc == 0) {
-//         int ret = (int)cobj->getAnimate3DQuality();
-//         JS::RootedValue jsret(cx);
-//         jsret = int32_to_jsval(cx, ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_Configuration_getAnimate3DQuality(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::Configuration* cobj = (cocos2d::Configuration *)(proxy ? proxy->ptr : NULL);
+  //     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_Configuration_getAnimate3DQuality : Invalid Native Object");
+  //     if (argc == 0) {
+  //         int ret = (int)cobj->getAnimate3DQuality();
+  //         JS::RootedValue jsret(cx);
+  //         jsret = int32_to_jsval(cx, ret);
+  //         args.rval().set(jsret);
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_Configuration_getAnimate3DQuality : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_Configuration_getAnimate3DQuality : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_Configuration_getMaxSupportPointLightInShader(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::Configuration* cobj = (cocos2d::Configuration *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_Configuration_getMaxSupportPointLightInShader : Invalid Native Object");
-//     if (argc == 0) {
-//         int ret = cobj->getMaxSupportPointLightInShader();
-//         JS::RootedValue jsret(cx);
-//         jsret = int32_to_jsval(cx, ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_Configuration_getMaxSupportPointLightInShader(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::Configuration* cobj = (cocos2d::Configuration *)(proxy ? proxy->ptr : NULL);
+  //     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_Configuration_getMaxSupportPointLightInShader : Invalid Native Object");
+  //     if (argc == 0) {
+  //         int ret = cobj->getMaxSupportPointLightInShader();
+  //         JS::RootedValue jsret(cx);
+  //         jsret = int32_to_jsval(cx, ret);
+  //         args.rval().set(jsret);
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_Configuration_getMaxSupportPointLightInShader : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_Configuration_getMaxSupportPointLightInShader : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_Configuration_getMaxTextureSize(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::Configuration* cobj = (cocos2d::Configuration *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_Configuration_getMaxTextureSize : Invalid Native Object");
-//     if (argc == 0) {
-//         int ret = cobj->getMaxTextureSize();
-//         JS::RootedValue jsret(cx);
-//         jsret = int32_to_jsval(cx, ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_Configuration_getMaxTextureSize(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::Configuration* cobj = (cocos2d::Configuration *)(proxy ? proxy->ptr : NULL);
+  //     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_Configuration_getMaxTextureSize : Invalid Native Object");
+  //     if (argc == 0) {
+  //         int ret = cobj->getMaxTextureSize();
+  //         JS::RootedValue jsret(cx);
+  //         jsret = int32_to_jsval(cx, ret);
+  //         args.rval().set(jsret);
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_Configuration_getMaxTextureSize : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_Configuration_getMaxTextureSize : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_Configuration_setValue(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::Configuration* cobj = (cocos2d::Configuration *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_Configuration_setValue : Invalid Native Object");
-//     if (argc == 2) {
-//         std::string arg0;
-//         cocos2d::Value arg1;
-//         ok &= jsval_to_std_string(cx, args.get(0), &arg0);
-//         ok &= jsval_to_ccvalue(cx, args.get(1), &arg1);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_Configuration_setValue : Error processing arguments");
-//         cobj->setValue(arg0, arg1);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_Configuration_setValue(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::Configuration* cobj = (cocos2d::Configuration *)(proxy ? proxy->ptr : NULL);
+  //     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_Configuration_setValue : Invalid Native Object");
+  //     if (argc == 2) {
+  //         std::string arg0;
+  //         cocos2d::Value arg1;
+  //         ok &= jsval_to_std_string(cx, args.get(0), &arg0);
+  //         ok &= jsval_to_ccvalue(cx, args.get(1), &arg1);
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_Configuration_setValue : Error processing arguments");
+  //         cobj->setValue(arg0, arg1);
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_Configuration_setValue : wrong number of arguments: %d, was expecting %d", argc, 2);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_Configuration_setValue : wrong number of arguments: %d, was expecting %d", argc, 2);
+  //     return false;
+}
+
 // bool js_cocos2dx_Configuration_getMaxSupportSpotLightInShader(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::Configuration* cobj = (cocos2d::Configuration *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_Configuration_getMaxSupportSpotLightInShader : Invalid Native Object");
-//     if (argc == 0) {
-//         int ret = cobj->getMaxSupportSpotLightInShader();
-//         JS::RootedValue jsret(cx);
-//         jsret = int32_to_jsval(cx, ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_Configuration_getMaxSupportSpotLightInShader(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::Configuration* cobj = (cocos2d::Configuration *)(proxy ? proxy->ptr : NULL);
+  //     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_Configuration_getMaxSupportSpotLightInShader : Invalid Native Object");
+  //     if (argc == 0) {
+  //         int ret = cobj->getMaxSupportSpotLightInShader();
+  //         JS::RootedValue jsret(cx);
+  //         jsret = int32_to_jsval(cx, ret);
+  //         args.rval().set(jsret);
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_Configuration_getMaxSupportSpotLightInShader : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_Configuration_getMaxSupportSpotLightInShader : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_Configuration_supportsETC(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::Configuration* cobj = (cocos2d::Configuration *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_Configuration_supportsETC : Invalid Native Object");
-//     if (argc == 0) {
-//         bool ret = cobj->supportsETC();
-//         JS::RootedValue jsret(cx);
-//         jsret = BOOLEAN_TO_JSVAL(ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_Configuration_supportsETC(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::Configuration* cobj = (cocos2d::Configuration *)(proxy ? proxy->ptr : NULL);
+  //     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_Configuration_supportsETC : Invalid Native Object");
+  //     if (argc == 0) {
+  //         bool ret = cobj->supportsETC();
+  //         JS::RootedValue jsret(cx);
+  //         jsret = BOOLEAN_TO_JSVAL(ret);
+  //         args.rval().set(jsret);
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_Configuration_supportsETC : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_Configuration_supportsETC : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_Configuration_getMaxSupportDirLightInShader(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::Configuration* cobj = (cocos2d::Configuration *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_Configuration_getMaxSupportDirLightInShader : Invalid Native Object");
-//     if (argc == 0) {
-//         int ret = cobj->getMaxSupportDirLightInShader();
-//         JS::RootedValue jsret(cx);
-//         jsret = int32_to_jsval(cx, ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_Configuration_getMaxSupportDirLightInShader(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::Configuration* cobj = (cocos2d::Configuration *)(proxy ? proxy->ptr : NULL);
+  //     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_Configuration_getMaxSupportDirLightInShader : Invalid Native Object");
+  //     if (argc == 0) {
+  //         int ret = cobj->getMaxSupportDirLightInShader();
+  //         JS::RootedValue jsret(cx);
+  //         jsret = int32_to_jsval(cx, ret);
+  //         args.rval().set(jsret);
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_Configuration_getMaxSupportDirLightInShader : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_Configuration_getMaxSupportDirLightInShader : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_Configuration_loadConfigFile(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::Configuration* cobj = (cocos2d::Configuration *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_Configuration_loadConfigFile : Invalid Native Object");
-//     if (argc == 1) {
-//         std::string arg0;
-//         ok &= jsval_to_std_string(cx, args.get(0), &arg0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_Configuration_loadConfigFile : Error processing arguments");
-//         cobj->loadConfigFile(arg0);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_Configuration_loadConfigFile(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::Configuration* cobj = (cocos2d::Configuration *)(proxy ? proxy->ptr : NULL);
+  //     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_Configuration_loadConfigFile : Invalid Native Object");
+  //     if (argc == 1) {
+  //         std::string arg0;
+  //         ok &= jsval_to_std_string(cx, args.get(0), &arg0);
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_Configuration_loadConfigFile : Error processing arguments");
+  //         cobj->loadConfigFile(arg0);
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_Configuration_loadConfigFile : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_Configuration_loadConfigFile : wrong number of arguments: %d, was expecting %d", argc, 1);
+  //     return false;
+}
+
 // bool js_cocos2dx_Configuration_supportsDiscardFramebuffer(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::Configuration* cobj = (cocos2d::Configuration *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_Configuration_supportsDiscardFramebuffer : Invalid Native Object");
-//     if (argc == 0) {
-//         bool ret = cobj->supportsDiscardFramebuffer();
-//         JS::RootedValue jsret(cx);
-//         jsret = BOOLEAN_TO_JSVAL(ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_Configuration_supportsDiscardFramebuffer(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::Configuration* cobj = (cocos2d::Configuration *)(proxy ? proxy->ptr : NULL);
+  //     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_Configuration_supportsDiscardFramebuffer : Invalid Native Object");
+  //     if (argc == 0) {
+  //         bool ret = cobj->supportsDiscardFramebuffer();
+  //         JS::RootedValue jsret(cx);
+  //         jsret = BOOLEAN_TO_JSVAL(ret);
+  //         args.rval().set(jsret);
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_Configuration_supportsDiscardFramebuffer : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_Configuration_supportsDiscardFramebuffer : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_Configuration_supportsOESPackedDepthStencil(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::Configuration* cobj = (cocos2d::Configuration *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_Configuration_supportsOESPackedDepthStencil : Invalid Native Object");
-//     if (argc == 0) {
-//         bool ret = cobj->supportsOESPackedDepthStencil();
-//         JS::RootedValue jsret(cx);
-//         jsret = BOOLEAN_TO_JSVAL(ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_Configuration_supportsOESPackedDepthStencil(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::Configuration* cobj = (cocos2d::Configuration *)(proxy ? proxy->ptr : NULL);
+  //     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_Configuration_supportsOESPackedDepthStencil : Invalid Native Object");
+  //     if (argc == 0) {
+  //         bool ret = cobj->supportsOESPackedDepthStencil();
+  //         JS::RootedValue jsret(cx);
+  //         jsret = BOOLEAN_TO_JSVAL(ret);
+  //         args.rval().set(jsret);
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_Configuration_supportsOESPackedDepthStencil : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_Configuration_supportsOESPackedDepthStencil : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_Configuration_supportsS3TC(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::Configuration* cobj = (cocos2d::Configuration *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_Configuration_supportsS3TC : Invalid Native Object");
-//     if (argc == 0) {
-//         bool ret = cobj->supportsS3TC();
-//         JS::RootedValue jsret(cx);
-//         jsret = BOOLEAN_TO_JSVAL(ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_Configuration_supportsS3TC(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::Configuration* cobj = (cocos2d::Configuration *)(proxy ? proxy->ptr : NULL);
+  //     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_Configuration_supportsS3TC : Invalid Native Object");
+  //     if (argc == 0) {
+  //         bool ret = cobj->supportsS3TC();
+  //         JS::RootedValue jsret(cx);
+  //         jsret = BOOLEAN_TO_JSVAL(ret);
+  //         args.rval().set(jsret);
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_Configuration_supportsS3TC : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
+  //     JS_ReportError(cx, "js_cocos2dx_Configuration_supportsS3TC : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  v8::Local<v8::Context> ctx = isolate->GetCurrentContext();
+  v8::Local<v8::Object> obj = args.This();
+  cocos2d::Configuration *cobj = (cocos2d::Configuration *)obj->GetAlignedPointerFromInternalField(0);
+  SE_PRECONDITION2(cobj, "js_cocos2dx_Configuration_supportsS3TC : Invalid Native Object");
+  if (args.Length() == 0)
+  {
+    bool ret = cobj->supportsS3TC();
+    args.GetReturnValue().Set(v8::Boolean::New(isolate, ret));
+    return;
+  }
+
+  SE_REPORT_ERROR("js_cocos2dx_Configuration_supportsS3TC : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+}
+
 // }
 // bool js_cocos2dx_Configuration_getInfo(JSContext *cx, uint32_t argc, jsval *vp)
 // {
@@ -654,7 +704,8 @@ void js_cocos2dx_Configuration_getInstance(const v8::FunctionCallbackInfo<v8::Va
     cocos2d::Configuration *ret = cocos2d::Configuration::getInstance();
     if (ret)
     {
-      args.GetReturnValue().Set(OBJECT_TO_JSVAL(js_get_or_create_jsobject<cocos2d::Configuration>(isolate, ret)));
+      assert(false);
+      // args.GetReturnValue().Set(OBJECT_TO_JSVAL(js_get_or_create_jsobject<cocos2d::Configuration>(isolate, ret)));
     }
     else
     {
@@ -669,6 +720,7 @@ void js_cocos2dx_Configuration_getInstance(const v8::FunctionCallbackInfo<v8::Va
 // void js_register_cocos2dx_Configuration(JSContext *cx, JS::HandleObject global) {
 void js_register_cocos2dx_Configuration(v8::Isolate *isolate, v8::Local<v8::Object> global)
 {
+  v8::Local<v8::Context> ctx = isolate->GetCurrentContext();
   //     jsb_cocos2d_Configuration_class = (JSClass *)calloc(1, sizeof(JSClass));
   v8::Local<v8::FunctionTemplate> tpl = v8::FunctionTemplate::New(isolate, nullptr);
   tpl->SetClassName(v8::String::NewFromUtf8(isolate, "Configuration").ToLocalChecked());
@@ -687,7 +739,7 @@ void js_register_cocos2dx_Configuration(v8::Isolate *isolate, v8::Local<v8::Obje
   tpl->PrototypeTemplate()->Set(isolate, "init", v8::FunctionTemplate::New(isolate, js_cocos2dx_Configuration_init));
   tpl->PrototypeTemplate()->Set(isolate, "getAnimate3DQuality", v8::FunctionTemplate::New(isolate, js_cocos2dx_Configuration_getAnimate3DQuality));
   tpl->PrototypeTemplate()->Set(isolate, "getMaxSupportPointLightInShader", v8::FunctionTemplate::New(isolate, js_cocos2dx_Configuration_getMaxSupportPointLightInShader));
-  tpl->PrototypeTemplate()->Set(isolate, "getMaxTextureSize", v8::  FunctionTemplate::New(isolate, js_cocos2dx_Configuration_getMaxTextureSize));
+  tpl->PrototypeTemplate()->Set(isolate, "getMaxTextureSize", v8::FunctionTemplate::New(isolate, js_cocos2dx_Configuration_getMaxTextureSize));
   tpl->PrototypeTemplate()->Set(isolate, "setValue", v8::FunctionTemplate::New(isolate, js_cocos2dx_Configuration_setValue));
   tpl->PrototypeTemplate()->Set(isolate, "getMaxSupportSpotLightInShader", v8::FunctionTemplate::New(isolate, js_cocos2dx_Configuration_getMaxSupportSpotLightInShader));
   tpl->PrototypeTemplate()->Set(isolate, "supportsETC", v8::FunctionTemplate::New(isolate, js_cocos2dx_Configuration_supportsETC));
@@ -695,16 +747,17 @@ void js_register_cocos2dx_Configuration(v8::Isolate *isolate, v8::Local<v8::Obje
   tpl->PrototypeTemplate()->Set(isolate, "loadConfigFile", v8::FunctionTemplate::New(isolate, js_cocos2dx_Configuration_loadConfigFile));
   tpl->PrototypeTemplate()->Set(isolate, "supportsDiscardFramebuffer", v8::FunctionTemplate::New(isolate, js_cocos2dx_Configuration_supportsDiscardFramebuffer));
   tpl->PrototypeTemplate()->Set(isolate, "supportsOESPackedDepthStencil", v8::FunctionTemplate::New(isolate, js_cocos2dx_Configuration_supportsOESPackedDepthStencil));
-  tpl->PrototypeTemplate()->Set(isolate, "supportsS3TC", v8:: FunctionTemplate::New(isolate, js_cocos2dx_Configuration_supportsS3TC));
-  tpl->PrototypeTemplate()->Set(isolate, "getInfo", v8::FunctionTemplate::New(isolate, js_cocos2dx_Configuration_getInfo));
-  tpl->PrototypeTemplate()->Set(isolate, "getMaxTextureUnits", v8::FunctionTemplate::New(isolate, js_cocos2dx_Configuration_getMaxTextureUnits));
-  tpl->PrototypeTemplate()->Set(isolate, "getValue", v8::FunctionTemplate::New(isolate, js_cocos2dx_Configuration_getValue));
-  tpl->PrototypeTemplate()->Set(isolate, "gatherGPUInfo", v8::FunctionTemplate::New(isolate, js_cocos2dx_Configuration_gatherGPUInfo));
-  tpl->PrototypeTemplate()->Set(isolate, "supportsMapBuffer", v8::FunctionTemplate::New(isolate, js_cocos2dx_Configuration_supportsMapBuffer));
-  tpl->PrototypeTemplate()->Set(isolate, "getInfoAsMap", v8::FunctionTemplate::New(isolate, js_cocos2dx_Configuration_getInfoAsMap));
-  tpl->Set(isolate, "destroyInstance", v8::FunctionTemplate::New(isolate, js_cocos2dx_Configuration_destroyInstance));
+  tpl->PrototypeTemplate()->Set(isolate, "supportsS3TC", v8::FunctionTemplate::New(isolate, js_cocos2dx_Configuration_supportsS3TC));
+  assert(false);
+  // tpl->PrototypeTemplate()->Set(isolate, "getInfo", v8::FunctionTemplate::New(isolate, js_cocos2dx_Configuration_getInfo));
+  // tpl->PrototypeTemplate()->Set(isolate, "getMaxTextureUnits", v8::FunctionTemplate::New(isolate, js_cocos2dx_Configuration_getMaxTextureUnits));
+  // tpl->PrototypeTemplate()->Set(isolate, "getValue", v8::FunctionTemplate::New(isolate, js_cocos2dx_Configuration_getValue));
+  // tpl->PrototypeTemplate()->Set(isolate, "gatherGPUInfo", v8::FunctionTemplate::New(isolate, js_cocos2dx_Configuration_gatherGPUInfo));
+  // tpl->PrototypeTemplate()->Set(isolate, "supportsMapBuffer", v8::FunctionTemplate::New(isolate, js_cocos2dx_Configuration_supportsMapBuffer));
+  // tpl->PrototypeTemplate()->Set(isolate, "getInfoAsMap", v8::FunctionTemplate::New(isolate, js_cocos2dx_Configuration_getInfoAsMap));
+  // tpl->Set(isolate, "destroyInstance", v8::FunctionTemplate::New(isolate, js_cocos2dx_Configuration_destroyInstance));
   tpl->Set(isolate, "getInstance", v8::FunctionTemplate::New(isolate, js_cocos2dx_Configuration_getInstance));
-  
+
   v8::Local<v8::Function> constructor = tpl->GetFunction(ctx).ToLocalChecked();
   global->Set(ctx, v8::String::NewFromUtf8(isolate, "Configuration").ToLocalChecked(), constructor).Check();
 
@@ -765,5 +818,4 @@ void js_register_cocos2dx_Configuration(v8::Isolate *isolate, v8::Local<v8::Obje
   //     JS_SetProperty(cx, proto, "__is_ref", JS::TrueHandleValue);
   //     // add the proto and JSClass to the type->js info hash table
   //     jsb_register_class<cocos2d::Configuration>(cx, jsb_cocos2d_Configuration_class, proto, JS::NullPtr());
-  
 }

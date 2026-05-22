@@ -70,19 +70,21 @@ void JsbObject::nativeObjectFinalizeHook(void *nativeObj)
   auto iter = NativePtrToObjectMap::find(nativeObj);
   if (iter != NativePtrToObjectMap::end())
   {
-    JsbObject *obj = iter->second;
-    NativePtrToObjectMap::erase(iter);
-    if (obj->_finalizeCb != nullptr)
-    {
-      obj->_finalizeCb(nativeObj);
-    }
-    else
-    {
-      assert(obj->_getClass() != nullptr);
-      if (obj->_getClass()->_finalizeFunc != nullptr)
-        obj->_getClass()->_finalizeFunc(nativeObj);
-    }
-    obj->decRef();
+    // TODO: 
+    assert(false);
+    // JsbObject *obj = iter->second;
+    // NativePtrToObjectMap::erase(iter);
+    // if (obj->_finalizeCb != nullptr)
+    // {
+    //   obj->_finalizeCb(nativeObj);
+    // }
+    // else
+    // {
+    //   assert(obj->_getClass() != nullptr);
+    //   if (obj->_getClass()->_finalizeFunc != nullptr)
+    //     obj->_getClass()->_finalizeFunc(nativeObj);
+    // }
+    // obj->decRef();
   }
   else
   {
@@ -111,30 +113,32 @@ void JsbObject::cleanup()
   const auto &nativePtrToObjectMap = NativePtrToObjectMap::instance();
   for (const auto &e : nativePtrToObjectMap)
   {
-    nativeObj = e.first;
-    obj = e.second;
+    // TODO:
+    assert(false);
+    // nativeObj = e.first;
+    // obj = e.second;
 
-    if (obj->_finalizeCb != nullptr)
-    {
-      obj->_finalizeCb(nativeObj);
-    }
-    else
-    {
-      if (obj->_getClass() != nullptr)
-      {
-        if (obj->_getClass()->_finalizeFunc != nullptr)
-        {
-          obj->_getClass()->_finalizeFunc(nativeObj);
-        }
-      }
-    }
-    // internal data should only be freed in Object::cleanup, since in other case, it is freed in ScriptEngine::privateDataFinalize
-    if (obj->_internalData != nullptr)
-    {
-      free(obj->_internalData);
-      obj->_internalData = nullptr;
-    }
-    obj->decRef();
+    // if (obj->_finalizeCb != nullptr)
+    // {
+    //   obj->_finalizeCb(nativeObj);
+    // }
+    // else
+    // {
+    //   if (obj->_getClass() != nullptr)
+    //   {
+    //     if (obj->_getClass()->_finalizeFunc != nullptr)
+    //     {
+    //       obj->_getClass()->_finalizeFunc(nativeObj);
+    //     }
+    //   }
+    // }
+    // // internal data should only be freed in Object::cleanup, since in other case, it is freed in ScriptEngine::privateDataFinalize
+    // if (obj->_internalData != nullptr)
+    // {
+    //   free(obj->_internalData);
+    //   obj->_internalData = nullptr;
+    // }
+    // obj->decRef();
   }
 
   NativePtrToObjectMap::clear();
@@ -178,8 +182,10 @@ JsbObject *JsbObject::getObjectWithPtr(void *ptr)
   auto iter = NativePtrToObjectMap::find(ptr);
   if (iter != NativePtrToObjectMap::end())
   {
-    obj = iter->second;
-    obj->incRef();
+    // TODO
+    assert(false);
+    // obj = iter->second;
+    // obj->incRef();
   }
   return obj;
 }
@@ -526,12 +532,14 @@ bool JsbObject::getArrayBufferData(uint8_t **ptr, size_t *length) const
 
 void JsbObject::setPrivateData(void *data)
 {
-  assert(_privateData == nullptr);
-  assert(NativePtrToObjectMap::find(data) == NativePtrToObjectMap::end());
-  // internal::setPrivate(__isolate, _obj, data, &_internalData);
-  JsbUtils::SetPrivate(__isolate, _obj, data, &_internalData);
-  NativePtrToObjectMap::emplace(data, this);
-  _privateData = data;
+  // assert(_privateData == nullptr);
+  // assert(NativePtrToObjectMap::find(data) == NativePtrToObjectMap::end());
+  // // internal::setPrivate(__isolate, _obj, data, &_internalData);
+  // JsbUtils::SetPrivate(__isolate, _obj, data, &_internalData);
+  // NativePtrToObjectMap::emplace(data, this);
+  // _privateData = data;
+  // TODO:
+  assert(false);
 }
 
 void *JsbObject::getPrivateData() const

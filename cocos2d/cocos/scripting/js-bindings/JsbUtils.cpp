@@ -240,7 +240,7 @@ bool JsbUtils::DefineFunction(v8::Local<v8::Object> obj, const char *name, void 
 bool JsbUtils::SetPrivate(v8::Isolate *isolate, void *nativePtr, v8::Local<v8::Object> obj)
 {
   assert(nativePtr == nullptr);
-  assert(NativePtrToObjectMap::find(data) == NativePtrToObjectMap::end());
+  assert(NativePtrToObjectMap::find(nativePtr) == NativePtrToObjectMap::end());
 
   // internal::setPrivate(__isolate, _obj, data, &_internalData);
   int c = obj->InternalFieldCount();
@@ -272,6 +272,7 @@ bool JsbUtils::SetPrivate(v8::Isolate *isolate, void *nativePtr, v8::Local<v8::O
   }
 
   // _privateData = data;
+  return true;
 }
 
 bool JsbUtils::NativePtrToObject(v8::Isolate *isolate, void *ptr, v8::Local<v8::Object> *outObj)

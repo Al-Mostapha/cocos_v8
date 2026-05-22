@@ -48,7 +48,7 @@ void NativePtrToObjectMap::emplace(void *nativeObj, v8::Local<v8::Object> seObj)
 {
     v8::Isolate *isolate = v8::Isolate::GetCurrent();
     v8::Global<v8::Object> global(isolate, seObj);
-    __nativePtrToObjectMap->emplace(nativeObj, global);
+    // __nativePtrToObjectMap->emplace(nativeObj, global);
     global.SetWeak(nativeObj, [](const v8::WeakCallbackInfo<void> &data)
                    {
         void *nativeObj = data.GetParameter();
