@@ -4,6 +4,8 @@
 #include "Core/JsbObject.hpp"
 #include "ScriptEngine.hpp"
 #include "Utils/MappingUtils.hpp"
+#include "base/CCValue.h"
+#include <sstream>
 
 std::string JsbUtils::FromV8String(v8::Isolate *isolate, v8::Local<v8::String> str)
 {
@@ -339,4 +341,451 @@ bool JsbUtils::CreateJsObjectByTypeName(const char *typeName, v8::Local<v8::Obje
   if (outObj != nullptr)
     *outObj = obj;
   return true;
+}
+
+bool JsbUtils::jsval_to_ccvalue(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::Value *outValue)
+{
+  v8::HandleScope handle_scope(isolate);
+
+  if (value->IsNull() || value->IsUndefined())
+  {
+    *outValue = cocos2d::Value::Null;
+    return true;
+  }
+  else if (value->IsBoolean())
+  {
+    *outValue = value->BooleanValue(isolate);
+    return true;
+  }
+  else if (value->IsInt32())
+  {
+    *outValue = value->Int32Value(isolate->GetCurrentContext()).FromJust();
+    return true;
+  }
+  else if (value->IsUint32())
+  {
+    *outValue = value->Uint32Value(isolate->GetCurrentContext()).FromJust();
+    return true;
+  }
+  else if (value->IsNumber())
+  {
+    *outValue = value->NumberValue(isolate->GetCurrentContext()).FromJust();
+    return true;
+  }
+  else if (value->IsString())
+  {
+    *outValue = FromV8String(isolate, value);
+    return true;
+  }
+  else if (value->IsObject())
+  {
+    v8::Local<v8::Object> obj = value->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
+    if (obj->IsArray())
+    {
+      cocos2d::ValueVector arrVal;
+      bool ok = jsval_to_ccvaluevector(isolate, value, &arrVal);
+      if (ok)
+      {
+        // *outValue = cocos2d::Value(arrVal);
+      }
+    }
+    else
+    {
+      cocos2d::ValueMap dictVal;
+      bool ok = jsval_to_ccvaluemap(isolate, value, &dictVal);
+      if (ok)
+      {
+        // *outValue = cocos2d::Value(dictVal);
+      }
+    }
+  }
+}
+
+bool JsbUtils::jsval_to_ccvaluemap(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::ValueMap *ret)
+{
+  v8::HandleScope handle_scope(isolate);
+
+  if (value->IsNull() || value->IsUndefined())
+  {
+    return true;
+  }
+
+  cocos2d::ValueMap &dict = *ret;
+
+  auto obj = value->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
+  v8::Local<v8::Array> propertyNames;
+  if (!obj->GetOwnPropertyNames(isolate->GetCurrentContext()).ToLocal(&propertyNames))
+  {
+    SE_REPORT_ERROR("Failed to get object property names");
+    return false;
+  }
+
+  for (uint32_t i = 0; i < propertyNames->Length(); i++)
+  {
+    v8::Local<v8::Value> key;
+    if (!propertyNames->Get(isolate->GetCurrentContext(), i).ToLocal(&key))
+    {
+      SE_REPORT_ERROR("Failed to get property name at index %d", i);
+      return false;
+    }
+
+    if (!key->IsString())
+    {
+      continue; // ignore non-string properties
+    }
+
+    v8::Local<v8::Value> value;
+    if (!obj->Get(isolate->GetCurrentContext(), key).ToLocal(&value))
+    {
+      SE_REPORT_ERROR("Failed to get property value for key %s", FromV8String(isolate, key).c_str());
+      return false;
+    }
+
+    std::string keyStr = FromV8String(isolate, key);
+    cocos2d::Value dictValue;
+    if (jsval_to_ccvalue(isolate, value, &dictValue))
+    {
+      dict.insert(cocos2d::ValueMap::value_type(keyStr, dictValue));
+    }
+    else
+    {
+      SE_REPORT_ERROR("Failed to convert property value for key %s to CCValue", keyStr.c_str());
+      return false;
+    }
+  }
+  return true;
+}
+
+bool JsbUtils::jsval_to_ccvaluemapintkey(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::ValueMapIntKey *ret)
+{
+  v8::HandleScope handle_scope(isolate);
+
+  if (value->IsNull() || value->IsUndefined())
+  {
+    return true;
+  }
+
+  cocos2d::ValueMapIntKey &dict = *ret;
+  auto obj = value->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
+  v8::Local<v8::Array> propertyNames;
+  if (!obj->GetOwnPropertyNames(isolate->GetCurrentContext()).ToLocal(&propertyNames))
+  {
+    SE_REPORT_ERROR("Failed to get object property names");
+    return false;
+  }
+
+  for (uint32_t i = 0; i < propertyNames->Length(); i++)
+  {
+    v8::Local<v8::Value> key;
+    if (!propertyNames->Get(isolate->GetCurrentContext(), i).ToLocal(&key))
+    {
+      SE_REPORT_ERROR("Failed to get property name at index %d", i);
+      return false;
+    }
+
+    if (!key->IsString())
+    {
+      continue; // ignore non-string properties
+    }
+
+    int keyVal = key->Int32Value(isolate->GetCurrentContext()).FromJust();
+    v8::Local<v8::Value> value;
+    if (!obj->Get(isolate->GetCurrentContext(), key).ToLocal(&value))
+    {
+      SE_REPORT_ERROR("Failed to get property value for key %d", keyVal);
+      return false;
+    }
+
+    cocos2d::Value dictValue;
+    if (jsval_to_ccvalue(isolate, value, &dictValue))
+    {
+      dict.insert(cocos2d::ValueMapIntKey::value_type(keyVal, dictValue));
+    }
+    else
+    {
+      SE_REPORT_ERROR("Failed to convert property value for key %d to CCValue", keyVal);
+      return false;
+    }
+  }
+
+  return true;
+}
+
+bool JsbUtils::jsval_to_ccvaluevector(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::ValueVector *ret)
+{
+  v8::HandleScope handle_scope(isolate);
+  // JS::RootedObject jsArr(cx);
+  // bool ok = v.isObject() && JS_ValueToObject( cx, v, &jsArr );
+  // JSB_PRECONDITION3( ok, cx, false, "Error converting value to object");
+  // JSB_PRECONDITION3( jsArr && JS_IsArrayObject( cx, jsArr),  cx, false, "Object must be an array");
+
+  // uint32_t len = 0;
+  // JS_GetArrayLength(cx, jsArr, &len);
+
+  v8::Local<v8::Object> obj = value->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
+  if (!obj->IsArray())
+  {
+    SE_REPORT_ERROR("Object must be an array");
+    return false;
+  }
+  v8::Local<v8::Array> arr = obj.As<v8::Array>();
+
+  for (uint32_t i = 0; i < arr->Length(); i++)
+  {
+    v8::Local<v8::Value> element;
+    if (!arr->Get(isolate->GetCurrentContext(), i).ToLocal(&element))
+    {
+      SE_REPORT_ERROR("Failed to get array element at index %d", i);
+      return false;
+    }
+
+    cocos2d::Value vecValue;
+    if (jsval_to_ccvalue(isolate, element, &vecValue))
+    {
+      ret->push_back(vecValue);
+    }
+    else
+    {
+      SE_REPORT_ERROR("Failed to convert array element at index %d to CCValue", i);
+      return false;
+    }
+  }
+  // for (uint32_t i=0; i < len; i++)
+  // {
+  //     JS::RootedValue value(cx);
+  //     if (JS_GetElement(cx, jsArr, i, &value))
+  //     {
+  //         if (value.isObject())
+  //         {
+  //             JS::RootedObject jsobj(cx, value.toObjectOrNull());
+  //             CCASSERT(jsb_get_js_proxy(jsobj) == nullptr, "Native object should be added!");
+
+  //             if (!JS_IsArrayObject(cx, jsobj))
+  //             {
+  //                 // It's a normal js object.
+  //                 ValueMap dictVal;
+  //                 ok = jsval_to_ccvaluemap(cx, value, &dictVal);
+  //                 if (ok)
+  //                 {
+  //                     ret->push_back(Value(dictVal));
+  //                 }
+  //             }
+  //             else {
+  //                 // It's a js array object.
+  //                 ValueVector arrVal;
+  //                 ok = jsval_to_ccvaluevector(cx, value, &arrVal);
+  //                 if (ok)
+  //                 {
+  //                     ret->push_back(Value(arrVal));
+  //                 }
+  //             }
+  //         }
+  //         else if (value.isString())
+  //         {
+  //             JSStringWrapper valueWapper(value.toString(), cx);
+  //             ret->push_back(Value(valueWapper.get()));
+  //         }
+  //         else if (value.isNumber())
+  //         {
+  //             double number = 0.0;
+  //             ok = JS::ToNumber(cx, value, &number);
+  //             if (ok)
+  //             {
+  //                 ret->push_back(Value(number));
+  //             }
+  //         }
+  //         else if (value.isBoolean())
+  //         {
+  //             bool boolVal = JS::ToBoolean(value);
+  //             ret->push_back(Value(boolVal));
+  //         }
+  //         else
+  //         {
+  //             CCASSERT(false, "not supported type");
+  //         }
+  //     }
+  // }
+
+  return true;
+}
+
+v8::Local<v8::Value> JsbUtils::ccvalue_to_jsval(v8::Isolate *isolate, const cocos2d::Value &v)
+{
+  v8::HandleScope handle_scope(isolate);
+  v8::Local<v8::Object> retObj;
+  switch (v.getType())
+  {
+  case cocos2d::Value::Type::NONE:
+    return v8::Null(isolate);
+    break;
+  case cocos2d::Value::Type::BOOLEAN:
+    return v8::Boolean::New(isolate, v.asBool());
+    break;
+  case cocos2d::Value::Type::INTEGER:
+    return v8::Integer::New(isolate, v.asInt());
+    break;
+  case cocos2d::Value::Type::FLOAT:
+  case cocos2d::Value::Type::DOUBLE:
+    return v8::Number::New(isolate, v.asDouble());
+    break;
+  case cocos2d::Value::Type::STRING:
+    return ToV8String(isolate, v.asString());
+    break;
+  case cocos2d::Value::Type::MAP:
+    return ccvaluemap_to_jsval(isolate, v.asValueMap());
+    break;
+  case cocos2d::Value::Type::INT_KEY_MAP:
+    return ccvaluemapintkey_to_jsval(isolate, v.asIntKeyMap());
+    break;
+  case cocos2d::Value::Type::VECTOR:
+    return ccvaluevector_to_jsval(isolate, v.asValueVector());
+  default:
+    break;
+  }
+}
+
+v8::Local<v8::Value> JsbUtils::ccvaluemap_to_jsval(v8::Isolate *isolate, const cocos2d::ValueMap &v)
+{
+  v8::Local<v8::Object> jsRet = v8::Object::New(isolate);
+
+  for (auto iter = v.begin(); iter != v.end(); ++iter)
+  {
+    v8::Local<v8::Value> dictElement;
+
+    std::string key = iter->first;
+    const cocos2d::Value &obj = iter->second;
+
+    switch (obj.getType())
+    {
+    case cocos2d::Value::Type::BOOLEAN:
+      dictElement = v8::Boolean::New(isolate, obj.asBool());
+      break;
+    case cocos2d::Value::Type::FLOAT:
+    case cocos2d::Value::Type::DOUBLE:
+      dictElement = v8::Number::New(isolate, obj.asDouble());
+      break;
+    case cocos2d::Value::Type::INTEGER:
+      dictElement = v8::Integer::New(isolate, obj.asInt());
+      break;
+    case cocos2d::Value::Type::STRING:
+      dictElement = ToV8String(isolate, obj.asString());
+      break;
+    case cocos2d::Value::Type::VECTOR:
+      dictElement = ccvaluevector_to_jsval(isolate, obj.asValueVector());
+      break;
+    case cocos2d::Value::Type::MAP:
+      dictElement = ccvaluemap_to_jsval(isolate, obj.asValueMap());
+      break;
+    case cocos2d::Value::Type::INT_KEY_MAP:
+      dictElement = ccvaluemapintkey_to_jsval(isolate, obj.asIntKeyMap());
+      break;
+    default:
+      break;
+    }
+
+    if (!key.empty())
+    {
+      // JS_SetProperty(cx, jsRet, key.c_str(), dictElement);
+      jsRet->Set(isolate->GetCurrentContext(), ToV8String(isolate, key), dictElement).FromJust();
+    }
+  }
+  return jsRet;
+}
+
+v8::Local<v8::Value> JsbUtils::ccvaluemapintkey_to_jsval(v8::Isolate *isolate, const cocos2d::ValueMapIntKey &v)
+{
+  v8::Local<v8::Array> jsRet = v8::Array::New(isolate, v.size());
+
+  for (auto iter = v.begin(); iter != v.end(); ++iter)
+  {
+    v8::Local<v8::Value> dictElement;
+    std::stringstream keyss;
+    keyss << iter->first;
+    std::string key = keyss.str();
+
+    const cocos2d::Value &obj = iter->second;
+
+    switch (obj.getType())
+    {
+    case cocos2d::Value::Type::BOOLEAN:
+      dictElement = v8::Boolean::New(isolate, obj.asBool());
+      break;
+    case cocos2d::Value::Type::FLOAT:
+    case cocos2d::Value::Type::DOUBLE:
+      dictElement = v8::Number::New(isolate, obj.asDouble());
+      break;
+    case cocos2d::Value::Type::INTEGER:
+      dictElement = v8::Integer::New(isolate, obj.asInt());
+      break;
+    case cocos2d::Value::Type::STRING:
+      dictElement = ToV8String(isolate, obj.asString());
+      break;
+    case cocos2d::Value::Type::VECTOR:
+      dictElement = ccvaluevector_to_jsval(isolate, obj.asValueVector());
+      break;
+    case cocos2d::Value::Type::MAP:
+      dictElement = ccvaluemap_to_jsval(isolate, obj.asValueMap());
+      break;
+    case cocos2d::Value::Type::INT_KEY_MAP:
+      dictElement = ccvaluemapintkey_to_jsval(isolate, obj.asIntKeyMap());
+      break;
+    default:
+      break;
+    }
+
+    if (!key.empty())
+    {
+      // JS_SetProperty(cx, jsRet, key.c_str(), dictElement);
+      jsRet->Set(isolate->GetCurrentContext(), ToV8String(isolate, key), dictElement).FromJust();
+    }
+  }
+  return jsRet;
+}
+
+v8::Local<v8::Value> JsbUtils::ccvaluevector_to_jsval(v8::Isolate *isolate, const cocos2d::ValueVector &v)
+{
+  v8::Local<v8::Array> jsRet = v8::Array::New(isolate, v.size());
+
+  int i = 0;
+  for (const auto &obj : v)
+  {
+    v8::Local<v8::Value> arrElement;
+
+    switch (obj.getType())
+    {
+    case cocos2d::Value::Type::BOOLEAN:
+      arrElement = v8::Boolean::New(isolate, obj.asBool());
+      break;
+    case cocos2d::Value::Type::FLOAT:
+    case cocos2d::Value::Type::DOUBLE:
+      arrElement = v8::Number::New(isolate, obj.asDouble());
+      break;
+    case cocos2d::Value::Type::INTEGER:
+      arrElement = v8::Integer::New(isolate, obj.asInt());
+      break;
+    case cocos2d::Value::Type::STRING:
+      arrElement = ToV8String(isolate, obj.asString());
+      break;
+    case cocos2d::Value::Type::VECTOR:
+      arrElement = ccvaluevector_to_jsval(isolate, obj.asValueVector());
+      break;
+    case cocos2d::Value::Type::MAP:
+      arrElement = ccvaluemap_to_jsval(isolate, obj.asValueMap());
+      break;
+    case cocos2d::Value::Type::INT_KEY_MAP:
+      arrElement = ccvaluemapintkey_to_jsval(isolate, obj.asIntKeyMap());
+      break;
+    default:
+      break;
+    }
+    
+
+    // if (!JS_SetElement(cx, jsretArr, i, arrElement))
+    // {
+    //   break;
+    // }
+    jsRet->Set(isolate->GetCurrentContext(), i, arrElement).FromJust();
+    ++i;
+  }
+  return jsRet;
 }

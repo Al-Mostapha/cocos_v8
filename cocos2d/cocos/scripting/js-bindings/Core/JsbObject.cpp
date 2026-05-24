@@ -70,7 +70,7 @@ void JsbObject::nativeObjectFinalizeHook(void *nativeObj)
   auto iter = NativePtrToObjectMap::find(nativeObj);
   if (iter != NativePtrToObjectMap::end())
   {
-    // TODO: 
+    // TODO:
     assert(false);
     // JsbObject *obj = iter->second;
     // NativePtrToObjectMap::erase(iter);
@@ -231,11 +231,11 @@ JsbObject *JsbObject::createArrayBufferObject(void *data, size_t byteLength)
 #else
   if (data)
   {
-    memcpy(jsobj->GetContents().Data(), data, byteLength);
+    memcpy(jsobj->GetBackingStore()->Data(), data, byteLength);
   }
   else
   {
-    memset(jsobj->GetContents().Data(), 0, byteLength);
+    memset(jsobj->GetBackingStore()->Data(), 0, byteLength);
   }
 #endif
   JsbObject *obj = JsbObject::_createJSObject(nullptr, jsobj);
@@ -258,7 +258,7 @@ JsbObject *JsbObject::createTypedArray(TypedArrayType type, void *data, size_t b
 
   v8::Local<v8::ArrayBuffer> jsobj = v8::ArrayBuffer::New(__isolate, byteLength);
   // If data has content,then will copy data into buffer,or will only clear buffer.
-#if CC_TARGET_PLATFORM == CC_PLATFORM_OPENHARMONY
+
   if (data)
   {
     memcpy(jsobj->GetBackingStore()->Data(), data, byteLength);
@@ -267,16 +267,6 @@ JsbObject *JsbObject::createTypedArray(TypedArrayType type, void *data, size_t b
   {
     memset(jsobj->GetBackingStore()->Data(), 0, byteLength);
   }
-#else
-  if (data)
-  {
-    memcpy(jsobj->GetContents().Data(), data, byteLength);
-  }
-  else
-  {
-    memset(jsobj->GetContents().Data(), 0, byteLength);
-  }
-#endif
 
   v8::Local<v8::Object> arr;
   switch (type)
@@ -495,13 +485,10 @@ bool JsbObject::getTypedArrayData(uint8_t **ptr, size_t *length) const
   assert(isTypedArray());
   v8::Local<v8::Object> obj = const_cast<JsbObject *>(this)->_obj.handle(__isolate);
   v8::Local<v8::TypedArray> arr = v8::Local<v8::TypedArray>::Cast(obj);
-#if CC_TARGET_PLATFORM == CC_PLATFORM_OPENHARMONY
+
   const auto &backingStore = arr->Buffer()->GetBackingStore();
   *ptr = static_cast<uint8_t *>(backingStore->Data()) + arr->ByteOffset();
-#else
-  v8::ArrayBuffer::Contents content = arr->Buffer()->GetContents();
-  *ptr = (uint8_t *)content.Data() + arr->ByteOffset();
-#endif
+
 
   *length = arr->ByteLength();
   return true;
@@ -518,15 +505,11 @@ bool JsbObject::getArrayBufferData(uint8_t **ptr, size_t *length) const
   assert(isArrayBuffer());
   v8::Local<v8::Object> obj = const_cast<JsbObject *>(this)->_obj.handle(__isolate);
   v8::Local<v8::ArrayBuffer> arrBuf = v8::Local<v8::ArrayBuffer>::Cast(obj);
-#if CC_TARGET_PLATFORM == CC_PLATFORM_OPENHARMONY
+
   const auto &backingStore = arrBuf->GetBackingStore();
   *ptr = static_cast<uint8_t *>(backingStore->Data());
   *length = backingStore->ByteLength();
-#else
-  v8::ArrayBuffer::Contents content = arrBuf->GetContents();
-  *ptr = (uint8_t *)content.Data();
-  *length = content.ByteLength();
-#endif
+
   return true;
 }
 
