@@ -4,6 +4,8 @@
 #define EXPOSE_GC "__jsb_gc__"
 #include "JsbUtils.h"
 #include <sstream>
+#include "Utils/MappingUtils.hpp"
+#include "platform/CCFileUtils.h"
 
 ScriptEngine *ScriptEngine::_instance = nullptr;
 int __jsbInvocationCount = 0;
@@ -387,7 +389,7 @@ bool ScriptEngine::init()
     _context.Reset(_isolate, v8::Context::New(_isolate));
     _context.Get(_isolate)->Enter();
 
-    // NativePtrToObjectMap::init();
+    NativePtrToObjectMap::init();
     // NonRefNativePtrCreatedByCtorMap::init();
 
     // Object::setup();
@@ -426,12 +428,57 @@ bool ScriptEngine::init()
 
     for (const auto &hook : _afterInitHookArray)
     {
-        hook();
+        hook(_isolate, _globalObj.Get(_isolate));
     }
     _afterInitHookArray.clear();
 
     return _isValid;
 
+    return true;
+}
+
+bool ScriptEngine::didStart()
+{
+
+    // v8::Isolate *isolate = getIsolate();
+    // v8::HandleScope handle_scope(isolate);
+
+    // v8::Local<v8::Value> result;
+    // std::string script = "'V8 + Cocos2d running! Result: ' + (6 * 7); console.log('Hello from V8'); cc.Configuration.getInstance().setValue('testKey', 'testValue'); cc.log('Config testKey: ' + cc.Configuration.getInstance().getValue('testKey'));";
+    // js->evalString(script.c_str(), script.length(), &result);
+
+    // //     se::HandleObject performanceObj(se::Object::createPlainObject());
+    // v8::Local<v8::Object> performanceObj = v8::Object::New(isolate);
+    // //     performanceObj->defineFunction("now", _SE(js_performance_now));
+    // JsbUtils::DefineFunction(performanceObj, "now", [](const v8::FunctionCallbackInfo<v8::Value> &args) -> void
+    //                          {
+    //         cocos2d::log("[JSB] performance.now() called");
+    //         auto isolate = args.GetIsolate();
+    //         auto now = std::chrono::high_resolution_clock::now();
+    //         auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
+    //         args.GetReturnValue().Set(v8::Number::New(isolate, static_cast<double>(ms))); });
+    // v8::Local<v8::Object> global = isolate->GetCurrentContext()->Global();
+    // //     global->setProperty("performance", se::Value(performanceObj));
+    // JsbUtils::SetProperty(isolate, global, "performance", performanceObj);
+
+    // // cocos2d::log("[JSB] %s", result.As);
+
+    // cocos2d::log("[JSB] Failed to start V8");
+
+    // v8::Isolate *isolate = js->getIsolate();
+    // v8::HandleScope handle_scope(isolate);
+    // v8::Local<v8::Context> context = isolate->GetCurrentContext();
+    // std::string script2 = "performance.now();";
+    // v8::Local<v8::Value> result2;
+    // js->evalString(script2.c_str(), script2.length(), &result2);
+    // if (result2->IsNumber())
+    // {
+    //     double now = result2.As<v8::Number>()->Value();
+    //     cocos2d::log("[JSB] performance.now() returned: %f", now);
+    // }
+    runScript("test.js");
+    runScript("script/jsb_boot.js");
+    runScript("main.js");
     return true;
 }
 
@@ -474,16 +521,26 @@ bool ScriptEngine::start()
 
     // After ScriptEngine is started, _registerCallbackArray isn't needed. Therefore, clear it here.
     _registerCallbackArray.clear();
-
+    this->didStart();
     return ok;
 }
+
+// v8::Local<v8::Script> ScriptEngine::compileScript(const std::string &path, v8::Local<v8::Object> global, v8::Isolate *isolate)
+// {
+// }
+
+// v8::Local<v8::Script> ScriptEngine::getScript(const std::string &path) {}
 
 bool ScriptEngine::runScript(const std::string &filePath, v8::Local<v8::Value> *rval)
 {
     assert(!filePath.empty());
-    assert(_fileOperationDelegate.isValid());
 
-    std::string scriptBuffer = _fileOperationDelegate.onGetStringFromFile(filePath);
+    cocos2d::FileUtils *futil = cocos2d::FileUtils::getInstance();
+    std::string scriptBuffer;
+    if (futil->isFileExist(filePath))
+    {
+        scriptBuffer = futil->getStringFromFile(filePath);
+    }
 
     if (!scriptBuffer.empty())
     {

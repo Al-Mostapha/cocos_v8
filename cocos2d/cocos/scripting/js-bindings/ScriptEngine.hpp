@@ -63,7 +63,13 @@ public:
 
   bool start();
 
+  bool didStart();
+
   void cleanup();
+
+  v8::Local<v8::Script> compileScript(const std::string &path, v8::Local<v8::Object> global, v8::Isolate *isolate);
+
+  v8::Local<v8::Script> getScript(const std::string &path);
 
   /**
    *  @brief Enables JavaScript debugger
@@ -93,10 +99,12 @@ public:
   {
     _beforeInitHookArray.push_back(hook);
   }
-  void addAfterInitHook(const std::function<void()> &hook)
+
+  void addAfterInitHook(const std::function<void(v8::Isolate *, v8::Local<v8::Object>)> &hook)
   {
     _afterInitHookArray.push_back(hook);
   }
+
   void addBeforeCleanupHook(const std::function<void()> &hook)
   {
     _beforeCleanupHookArray.push_back(hook);
@@ -106,6 +114,7 @@ public:
   {
     _afterCleanupHookArray.push_back(hook);
   }
+
   std::chrono::steady_clock::time_point getStartTime() const { return _startTime; }
 
 private:
@@ -130,7 +139,7 @@ private:
   std::chrono::steady_clock::time_point _startTime;
   std::vector<std::function<bool(v8::Local<v8::Object>)>> _registerCallbackArray;
   std::vector<std::function<void()>> _beforeInitHookArray;
-  std::vector<std::function<void()>> _afterInitHookArray;
+  std::vector<std::function<void(v8::Isolate *, v8::Local<v8::Object>)>> _afterInitHookArray;
   std::vector<std::function<void()>> _beforeCleanupHookArray;
   std::vector<std::function<void()>> _afterCleanupHookArray;
 

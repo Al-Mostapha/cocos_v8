@@ -901,7 +901,7 @@ void js_cocos2dx_Configuration_getInstance(const v8::FunctionCallbackInfo<v8::Va
     if (ret)
     {
       v8::Local<v8::Object> jsret;
-      JsbUtils::NativePtrToObject(isolate, ret, &jsret);
+      JsbUtils::NativePtrToObject(typeid(*ret).name(), ret, &jsret);
       args.GetReturnValue().Set(jsret);
     }
     else
@@ -920,7 +920,7 @@ void js_register_cocos2dx_Configuration(v8::Isolate *isolate, v8::Local<v8::Obje
   v8::Local<v8::Context> ctx = isolate->GetCurrentContext();
   //     jsb_cocos2d_Configuration_class = (JSClass *)calloc(1, sizeof(JSClass));
   v8::Local<v8::FunctionTemplate> tpl = JsbUtils::CreateClass(isolate, "Configuration", nullptr);
-  JsbUtils::RegisterV8Class("Configuration", &tpl);
+  JsbUtils::RegisterV8Class(typeid(cocos2d::Configuration).name(), &tpl);
 
   //     jsb_cocos2d_Configuration_class->name = "Configuration";
   //     jsb_cocos2d_Configuration_class->addProperty = JS_PropertyStub;

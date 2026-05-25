@@ -241,7 +241,7 @@ bool JsbUtils::DefineFunction(v8::Local<v8::Object> obj, const char *name, void 
 
 bool JsbUtils::SetPrivate(v8::Isolate *isolate, void *nativePtr, v8::Local<v8::Object> obj)
 {
-  assert(nativePtr == nullptr);
+  assert(nativePtr != nullptr);
   assert(NativePtrToObjectMap::find(nativePtr) == NativePtrToObjectMap::end());
 
   // internal::setPrivate(__isolate, _obj, data, &_internalData);
@@ -277,9 +277,9 @@ bool JsbUtils::SetPrivate(v8::Isolate *isolate, void *nativePtr, v8::Local<v8::O
   return true;
 }
 
-bool JsbUtils::NativePtrToObject(v8::Isolate *isolate, void *ptr, v8::Local<v8::Object> *outObj)
+bool JsbUtils::NativePtrToObject(const char *typeName, void *ptr, v8::Local<v8::Object> *outObj)
 {
-
+  v8::Isolate *isolate = v8::Isolate::GetCurrent();
   v8::EscapableHandleScope handle_scope(isolate);
   v8::Local<v8::Context> context = isolate->GetCurrentContext();
   auto jsbObj = NativePtrToObjectMap::find(ptr);
@@ -298,9 +298,9 @@ bool JsbUtils::NativePtrToObject(v8::Isolate *isolate, void *ptr, v8::Local<v8::
     //     *isReturnCachedValue = false;
     // }
     v8::Local<v8::Object> obj;
-    if (!CreateJsObjectByTypeName(typeid(ptr).name(), &obj))
+    if (!CreateJsObjectByTypeName(typeName, &obj))
     {
-      SE_REPORT_ERROR("Failed to create js object for native type: %s", typeid(ptr).name());
+      SE_REPORT_ERROR("Failed to create js object for native type: %s", typeName);
       return false;
     }
 
@@ -806,7 +806,7 @@ bool JsbUtils::RegisterV8Class(const char *className, v8::Local<v8::FunctionTemp
     SE_REPORT_ERROR("Failed to get function template for class: %s", className);
     return false;
   }
-
+  SE_LOGD("Register class: %s", className);
   ScriptEngine::_registeredClasses[className] = v8::Global<v8::FunctionTemplate>(isolate, *constructor);
   return true;
 }
