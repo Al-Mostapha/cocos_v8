@@ -93,6 +93,10 @@ public:
   {
     _beforeInitHookArray.push_back(hook);
   }
+  void addAfterInitHook(const std::function<void()> &hook)
+  {
+    _afterInitHookArray.push_back(hook);
+  }
   void addBeforeCleanupHook(const std::function<void()> &hook)
   {
     _beforeCleanupHookArray.push_back(hook);

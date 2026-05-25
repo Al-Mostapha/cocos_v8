@@ -6,6 +6,7 @@
 // bool js_cocos2dx_Configuration_constructor(JSContext *cx, uint32_t argc, jsval *vp);
 // void js_cocos2dx_Configuration_finalize(JSContext *cx, JSObject *obj);
 // void js_register_cocos2dx_Configuration(JSContext *cx, JS::HandleObject global);
+void js_register_cocos2dx_Configuration(v8::Isolate *isolate, v8::Local<v8::Object> global);
 // void register_all_cocos2dx(JSContext* cx, JS::HandleObject obj);
 // bool js_cocos2dx_Configuration_supportsPVRTC(JSContext *cx, uint32_t argc, jsval *vp);
 // bool js_cocos2dx_Configuration_supportsOESDepth24(JSContext *cx, uint32_t argc, jsval *vp);

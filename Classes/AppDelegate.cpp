@@ -26,6 +26,7 @@
 #include "HelloWorldScene.h"
 #include "ScriptEngine.hpp"
 #include "JsbUtils.h"
+#include "Wrapper/JsbAllCocos.hpp"
 
 // #define USE_AUDIO_ENGINE 1
 
@@ -114,10 +115,19 @@ bool AppDelegate::applicationDidFinishLaunching()
     // Start the JS engine and run a smoke test
     auto *js = ScriptEngine::getInstance();
 
+    js->addAfterInitHook([]() {
+        auto isolate = ScriptEngine::getInstance()->getIsolate();
+        v8::HandleScope handle_scope(isolate);
+        auto context = ScriptEngine::getInstance()->_getContext();
+        v8::Context::Scope context_scope(context);
+        register_all_cocos2dx(isolate, context->Global());
+    });
+
     // jsb_register_all_modules();
 
     if (js->start())
     {
+        
         v8::Isolate *isolate = js->getIsolate();
         v8::HandleScope handle_scope(isolate);
 

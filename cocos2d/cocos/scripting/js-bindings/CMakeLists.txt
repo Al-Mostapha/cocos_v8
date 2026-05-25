@@ -13,6 +13,7 @@ set(JSB_SRC
     Utils/MappingUtils.cpp
 
     Wrapper/JsbCommon.cpp
+    Wrapper/JsbAllCocos.cpp
 )
 
 set(JSB_HEADERS
@@ -30,6 +31,7 @@ set(JSB_HEADERS
 
     Utils/MappingUtils.hpp
 
+    Wrapper/JsbAllCocos.hpp
     Wrapper/JsbCommon.hpp
 )
 

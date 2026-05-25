@@ -46,6 +46,12 @@ public:
     static bool CreateJsObjectByTypeName(const char *typeName, v8::Local<v8::Object> *outObj);
     static bool NativePtrToObject(v8::Isolate *isolate, void *ptr, v8::Local<v8::Object> *outObj);
 
+    static bool GetOrCreateJsObject(v8::Isolate *isolate, v8::Local<v8::Object> obj, const char *name, v8::Local<v8::Object> *outObj);
+
+    static v8::Local<v8::FunctionTemplate> CreateClass(v8::Isolate *isolate, const char *className, v8::FunctionCallback constructor);
+
+    static bool RegisterV8Class(const char *className, v8::Local<v8::FunctionTemplate> *constructor);
+
     static bool jsval_to_ccvalue(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::Value *outValue);
     static bool jsval_to_ccvaluemap(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::ValueMap *ret);
     static bool jsval_to_ccvaluemapintkey(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::ValueMapIntKey *ret);

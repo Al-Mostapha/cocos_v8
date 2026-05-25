@@ -778,7 +778,6 @@ v8::Local<v8::Value> JsbUtils::ccvaluevector_to_jsval(v8::Isolate *isolate, cons
     default:
       break;
     }
-    
 
     // if (!JS_SetElement(cx, jsretArr, i, arrElement))
     // {
@@ -788,4 +787,71 @@ v8::Local<v8::Value> JsbUtils::ccvaluevector_to_jsval(v8::Isolate *isolate, cons
     ++i;
   }
   return jsRet;
+}
+
+v8::Local<v8::FunctionTemplate> JsbUtils::CreateClass(v8::Isolate *isolate, const char *className, v8::FunctionCallback constructor)
+{
+  v8::EscapableHandleScope handle_scope(isolate);
+  v8::Local<v8::FunctionTemplate> tmpl = v8::FunctionTemplate::New(isolate, constructor);
+  tmpl->SetClassName(ToV8String(isolate, className));
+  tmpl->InstanceTemplate()->SetInternalFieldCount(1);
+  return handle_scope.Escape(tmpl);
+}
+
+bool JsbUtils::RegisterV8Class(const char *className, v8::Local<v8::FunctionTemplate> *constructor)
+{
+  v8::Isolate *isolate = v8::Isolate::GetCurrent();
+  if (constructor->IsEmpty())
+  {
+    SE_REPORT_ERROR("Failed to get function template for class: %s", className);
+    return false;
+  }
+
+  ScriptEngine::_registeredClasses[className] = v8::Global<v8::FunctionTemplate>(isolate, *constructor);
+  return true;
+}
+
+bool JsbUtils::GetOrCreateJsObject(v8::Isolate *isolate, v8::Local<v8::Object> obj, const char *name, v8::Local<v8::Object> *outObj)
+{
+  v8::EscapableHandleScope handle_scope(isolate);
+  // JS::RootedValue nsval(cx);
+  // JS_GetProperty(cx, obj, name.c_str(), &nsval);
+  v8::Local<v8::Value> nsval;
+  if (!JsbUtils::GetProperty(isolate, obj, name, &nsval))
+  {
+    SE_REPORT_ERROR("Failed to get property %s from object", name);
+    return false;
+  }
+  // if (nsval == JSVAL_VOID)
+  // {
+  //   jsObj.set(JS_NewObject(cx, nullptr, JS::NullPtr(), JS::NullPtr()));
+  //   nsval = OBJECT_TO_JSVAL(jsObj);
+  //   JS_SetProperty(cx, obj, name.c_str(), nsval);
+  // }
+  // else
+  // {
+  //   jsObj.set(nsval.toObjectOrNull());
+  // }
+  if (nsval->IsUndefined())
+  {
+    v8::Local<v8::Object> newObj = v8::Object::New(isolate);
+    if (!JsbUtils::SetProperty(isolate, obj, name, newObj))
+    {
+      SE_REPORT_ERROR("Failed to set property %s to object", name);
+      return false;
+    }
+    if (outObj != nullptr)
+      *outObj = handle_scope.Escape(newObj);
+  }
+  else
+  {
+    if (!nsval->IsObject())
+    {
+      SE_REPORT_ERROR("Property %s is not an object", name);
+      return false;
+    }
+    if (outObj != nullptr)
+      *outObj = handle_scope.Escape(nsval->ToObject(isolate->GetCurrentContext()).ToLocalChecked());
+  }
+  return true;
 }
