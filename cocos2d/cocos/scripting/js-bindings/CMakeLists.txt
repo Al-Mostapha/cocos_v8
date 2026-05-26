@@ -14,6 +14,7 @@ set(JSB_SRC
 
     Wrapper/JsbCommon.cpp
     Wrapper/JsbAllCocos.cpp
+    Wrapper/JsbNode.cpp
 )
 
 set(JSB_HEADERS
@@ -33,6 +34,7 @@ set(JSB_HEADERS
 
     Wrapper/JsbAllCocos.hpp
     Wrapper/JsbCommon.hpp
+    Wrapper/JsbNode.hpp
 )
 
 add_library(jsb STATIC ${JSB_SRC} ${JSB_HEADERS})

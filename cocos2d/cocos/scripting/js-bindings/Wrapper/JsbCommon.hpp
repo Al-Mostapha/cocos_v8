@@ -7,35 +7,6 @@
 // void js_cocos2dx_Configuration_finalize(JSContext *cx, JSObject *obj);
 // void js_register_cocos2dx_Configuration(JSContext *cx, JS::HandleObject global);
 void js_register_cocos2dx_Configuration(v8::Isolate *isolate, v8::Local<v8::Object> global);
-// void register_all_cocos2dx(JSContext* cx, JS::HandleObject obj);
-// bool js_cocos2dx_Configuration_supportsPVRTC(JSContext *cx, uint32_t argc, jsval *vp);
-// bool js_cocos2dx_Configuration_supportsOESDepth24(JSContext *cx, uint32_t argc, jsval *vp);
-// bool js_cocos2dx_Configuration_getMaxModelviewStackDepth(JSContext *cx, uint32_t argc, jsval *vp);
-// bool js_cocos2dx_Configuration_supportsShareableVAO(JSContext *cx, uint32_t argc, jsval *vp);
-// bool js_cocos2dx_Configuration_supportsBGRA8888(JSContext *cx, uint32_t argc, jsval *vp);
-// bool js_cocos2dx_Configuration_checkForGLExtension(JSContext *cx, uint32_t argc, jsval *vp);
-// bool js_cocos2dx_Configuration_supportsATITC(JSContext *cx, uint32_t argc, jsval *vp);
-// bool js_cocos2dx_Configuration_supportsNPOT(JSContext *cx, uint32_t argc, jsval *vp);
-// bool js_cocos2dx_Configuration_init(JSContext *cx, uint32_t argc, jsval *vp);
-// bool js_cocos2dx_Configuration_getAnimate3DQuality(JSContext *cx, uint32_t argc, jsval *vp);
-// bool js_cocos2dx_Configuration_getMaxSupportPointLightInShader(JSContext *cx, uint32_t argc, jsval *vp);
-// bool js_cocos2dx_Configuration_getMaxTextureSize(JSContext *cx, uint32_t argc, jsval *vp);
-// bool js_cocos2dx_Configuration_setValue(JSContext *cx, uint32_t argc, jsval *vp);
-// bool js_cocos2dx_Configuration_getMaxSupportSpotLightInShader(JSContext *cx, uint32_t argc, jsval *vp);
-// bool js_cocos2dx_Configuration_supportsETC(JSContext *cx, uint32_t argc, jsval *vp);
-// bool js_cocos2dx_Configuration_getMaxSupportDirLightInShader(JSContext *cx, uint32_t argc, jsval *vp);
-// bool js_cocos2dx_Configuration_loadConfigFile(JSContext *cx, uint32_t argc, jsval *vp);
-// bool js_cocos2dx_Configuration_supportsDiscardFramebuffer(JSContext *cx, uint32_t argc, jsval *vp);
-// bool js_cocos2dx_Configuration_supportsOESPackedDepthStencil(JSContext *cx, uint32_t argc, jsval *vp);
-// bool js_cocos2dx_Configuration_supportsS3TC(JSContext *cx, uint32_t argc, jsval *vp);
-// bool js_cocos2dx_Configuration_getInfo(JSContext *cx, uint32_t argc, jsval *vp);
-// bool js_cocos2dx_Configuration_getMaxTextureUnits(JSContext *cx, uint32_t argc, jsval *vp);
-// bool js_cocos2dx_Configuration_getValue(JSContext *cx, uint32_t argc, jsval *vp);
-// bool js_cocos2dx_Configuration_gatherGPUInfo(JSContext *cx, uint32_t argc, jsval *vp);
-// bool js_cocos2dx_Configuration_supportsMapBuffer(JSContext *cx, uint32_t argc, jsval *vp);
-// bool js_cocos2dx_Configuration_getInfoAsMap(JSContext *cx, uint32_t argc, jsval *vp);
-// bool js_cocos2dx_Configuration_destroyInstance(JSContext *cx, uint32_t argc, jsval *vp);
-// bool js_cocos2dx_Configuration_getInstance(JSContext *cx, uint32_t argc, jsval *vp);
 
 // extern JSClass  *jsb_cocos2d_Properties_class;
 // extern JSObject *jsb_cocos2d_Properties_prototype;
@@ -76,9 +47,10 @@ void js_register_cocos2dx_Configuration(v8::Isolate *isolate, v8::Local<v8::Obje
 // extern JSClass  *jsb_cocos2d_Device_class;
 // extern JSObject *jsb_cocos2d_Device_prototype;
 
+// void js_register_cocos2dx_Device(JSContext *cx, JS::HandleObject global);
+void js_register_cocos2dx_Device(v8::Isolate *isolate, v8::Local<v8::Object> global);
 // bool js_cocos2dx_Device_constructor(JSContext *cx, uint32_t argc, jsval *vp);
 // void js_cocos2dx_Device_finalize(JSContext *cx, JSObject *obj);
-// void js_register_cocos2dx_Device(JSContext *cx, JS::HandleObject global);
 // void register_all_cocos2dx(JSContext* cx, JS::HandleObject obj);
 // bool js_cocos2dx_Device_setAccelerometerEnabled(JSContext *cx, uint32_t argc, jsval *vp);
 // bool js_cocos2dx_Device_setAccelerometerInterval(JSContext *cx, uint32_t argc, jsval *vp);

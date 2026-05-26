@@ -1,7 +1,9 @@
 
+#include "v8.h"
 // extern JSClass  *jsb_cocos2d_Node_class;
 // extern JSObject *jsb_cocos2d_Node_prototype;
 
+void js_register_cocos2dx_Node(v8::Isolate *isolate, v8::Local<v8::Object> global);
 // bool js_cocos2dx_Node_constructor(JSContext *cx, uint32_t argc, jsval *vp);
 // void js_cocos2dx_Node_finalize(JSContext *cx, JSObject *obj);
 // void js_register_cocos2dx_Node(JSContext *cx, JS::HandleObject global);

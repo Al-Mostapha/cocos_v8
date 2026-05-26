@@ -5,6 +5,7 @@
 #include "ScriptEngine.hpp"
 #include "Utils/MappingUtils.hpp"
 #include "base/CCValue.h"
+#include "math/CCAffineTransform.h"
 #include <sstream>
 
 std::string JsbUtils::FromV8String(v8::Isolate *isolate, v8::Local<v8::String> str)
@@ -854,4 +855,91 @@ bool JsbUtils::GetOrCreateJsObject(v8::Isolate *isolate, v8::Local<v8::Object> o
       *outObj = handle_scope.Escape(nsval->ToObject(isolate->GetCurrentContext()).ToLocalChecked());
   }
   return true;
+}
+
+v8::Local<v8::Value> JsbUtils::cccolor3b_to_jsval(v8::Isolate *isolate, const cocos2d::Color3B &v)
+{
+  v8::EscapableHandleScope handle_scope(isolate);
+  v8::Local<v8::Object> jsRet = v8::Object::New(isolate);
+  SetProperty(isolate, jsRet, "r", v8::Integer::New(isolate, v.r));
+  SetProperty(isolate, jsRet, "g", v8::Integer::New(isolate, v.g));
+  SetProperty(isolate, jsRet, "b", v8::Integer::New(isolate, v.b));
+
+  return handle_scope.Escape(jsRet);
+}
+
+v8::Local<v8::Value> JsbUtils::vector3_to_jsval(v8::Isolate *isolate, const cocos2d::Vec3 &v)
+{
+  v8::EscapableHandleScope handle_scope(isolate);
+  v8::Local<v8::Object> jsRet = v8::Object::New(isolate);
+  SetProperty(isolate, jsRet, "x", v8::Number::New(isolate, v.x));
+  SetProperty(isolate, jsRet, "y", v8::Number::New(isolate, v.y));
+  SetProperty(isolate, jsRet, "z", v8::Number::New(isolate, v.z));
+
+  return handle_scope.Escape(jsRet);
+}
+
+v8::Local<v8::Value> JsbUtils::vector2_to_jsval(v8::Isolate *isolate, const cocos2d::Vec2 &v)
+{
+  v8::EscapableHandleScope handle_scope(isolate);
+  v8::Local<v8::Object> jsRet = v8::Object::New(isolate);
+  SetProperty(isolate, jsRet, "x", v8::Number::New(isolate, v.x));
+  SetProperty(isolate, jsRet, "y", v8::Number::New(isolate, v.y));
+
+  return handle_scope.Escape(jsRet);
+}
+
+bool JsbUtils::jsval_to_vector2(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::Vec2 *outValue)
+{
+  v8::HandleScope handle_scope(isolate);
+
+  if (value->IsNull() || value->IsUndefined())
+  {
+    *outValue = cocos2d::Vec2::ZERO;
+    return true;
+  }
+
+  auto obj = value->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
+  v8::Local<v8::Value> xVal;
+  if (!obj->Get(isolate->GetCurrentContext(), ToV8String(isolate, "x")).ToLocal(&xVal))
+  {
+    SE_REPORT_ERROR("Failed to get property x from object");
+    return false;
+  }
+  v8::Local<v8::Value> yVal;
+  if (!obj->Get(isolate->GetCurrentContext(), ToV8String(isolate, "y")).ToLocal(&yVal))
+  {
+    SE_REPORT_ERROR("Failed to get property y from object");
+    return false;
+  }
+
+  outValue->x = xVal->NumberValue(isolate->GetCurrentContext()).FromJust();
+  outValue->y = yVal->NumberValue(isolate->GetCurrentContext()).FromJust();
+  return true;
+}
+
+v8::Local<v8::Array> JsbUtils::matrix_to_jsval(v8::Isolate *isolate, const cocos2d::Mat4 &v)
+{
+  v8::EscapableHandleScope handle_scope(isolate);
+  v8::Local<v8::Array> jsArray = v8::Array::New(isolate, 16);
+  for (int i = 0; i < 16; i++)
+  {
+    jsArray->Set(isolate->GetCurrentContext(), i, v8::Number::New(isolate, v.m[i])).FromJust();
+  }
+
+  return handle_scope.Escape(jsArray);
+}
+
+v8::Local<v8::Object> JsbUtils::ccaffinetransform_to_jsval(v8::Isolate *isolate, const cocos2d::AffineTransform &v)
+{
+  v8::EscapableHandleScope handle_scope(isolate);
+  v8::Local<v8::Object> jsRet = v8::Object::New(isolate);
+  SetProperty(isolate, jsRet, "a", v8::Number::New(isolate, v.a));
+  SetProperty(isolate, jsRet, "b", v8::Number::New(isolate, v.b));
+  SetProperty(isolate, jsRet, "c", v8::Number::New(isolate, v.c));
+  SetProperty(isolate, jsRet, "d", v8::Number::New(isolate, v.d));
+  SetProperty(isolate, jsRet, "tx", v8::Number::New(isolate, v.tx));
+  SetProperty(isolate, jsRet, "ty", v8::Number::New(isolate, v.ty));
+
+  return handle_scope.Escape(jsRet);
 }

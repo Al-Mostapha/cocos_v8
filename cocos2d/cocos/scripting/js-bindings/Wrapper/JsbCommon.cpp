@@ -3,6 +3,7 @@
 #include "JsbUtils.h"
 #include "JsbCommon.hpp"
 #include "base/CCConfiguration.h"
+#include "platform/CCDevice.h"
 // JSClass  *jsb_cocos2d_Configuration_class;
 // JSObject *jsb_cocos2d_Configuration_prototype;
 
@@ -931,6 +932,7 @@ void js_register_cocos2dx_Configuration(v8::Isolate *isolate, v8::Local<v8::Obje
   //     jsb_cocos2d_Configuration_class->resolve = JS_ResolveStub;
   //     jsb_cocos2d_Configuration_class->convert = JS_ConvertStub;
   //     jsb_cocos2d_Configuration_class->flags = JSCLASS_HAS_RESERVED_SLOTS(2);
+  tpl->PrototypeTemplate()->Set(isolate, "supportsPVRTC", v8::FunctionTemplate::New(isolate, js_cocos2dx_Configuration_supportsPVRTC));
   tpl->PrototypeTemplate()->Set(isolate, "supportsATITC", v8::FunctionTemplate::New(isolate, js_cocos2dx_Configuration_supportsATITC));
   tpl->PrototypeTemplate()->Set(isolate, "supportsNPOT", v8::FunctionTemplate::New(isolate, js_cocos2dx_Configuration_supportsNPOT));
   tpl->PrototypeTemplate()->Set(isolate, "init", v8::FunctionTemplate::New(isolate, js_cocos2dx_Configuration_init));
@@ -1014,4 +1016,214 @@ void js_register_cocos2dx_Configuration(v8::Isolate *isolate, v8::Local<v8::Obje
   //     JS_SetProperty(cx, proto, "__is_ref", JS::TrueHandleValue);
   //     // add the proto and JSClass to the type->js info hash table
   //     jsb_register_class<cocos2d::Configuration>(cx, jsb_cocos2d_Configuration_class, proto, JS::NullPtr());
+}
+
+// bool js_cocos2dx_Device_constructor(JSContext *cx, uint32_t argc, jsval *vp);
+// void js_cocos2dx_Device_finalize(JSContext *cx, JSObject *obj);
+// void register_all_cocos2dx(JSContext* cx, JS::HandleObject obj);
+// bool js_cocos2dx_Device_setAccelerometerEnabled(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_Device_setAccelerometerInterval(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_Device_setKeepScreenOn(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_Device_vibrate(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_Device_getDPI(JSContext *cx, uint32_t argc, jsval *vp);
+// void js_register_cocos2dx_Device(JSContext *cx, JS::HandleObject global);
+
+// bool js_cocos2dx_Device_setAccelerometerEnabled(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_Device_setAccelerometerEnabled(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     if (argc == 1) {
+  //         bool arg0;
+  //         arg0 = JS::ToBoolean(args.get(0));
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_Device_setAccelerometerEnabled : Error processing arguments");
+  //         cocos2d::Device::setAccelerometerEnabled(arg0);
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
+  if (args.Length() == 1)
+  {
+    bool arg0 = args[0]->BooleanValue(args.GetIsolate());
+    cocos2d::Device::setAccelerometerEnabled(arg0);
+    args.GetReturnValue().Set(v8::Undefined(args.GetIsolate()));
+    return;
+  }
+
+  SE_REPORT_ERROR("js_cocos2dx_Device_setAccelerometerEnabled : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+  //     JS_ReportError(cx, "js_cocos2dx_Device_setAccelerometerEnabled : wrong number of arguments");
+  //     return false;
+}
+
+// bool js_cocos2dx_Device_setAccelerometerInterval(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_Device_setAccelerometerInterval(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     if (argc == 1) {
+  //         double arg0 = 0;
+  //         ok &= JS::ToNumber( cx, args.get(0), &arg0) && !std::isnan(arg0);
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_Device_setAccelerometerInterval : Error processing arguments");
+  //         cocos2d::Device::setAccelerometerInterval(arg0);
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
+  if (args.Length() == 1)
+  {
+    double arg0 = args[0]->NumberValue(args.GetIsolate()->GetCurrentContext()).FromJust();
+    if (!std::isnan(arg0))
+    {
+      cocos2d::Device::setAccelerometerInterval(arg0);
+      args.GetReturnValue().Set(v8::Undefined(args.GetIsolate()));
+      return;
+    }
+    else
+    {
+      SE_REPORT_ERROR("js_cocos2dx_Device_setAccelerometerInterval : Error processing arguments");
+    }
+  }
+  //     JS_ReportError(cx, "js_cocos2dx_Device_setAccelerometerInterval : wrong number of arguments");
+  SE_REPORT_ERROR("js_cocos2dx_Device_setAccelerometerInterval : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+  //     return false;
+}
+
+// bool js_cocos2dx_Device_setKeepScreenOn(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_Device_setKeepScreenOn(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     if (argc == 1) {
+  //         bool arg0;
+  //         arg0 = JS::ToBoolean(args.get(0));
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_Device_setKeepScreenOn : Error processing arguments");
+  //         cocos2d::Device::setKeepScreenOn(arg0);
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
+  if (args.Length() == 1)
+  {
+    v8::Isolate *isolate = args.GetIsolate();
+    bool arg0 = args[0]->BooleanValue(isolate);
+    cocos2d::Device::setKeepScreenOn(arg0);
+    args.GetReturnValue().Set(v8::Undefined(isolate));
+    return;
+  }
+  SE_REPORT_ERROR("js_cocos2dx_Device_setKeepScreenOn : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+  //     JS_ReportError(cx, "js_cocos2dx_Device_setKeepScreenOn : wrong number of arguments");
+  //     return false;
+}
+
+// bool js_cocos2dx_Device_vibrate(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_Device_vibrate(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     if (argc == 1) {
+  //         double arg0 = 0;
+  //         ok &= JS::ToNumber( cx, args.get(0), &arg0) && !std::isnan(arg0);
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_Device_vibrate : Error processing arguments");
+  //         cocos2d::Device::vibrate(arg0);
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
+  if (args.Length() == 1)
+  {
+    double arg0 = args[0]->NumberValue(args.GetIsolate()->GetCurrentContext()).FromJust();
+    if (!std::isnan(arg0))
+    {
+      cocos2d::Device::vibrate(arg0);
+      args.GetReturnValue().Set(v8::Undefined(args.GetIsolate()));
+      return;
+    }
+    else
+    {
+      SE_REPORT_ERROR("js_cocos2dx_Device_vibrate : Error processing arguments");
+    }
+  }
+  //     JS_ReportError(cx, "js_cocos2dx_Device_vibrate : wrong number of arguments");
+  //     return false;
+}
+
+// bool js_cocos2dx_Device_getDPI(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_Device_getDPI(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     if (argc == 0) {
+
+  //         int ret = cocos2d::Device::getDPI();
+  //         jsval jsret = JSVAL_NULL;
+  //         jsret = int32_to_jsval(cx, ret);
+  //         args.rval().set(jsret);
+  //         return true;
+  //     }
+  if (args.Length() == 0)
+  {
+    int ret = cocos2d::Device::getDPI();
+    args.GetReturnValue().Set(v8::Integer::New(isolate, ret));
+    return;
+  }
+  SE_REPORT_ERROR("js_cocos2dx_Device_getDPI : wrong number of arguments");
+}
+
+// void js_register_cocos2dx_Device(JSContext *cx, JS::HandleObject global) {
+void js_register_cocos2dx_Device(v8::Isolate *isolate, v8::Local<v8::Object> global)
+{
+  v8::Local<v8::Context> ctx = isolate->GetCurrentContext();
+  //     jsb_cocos2d_Device_class = (JSClass *)calloc(1, sizeof(JSClass));
+  v8::Local<v8::FunctionTemplate> tpl = JsbUtils::CreateClass(isolate, "Device", nullptr);
+  JsbUtils::RegisterV8Class(typeid(cocos2d::Device).name(), &tpl);
+  //     jsb_cocos2d_Device_class->name = "Device";
+  //     jsb_cocos2d_Device_class->addProperty = JS_PropertyStub;
+  //     jsb_cocos2d_Device_class->delProperty = JS_DeletePropertyStub;
+  //     jsb_cocos2d_Device_class->getProperty = JS_PropertyStub;
+  //     jsb_cocos2d_Device_class->setProperty = JS_StrictPropertyStub;
+  //     jsb_cocos2d_Device_class->enumerate = JS_EnumerateStub;
+  //     jsb_cocos2d_Device_class->resolve = JS_ResolveStub;
+  //     jsb_cocos2d_Device_class->convert = JS_ConvertStub;
+  //     jsb_cocos2d_Device_class->flags = JSCLASS_HAS_RESERVED_SLOTS(2);
+
+  //     static JSPropertySpec properties[] = {
+  //         JS_PS_END
+  //     };
+
+  //     static JSFunctionSpec funcs[] = {
+  //         JS_FS_END
+  //     };
+
+  //     static JSFunctionSpec st_funcs[] = {
+  //         JS_FN("setAccelerometerEnabled", js_cocos2dx_Device_setAccelerometerEnabled, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setAccelerometerEnabled", v8::FunctionTemplate::New(isolate, js_cocos2dx_Device_setAccelerometerEnabled));
+  //         JS_FN("setAccelerometerInterval", js_cocos2dx_Device_setAccelerometerInterval, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setAccelerometerInterval", v8::FunctionTemplate::New(isolate, js_cocos2dx_Device_setAccelerometerInterval));
+  //         JS_FN("setKeepScreenOn", js_cocos2dx_Device_setKeepScreenOn, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setKeepScreenOn", v8::FunctionTemplate::New(isolate, js_cocos2dx_Device_setKeepScreenOn));
+  //         JS_FN("vibrate", js_cocos2dx_Device_vibrate, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "vibrate", v8::FunctionTemplate::New(isolate, js_cocos2dx_Device_vibrate));
+  //         JS_FN("getDPI", js_cocos2dx_Device_getDPI, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getDPI", v8::FunctionTemplate::New(isolate, js_cocos2dx_Device_getDPI));
+  //         JS_FS_END
+  //     };
+
+  //     jsb_cocos2d_Device_prototype = JS_InitClass(
+  //         cx, global,
+  //         JS::NullPtr(),
+  //         jsb_cocos2d_Device_class,
+  //         dummy_constructor<cocos2d::Device>, 0, // no constructor
+  //         properties,
+  //         funcs,
+  //         NULL, // no static properties
+  //         st_funcs);
+
+  //     JS::RootedObject proto(cx, jsb_cocos2d_Device_prototype);
+  //     JS::RootedValue className(cx, std_string_to_jsval(cx, "Device"));
+  //     JS_SetProperty(cx, proto, "_className", className);
+  //     JS_SetProperty(cx, proto, "__nativeObj", JS::TrueHandleValue);
+  //     JS_SetProperty(cx, proto, "__is_ref", JS::FalseHandleValue);
+  //     // add the proto and JSClass to the type->js info hash table
+  //     jsb_register_class<cocos2d::Device>(cx, jsb_cocos2d_Device_class, proto, JS::NullPtr());
 }

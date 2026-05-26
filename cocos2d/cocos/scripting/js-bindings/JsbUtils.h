@@ -4,6 +4,8 @@
 #include <v8.h>
 #include "Core/JsbObjectWrap.hpp"
 #include "base/CCValue.h"
+#include "base/CCVector.h"
+#include "base/ccTypes.h"
 // namespace cocos2d
 // {
 //     class Value;
@@ -61,4 +63,52 @@ public:
     static v8::Local<v8::Value> ccvaluemap_to_jsval(v8::Isolate *isolate, const cocos2d::ValueMap &v);
     static v8::Local<v8::Value> ccvaluemapintkey_to_jsval(v8::Isolate *isolate, const cocos2d::ValueMapIntKey &v);
     static v8::Local<v8::Value> ccvaluevector_to_jsval(v8::Isolate *isolate, const cocos2d::ValueVector &v);
+
+    static v8::Local<v8::Value> cccolor3b_to_jsval(v8::Isolate *isolate, const cocos2d::Color3B &v);
+
+    template <class T>
+    static v8::Local<v8::Value> ccvector_to_jsval(v8::Isolate *isolate, const cocos2d::Vector<T> &v)
+    {
+        // JS::RootedObject jsretArr(isolate, JS_NewArrayObject(isolate, 0));
+        v8::Local<v8::Array> jsretArr = v8::Array::New(isolate, 0);
+        int i = 0;
+        for (const auto &obj : v)
+        {
+            //     JS::RootedValue arrElement(cx);
+            v8::Local<v8::Object> arrElement;
+            JsbUtils::NativePtrToObject(typeid(*obj).name(), obj, &arrElement);
+            //     // First, check whether object is associated with js object.
+            //     js_type_class_t *typeClass = js_get_type_from_native(obj);
+            //     JS::RootedObject jsobject(cx, jsb_ref_get_or_create_jsobject(cx, obj, typeClass, typeid(*obj).name()));
+            //     if (jsobject.get())
+            //     {
+            //         arrElement = OBJECT_TO_JSVAL(jsobject);
+            //     }
+
+            //     if (!JS_SetElement(cx, jsretArr, i, arrElement))
+            //     {
+            //         break;
+            //     }
+            //     ++i;
+            v8::Maybe<bool> maybe = jsretArr->Set(isolate->GetCurrentContext(), i, arrElement);
+            if (maybe.IsNothing() || !maybe.FromJust())
+            {
+                SE_REPORT_ERROR("Failed to set array element at index %d", i);
+                break;
+            }
+            ++i;
+        }
+        return jsretArr;
+    }
+
+    static v8::Local<v8::Value> vector3_to_jsval(v8::Isolate *isolate, const cocos2d::Vec3& v);
+    static v8::Local<v8::Value> vector2_to_jsval(v8::Isolate *isolate, const cocos2d::Vec2& v);
+
+    static v8::Local<v8::Array> matrix_to_jsval(v8::Isolate *isolate, const cocos2d::Mat4& v);
+    static v8::Local<v8::Object> ccaffinetransform_to_jsval(v8::Isolate *isolate, const cocos2d::AffineTransform& v);
+
+    static bool jsval_to_vector2(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::Vec2 *outValue);
+    
+
+    
 };
