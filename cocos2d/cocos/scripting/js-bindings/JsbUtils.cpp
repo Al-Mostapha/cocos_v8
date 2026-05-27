@@ -943,3 +943,146 @@ v8::Local<v8::Object> JsbUtils::ccaffinetransform_to_jsval(v8::Isolate *isolate,
 
   return handle_scope.Escape(jsRet);
 }
+
+bool JsbUtils::jsval_to_vector3(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::Vec3 *outValue)
+{
+  // JS::RootedObject tmp(cx);
+  // JS::RootedValue jsx(cx);
+  // JS::RootedValue jsy(cx);
+  // JS::RootedValue jsz(cx);
+  // double x, y, z;
+  double x = 0.0, y = 0.0, z = 0.0;
+  // bool ok = vp.isObject() &&
+  // JS_ValueToObject(cx, vp, &tmp) &&
+  // JS_GetProperty(cx, tmp, "x", &jsx) &&
+  // JS_GetProperty(cx, tmp, "y", &jsy) &&
+  // JS_GetProperty(cx, tmp, "z", &jsz) &&
+  // JS::ToNumber(cx, jsx, &x) &&
+  // JS::ToNumber(cx, jsy, &y) &&
+  // JS::ToNumber(cx, jsz, &z) &&
+  // !std::isnan(x) && !std::isnan(y) && !std::isnan(z);
+  if (!value->IsObject())
+  {
+    SE_REPORT_ERROR("Value is not an object");
+    return false;
+  }
+  v8::Local<v8::Object> obj = value->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
+  v8::Local<v8::Value> xVal;
+  if (!obj->Get(isolate->GetCurrentContext(), ToV8String(isolate, "x")).ToLocal(&xVal))
+  {
+    SE_REPORT_ERROR("Failed to get property x from object");
+    return false;
+  }
+  v8::Local<v8::Value> yVal;
+  if (!obj->Get(isolate->GetCurrentContext(), ToV8String(isolate, "y")).ToLocal(&yVal))
+  {
+    SE_REPORT_ERROR("Failed to get property y from object");
+    return false;
+  }
+  v8::Local<v8::Value> zVal;
+  if (!obj->Get(isolate->GetCurrentContext(), ToV8String(isolate, "z")).ToLocal(&zVal))
+  {
+    SE_REPORT_ERROR("Failed to get property z from object");
+    return false;
+  }
+  x = xVal->NumberValue(isolate->GetCurrentContext()).FromJust();
+  y = yVal->NumberValue(isolate->GetCurrentContext()).FromJust();
+  z = zVal->NumberValue(isolate->GetCurrentContext()).FromJust();
+
+  // JSB_PRECONDITION3(ok, cx, false, "Error processing arguments");
+
+  // ret->x = (float)x;
+  // ret->y = (float)y;
+  // ret->z = (float)z;
+  outValue->x = static_cast<float>(x);
+  outValue->y = static_cast<float>(y);
+  outValue->z = static_cast<float>(z);
+
+  // return true;
+  return true;
+}
+
+bool JsbUtils::jsval_to_matrix(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::Mat4 *outValue)
+{
+  // JS::RootedObject jsobj(cx);
+  // bool ok = vp.isObject() && JS_ValueToObject(cx, vp, &jsobj);
+  // JSB_PRECONDITION3(ok, cx, false, "Error converting value to object");
+  // JSB_PRECONDITION3(jsobj && JS_IsArrayObject(cx, jsobj), cx, false, "Object must be an matrix");
+
+  // uint32_t len = 0;
+  uint32_t len = 0;
+  v8::Local<v8::Object> obj = value->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
+
+  if (!obj->IsArray())
+  {
+    SE_REPORT_ERROR("Object must be an array");
+    return false;
+  }
+  v8::Local<v8::Array> arr = obj.As<v8::Array>();
+  len = arr->Length();
+
+  if (len != 16)
+  {
+    SE_REPORT_ERROR("Array length error: %d, was expecting 16", len);
+    return false;
+  }
+
+  for (uint32_t i = 0; i < len; i++)
+  {
+    v8::Local<v8::Value> element;
+    if (!arr->Get(isolate->GetCurrentContext(), i).ToLocal(&element))
+    {
+      SE_REPORT_ERROR("Failed to get array element at index %d", i);
+      return false;
+    }
+
+    if (element->IsNumber())
+    {
+      double number = element->NumberValue(isolate->GetCurrentContext()).FromJust();
+      outValue->m[i] = static_cast<float>(number);
+    }
+    else
+    {
+      SE_REPORT_ERROR("Not supported type in matrix");
+      return false;
+    }
+  }
+
+  return true;
+}
+
+bool JsbUtils::jsval_to_cccolor3b(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::Color3B *outValue)
+{
+  v8::HandleScope handle_scope(isolate);
+
+  if (value->IsNull() || value->IsUndefined())
+  {
+    *outValue = cocos2d::Color3B::BLACK;
+    return true;
+  }
+
+  auto obj = value->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
+  v8::Local<v8::Value> rVal;
+  if (!obj->Get(isolate->GetCurrentContext(), ToV8String(isolate, "r")).ToLocal(&rVal))
+  {
+    SE_REPORT_ERROR("Failed to get property r from object");
+    return false;
+  }
+  v8::Local<v8::Value> gVal;
+  if (!obj->Get(isolate->GetCurrentContext(), ToV8String(isolate, "g")).ToLocal(&gVal))
+  {
+    SE_REPORT_ERROR("Failed to get property g from object");
+    return false;
+  }
+  v8::Local<v8::Value> bVal;
+  if (!obj->Get(isolate->GetCurrentContext(), ToV8String(isolate, "b")).ToLocal(&bVal))
+  {
+    SE_REPORT_ERROR("Failed to get property b from object");
+    return false;
+  }
+
+  outValue->r = static_cast<unsigned char>(rVal->Int32Value(isolate->GetCurrentContext()).FromJust());
+  outValue->g = static_cast<unsigned char>(gVal->Int32Value(isolate->GetCurrentContext()).FromJust());
+  outValue->b = static_cast<unsigned char>(bVal->Int32Value(isolate->GetCurrentContext()).FromJust());
+  return true;
+}

@@ -6,6 +6,7 @@
 #include "base/CCValue.h"
 #include "base/CCVector.h"
 #include "base/ccTypes.h"
+#include "math/CCAffineTransform.h"
 // namespace cocos2d
 // {
 //     class Value;
@@ -101,14 +102,15 @@ public:
         return jsretArr;
     }
 
-    static v8::Local<v8::Value> vector3_to_jsval(v8::Isolate *isolate, const cocos2d::Vec3& v);
-    static v8::Local<v8::Value> vector2_to_jsval(v8::Isolate *isolate, const cocos2d::Vec2& v);
+    static v8::Local<v8::Value> vector3_to_jsval(v8::Isolate *isolate, const cocos2d::Vec3 &v);
+    static v8::Local<v8::Value> vector2_to_jsval(v8::Isolate *isolate, const cocos2d::Vec2 &v);
 
-    static v8::Local<v8::Array> matrix_to_jsval(v8::Isolate *isolate, const cocos2d::Mat4& v);
-    static v8::Local<v8::Object> ccaffinetransform_to_jsval(v8::Isolate *isolate, const cocos2d::AffineTransform& v);
+    static v8::Local<v8::Array> matrix_to_jsval(v8::Isolate *isolate, const cocos2d::Mat4 &v);
+    static v8::Local<v8::Object> ccaffinetransform_to_jsval(v8::Isolate *isolate, const cocos2d::AffineTransform &v);
 
     static bool jsval_to_vector2(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::Vec2 *outValue);
-    
+    static bool jsval_to_vector3(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::Vec3 *outValue);
+    static bool jsval_to_matrix(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::Mat4 *outValue);
 
-    
+    static bool jsval_to_cccolor3b(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::Color3B *outValue);
 };
