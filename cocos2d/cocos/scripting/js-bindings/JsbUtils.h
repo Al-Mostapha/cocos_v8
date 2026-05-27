@@ -55,10 +55,34 @@ public:
 
     static bool RegisterV8Class(const char *className, v8::Local<v8::FunctionTemplate> *constructor);
 
+    
+    static std::function<void()> FromJsFunc(v8::Isolate *isolate, v8::Local<v8::Function> func, v8::Local<v8::Object> self)
+    {
+        // TODO when delete the lambda, the jsGlobalFunc and jsSelf will be destructed, which will make the callback invalid. We need to make sure the callback is not called after the lambda is destructed.
+        auto jsGlobalFunc = std::make_shared<v8::Global<v8::Function>>(isolate, func);
+        auto jsSelf = std::make_shared<v8::Global<v8::Object>>(isolate, self);
+
+        return [jsGlobalFunc, jsSelf, isolate]() -> void
+        {
+            v8::HandleScope handleScope(isolate);
+            v8::Local<v8::Function> fn = jsGlobalFunc->Get(isolate);
+            v8::Local<v8::Object> selfObj = jsSelf->Get(isolate);
+
+            v8::TryCatch tryCatch(isolate);
+            fn->Call(isolate->GetCurrentContext(), selfObj, 0, nullptr).ToLocalChecked();
+            if (tryCatch.HasCaught())
+            {
+                v8::String::Utf8Value error(isolate, tryCatch.Exception());
+                SE_REPORT_ERROR("Exception occurred while invoking callback: %s", *error ? *error : "unknown");
+            }
+        };
+    }
+
     static bool jsval_to_ccvalue(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::Value *outValue);
     static bool jsval_to_ccvaluemap(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::ValueMap *ret);
     static bool jsval_to_ccvaluemapintkey(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::ValueMapIntKey *ret);
     static bool jsval_to_ccvaluevector(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::ValueVector *ret);
+    static bool jsval_to_ccsize(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::Size *ret);
 
     static v8::Local<v8::Value> ccvalue_to_jsval(v8::Isolate *isolate, const cocos2d::Value &v);
     static v8::Local<v8::Value> ccvaluemap_to_jsval(v8::Isolate *isolate, const cocos2d::ValueMap &v);
@@ -66,6 +90,10 @@ public:
     static v8::Local<v8::Value> ccvaluevector_to_jsval(v8::Isolate *isolate, const cocos2d::ValueVector &v);
 
     static v8::Local<v8::Value> cccolor3b_to_jsval(v8::Isolate *isolate, const cocos2d::Color3B &v);
+    static v8::Local<v8::Value> ccsize_to_jsval(v8::Isolate *isolate, const cocos2d::Size &v);
+    static v8::Local<v8::Value> ccrect_to_jsval(v8::Isolate *isolate, const cocos2d::Rect &v);
+
+    static bool jsval_to_quaternion(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::Quaternion *outValue);
 
     template <class T>
     static v8::Local<v8::Value> ccvector_to_jsval(v8::Isolate *isolate, const cocos2d::Vector<T> &v)

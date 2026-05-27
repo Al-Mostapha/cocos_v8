@@ -1086,3 +1086,91 @@ bool JsbUtils::jsval_to_cccolor3b(v8::Isolate *isolate, v8::Local<v8::Value> val
   outValue->b = static_cast<unsigned char>(bVal->Int32Value(isolate->GetCurrentContext()).FromJust());
   return true;
 }
+
+v8::Local<v8::Value> JsbUtils::ccsize_to_jsval(v8::Isolate *isolate, const cocos2d::Size &v)
+{
+  v8::EscapableHandleScope handle_scope(isolate);
+  v8::Local<v8::Object> obj = v8::Object::New(isolate);
+  obj->Set(isolate->GetCurrentContext(), ToV8String(isolate, "width"), v8::Number::New(isolate, v.width)).FromJust();
+  obj->Set(isolate->GetCurrentContext(), ToV8String(isolate, "height"), v8::Number::New(isolate, v.height)).FromJust();
+  return handle_scope.Escape(obj);
+}
+
+v8::Local<v8::Value> JsbUtils::ccrect_to_jsval(v8::Isolate *isolate, const cocos2d::Rect &v)
+{
+  v8::EscapableHandleScope handle_scope(isolate);
+  v8::Local<v8::Object> obj = v8::Object::New(isolate);
+  obj->Set(isolate->GetCurrentContext(), ToV8String(isolate, "x"), v8::Number::New(isolate, v.origin.x)).FromJust();
+  obj->Set(isolate->GetCurrentContext(), ToV8String(isolate, "y"), v8::Number::New(isolate, v.origin.y)).FromJust();
+  obj->Set(isolate->GetCurrentContext(), ToV8String(isolate, "width"), v8::Number::New(isolate, v.size.width)).FromJust();
+  obj->Set(isolate->GetCurrentContext(), ToV8String(isolate, "height"), v8::Number::New(isolate, v.size.height)).FromJust();
+  return handle_scope.Escape(obj);
+}
+
+bool JsbUtils::jsval_to_quaternion(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::Quaternion *outValue)
+{
+  v8::HandleScope handle_scope(isolate);
+
+  if (value->IsNull() || value->IsUndefined())
+  {
+    return true;
+  }
+
+  auto obj = value->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
+  v8::Local<v8::Value> xVal;
+  if (!obj->Get(isolate->GetCurrentContext(), ToV8String(isolate, "x")).ToLocal(&xVal))
+  {
+    SE_REPORT_ERROR("Failed to get property x from object");
+    return false;
+  }
+  v8::Local<v8::Value> yVal;
+  if (!obj->Get(isolate->GetCurrentContext(), ToV8String(isolate, "y")).ToLocal(&yVal))
+  {
+    SE_REPORT_ERROR("Failed to get property y from object");
+    return false;
+  }
+  v8::Local<v8::Value> zVal;
+  if (!obj->Get(isolate->GetCurrentContext(), ToV8String(isolate, "z")).ToLocal(&zVal))
+  {
+    SE_REPORT_ERROR("Failed to get property z from object");
+    return false;
+  }
+  v8::Local<v8::Value> wVal;
+  if (!obj->Get(isolate->GetCurrentContext(), ToV8String(isolate, "w")).ToLocal(&wVal))
+  {
+    SE_REPORT_ERROR("Failed to get property w from object");
+    return false;
+  }
+  outValue->x = xVal->NumberValue(isolate->GetCurrentContext()).FromJust();
+  outValue->y = yVal->NumberValue(isolate->GetCurrentContext()).FromJust();
+  outValue->z = zVal->NumberValue(isolate->GetCurrentContext()).FromJust();
+  outValue->w = wVal->NumberValue(isolate->GetCurrentContext()).FromJust();
+  return true;
+}
+
+bool JsbUtils::jsval_to_ccsize(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::Size *ret)
+{
+  v8::HandleScope handle_scope(isolate);
+
+  if (value->IsNull() || value->IsUndefined())
+  {
+    return true;
+  }
+
+  auto obj = value->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
+  v8::Local<v8::Value> widthVal;
+  if (!obj->Get(isolate->GetCurrentContext(), ToV8String(isolate, "width")).ToLocal(&widthVal))
+  {
+    SE_REPORT_ERROR("Failed to get property width from object");
+    return false;
+  }
+  v8::Local<v8::Value> heightVal;
+  if (!obj->Get(isolate->GetCurrentContext(), ToV8String(isolate, "height")).ToLocal(&heightVal))
+  {
+    SE_REPORT_ERROR("Failed to get property height from object");
+    return false;
+  }
+  ret->width = widthVal->NumberValue(isolate->GetCurrentContext()).FromJust();
+  ret->height = heightVal->NumberValue(isolate->GetCurrentContext()).FromJust();
+  return true;
+}

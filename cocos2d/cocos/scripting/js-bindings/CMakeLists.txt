@@ -3,6 +3,7 @@ set(V8_DIR ${COCOS2DX_ROOT_PATH}/external/V8)
 set(JSB_SRC
     ScriptEngine.cpp
     JsbUtils.cpp
+    JsbCtor.cpp
     Core/jsb_module_register.cpp
     Core/jsb_global.cpp
     Core/JsbClass.cpp
@@ -15,11 +16,13 @@ set(JSB_SRC
     Wrapper/JsbCommon.cpp
     Wrapper/JsbAllCocos.cpp
     Wrapper/JsbNode.cpp
+    Wrapper/JsbScene.cpp
 )
 
 set(JSB_HEADERS
     JsbBase.h
     JsbConfig.h
+    JsbCtor.hpp
     HelperMacros.h
     ScriptEngine.hpp
     Core/jsb_module_register.hpp
@@ -35,6 +38,7 @@ set(JSB_HEADERS
     Wrapper/JsbAllCocos.hpp
     Wrapper/JsbCommon.hpp
     Wrapper/JsbNode.hpp
+    Wrapper/JsbScene.hpp
 )
 
 add_library(jsb STATIC ${JSB_SRC} ${JSB_HEADERS})
