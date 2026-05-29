@@ -55,8 +55,7 @@ public:
 
     static bool RegisterV8Class(const char *className, v8::Local<v8::FunctionTemplate> *constructor);
 
-    
-    static std::function<void()> FromJsFunc(v8::Isolate *isolate, v8::Local<v8::Function> func, v8::Local<v8::Object> self)
+        static std::function<void()> FromJsFunc(v8::Isolate *isolate, v8::Local<v8::Function> func, v8::Local<v8::Object> self)
     {
         // TODO when delete the lambda, the jsGlobalFunc and jsSelf will be destructed, which will make the callback invalid. We need to make sure the callback is not called after the lambda is destructed.
         auto jsGlobalFunc = std::make_shared<v8::Global<v8::Function>>(isolate, func);
@@ -83,6 +82,7 @@ public:
     static bool jsval_to_ccvaluemapintkey(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::ValueMapIntKey *ret);
     static bool jsval_to_ccvaluevector(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::ValueVector *ret);
     static bool jsval_to_ccsize(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::Size *ret);
+    static bool jsval_to_cccolor4b(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::Color4B *ret);
 
     static v8::Local<v8::Value> ccvalue_to_jsval(v8::Isolate *isolate, const cocos2d::Value &v);
     static v8::Local<v8::Value> ccvaluemap_to_jsval(v8::Isolate *isolate, const cocos2d::ValueMap &v);
@@ -90,8 +90,11 @@ public:
     static v8::Local<v8::Value> ccvaluevector_to_jsval(v8::Isolate *isolate, const cocos2d::ValueVector &v);
 
     static v8::Local<v8::Value> cccolor3b_to_jsval(v8::Isolate *isolate, const cocos2d::Color3B &v);
+    static v8::Local<v8::Value> cccolor4f_to_jsval(v8::Isolate *isolate, const cocos2d::Color4F &v);
+    static v8::Local<v8::Value> cccolor4b_to_jsval(v8::Isolate *isolate, const cocos2d::Color4B &v);
     static v8::Local<v8::Value> ccsize_to_jsval(v8::Isolate *isolate, const cocos2d::Size &v);
     static v8::Local<v8::Value> ccrect_to_jsval(v8::Isolate *isolate, const cocos2d::Rect &v);
+    static v8::Local<v8::Value> blendfunc_to_jsval(v8::Isolate *isolate, const cocos2d::BlendFunc &v);
 
     static bool jsval_to_quaternion(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::Quaternion *outValue);
 
@@ -141,4 +144,5 @@ public:
     static bool jsval_to_matrix(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::Mat4 *outValue);
 
     static bool jsval_to_cccolor3b(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::Color3B *outValue);
+    static bool jsval_to_cccolor4f(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::Color4F *outValue);
 };

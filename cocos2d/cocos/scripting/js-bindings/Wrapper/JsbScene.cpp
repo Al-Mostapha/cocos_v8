@@ -2,6 +2,7 @@
 #include "2d/CCScene.h"
 #include "2d/CCCamera.h"
 #include "JsbCtor.hpp"
+#include "ScriptEngine.hpp"
 // JSClass  *jsb_cocos2d_Scene_class;
 // JSObject *jsb_cocos2d_Scene_prototype;
 
@@ -451,6 +452,7 @@ void js_register_cocos2dx_Scene(v8::Isolate *isolate, v8::Local<v8::Object> glob
   v8::Local<v8::FunctionTemplate> tpl = v8::FunctionTemplate::New(isolate, js_cocos2dx_Scene_constructor);
   tpl->SetClassName(v8::String::NewFromUtf8(isolate, "Scene").ToLocalChecked());
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
+  tpl->Inherit(ScriptEngine::getInstance()->getClassByName(typeid(cocos2d::Node).name()));
   JsbUtils::RegisterV8Class(typeid(cocos2d::Scene).name(), &tpl);
 
   //     static JSPropertySpec properties[] = {
@@ -459,18 +461,27 @@ void js_register_cocos2dx_Scene(v8::Isolate *isolate, v8::Local<v8::Object> glob
 
   //     static JSFunctionSpec funcs[] = {
   //         JS_FN("setCameraOrderDirty", js_cocos2dx_Scene_setCameraOrderDirty, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setCameraOrderDirty", v8::FunctionTemplate::New(isolate, js_cocos2dx_Scene_setCameraOrderDirty));
   //         JS_FN("render", js_cocos2dx_Scene_render, 2, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "render", v8::FunctionTemplate::New(isolate, js_cocos2dx_Scene_render));
   //         JS_FN("stepPhysicsAndNavigation", js_cocos2dx_Scene_stepPhysicsAndNavigation, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "stepPhysicsAndNavigation", v8::FunctionTemplate::New(isolate, js_cocos2dx_Scene_stepPhysicsAndNavigation));
   //         JS_FN("onProjectionChanged", js_cocos2dx_Scene_onProjectionChanged, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "onProjectionChanged", v8::FunctionTemplate::New(isolate, js_cocos2dx_Scene_onProjectionChanged));
   //         JS_FN("initWithSize", js_cocos2dx_Scene_initWithSize, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "initWithSize", v8::FunctionTemplate::New(isolate, js_cocos2dx_Scene_initWithSize));
   //         JS_FN("getDefaultCamera", js_cocos2dx_Scene_getDefaultCamera, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getDefaultCamera", v8::FunctionTemplate::New(isolate, js_cocos2dx_Scene_getDefaultCamera));
   //         JS_FN("ctor", js_cocos2dx_Scene_ctor, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "ctor", v8::FunctionTemplate::New(isolate, js_cocos2dx_Scene_ctor));
   //         JS_FS_END
   //     };
 
   //     static JSFunctionSpec st_funcs[] = {
   //         JS_FN("createWithSize", js_cocos2dx_Scene_createWithSize, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->Set(isolate, "createWithSize", v8::FunctionTemplate::New(isolate, js_cocos2dx_Scene_createWithSize));
   //         JS_FN("create", js_cocos2dx_Scene_create, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->Set(isolate, "create", v8::FunctionTemplate::New(isolate, js_cocos2dx_Scene_create));
   //         JS_FS_END
   //     };
 
@@ -488,8 +499,11 @@ void js_register_cocos2dx_Scene(v8::Isolate *isolate, v8::Local<v8::Object> glob
   //     JS::RootedObject proto(cx, jsb_cocos2d_Scene_prototype);
   //     JS::RootedValue className(cx, std_string_to_jsval(cx, "Scene"));
   //     JS_SetProperty(cx, proto, "_className", className);
+  tpl->PrototypeTemplate()->Set(isolate, "_className", v8::String::NewFromUtf8(isolate, "Scene").ToLocalChecked());
   //     JS_SetProperty(cx, proto, "__nativeObj", JS::TrueHandleValue);
+  tpl->PrototypeTemplate()->Set(isolate, "__nativeObj", v8::True(isolate));
   //     JS_SetProperty(cx, proto, "__is_ref", JS::TrueHandleValue);
+  tpl->PrototypeTemplate()->Set(isolate, "__is_ref", v8::True(isolate));
   //     // add the proto and JSClass to the type->js info hash table
   //     jsb_register_class<cocos2d::Scene>(cx, jsb_cocos2d_Scene_class, proto, parent_proto);
   //     anonEvaluate(cx, global, "(function () { cc.Scene.extend = cc.Class.extend; })()");

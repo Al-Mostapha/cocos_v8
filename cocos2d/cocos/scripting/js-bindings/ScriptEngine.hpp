@@ -13,6 +13,16 @@ class ScriptEngine
 {
 public:
   static std::unordered_map<std::string, v8::Global<v8::FunctionTemplate>> _registeredClasses;
+
+  v8::Local<v8::FunctionTemplate> getClassByName(const std::string &className)
+  {
+    v8::Isolate *isolate = getIsolate();
+    v8::EscapableHandleScope handleScope(isolate);
+    auto iter = _registeredClasses.find(className);
+    if (iter != _registeredClasses.end())
+      return handleScope.Escape(iter->second.Get(_isolate));
+    return v8::Local<v8::FunctionTemplate>();
+  }
   class FileOperationDelegate
   {
   public:
