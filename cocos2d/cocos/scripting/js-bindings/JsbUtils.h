@@ -145,4 +145,5 @@ public:
 
     static bool jsval_to_cccolor3b(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::Color3B *outValue);
     static bool jsval_to_cccolor4f(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::Color4F *outValue);
+    static bool jsval_to_blendfunc(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::BlendFunc *outValue);
 };

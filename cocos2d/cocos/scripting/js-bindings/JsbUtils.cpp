@@ -859,12 +859,12 @@ v8::Local<v8::Value> JsbUtils::cccolor4b_to_jsval(v8::Isolate *isolate, const co
   return handle_scope.Escape(jsRet);
 }
 
-v8::Local<v8::Value> blendfunc_to_jsval(v8::Isolate *isolate, const cocos2d::BlendFunc &v)
+v8::Local<v8::Value> JsbUtils::blendfunc_to_jsval(v8::Isolate *isolate, const cocos2d::BlendFunc &v)
 {
   v8::EscapableHandleScope handle_scope(isolate);
   v8::Local<v8::Object> jsRet = v8::Object::New(isolate);
-  SetProperty(isolate, jsRet, "src", v8::Integer::New(isolate, v.src));
-  SetProperty(isolate, jsRet, "dst", v8::Integer::New(isolate, v.dst));
+  SetProperty(isolate, jsRet, "src", v8::Integer::New(isolate, (int)v.src));
+  SetProperty(isolate, jsRet, "dst", v8::Integer::New(isolate, (int)v.dst));
 
   return handle_scope.Escape(jsRet);
 }
@@ -1284,5 +1284,34 @@ bool JsbUtils::jsval_to_cccolor4f(v8::Isolate *isolate, v8::Local<v8::Value> val
   outValue->g = gVal->NumberValue(isolate->GetCurrentContext()).FromJust();
   outValue->b = bVal->NumberValue(isolate->GetCurrentContext()).FromJust();
   outValue->a = aVal->NumberValue(isolate->GetCurrentContext()).FromJust();
+  return true;
+}
+
+bool JsbUtils::jsval_to_blendfunc(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::BlendFunc *outValue)
+{
+  v8::HandleScope handle_scope(isolate);
+
+  if (value->IsNull() || value->IsUndefined())
+  {
+    *outValue = cocos2d::BlendFunc::ALPHA_PREMULTIPLIED;
+    return true;
+  }
+
+  auto obj = value->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
+  v8::Local<v8::Value> srcVal;
+  if (!obj->Get(isolate->GetCurrentContext(), ToV8String(isolate, "src")).ToLocal(&srcVal))
+  {
+    SE_REPORT_ERROR("Failed to get property src from object");
+    return false;
+  }
+  v8::Local<v8::Value> dstVal;
+  if (!obj->Get(isolate->GetCurrentContext(), ToV8String(isolate, "dst")).ToLocal(&dstVal))
+  {
+    SE_REPORT_ERROR("Failed to get property dst from object");
+    return false;
+  }
+
+  outValue->src = static_cast<cocos2d::backend::BlendFactor>(srcVal->Int32Value(isolate->GetCurrentContext()).FromJust());
+  outValue->dst = static_cast<cocos2d::backend::BlendFactor>(dstVal->Int32Value(isolate->GetCurrentContext()).FromJust());
   return true;
 }
