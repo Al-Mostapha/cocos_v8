@@ -22,6 +22,8 @@ set(JSB_SRC
     Wrapper/JsbSprite.cpp
     Wrapper/JsbNodeSpecial.cpp
     Wrapper/JsbWidget.cpp
+    Wrapper/UI/JsbButton.cpp
+    Wrapper/UI/JsbText.cpp
 )
 
 set(JSB_HEADERS
@@ -49,6 +51,8 @@ set(JSB_HEADERS
     Wrapper/JsbSprite.hpp
     Wrapper/JsbNodeSpecial.hpp
     Wrapper/JsbWidget.hpp
+    Wrapper/UI/JsbButton.hpp
+    Wrapper/UI/JsbText.hpp
 )
 
 add_library(jsb STATIC ${JSB_SRC} ${JSB_HEADERS})

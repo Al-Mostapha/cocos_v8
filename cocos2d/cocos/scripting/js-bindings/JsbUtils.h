@@ -96,6 +96,7 @@ public:
     static v8::Local<v8::Value> ccsize_to_jsval(v8::Isolate *isolate, const cocos2d::Size &v);
     static v8::Local<v8::Value> ccrect_to_jsval(v8::Isolate *isolate, const cocos2d::Rect &v);
     static v8::Local<v8::Value> blendfunc_to_jsval(v8::Isolate *isolate, const cocos2d::BlendFunc &v);
+    static v8::Local<v8::Value> resourcedata_to_jsval(v8::Isolate *isolate, const cocos2d::ResourceData &v);
 
     static bool jsval_to_quaternion(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::Quaternion *outValue);
 

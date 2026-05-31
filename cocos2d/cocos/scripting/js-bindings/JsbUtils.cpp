@@ -6,6 +6,7 @@
 #include "Utils/MappingUtils.hpp"
 #include "base/CCValue.h"
 #include "math/CCAffineTransform.h"
+#include "editor-support/cocostudio/CocosStudioExtension.h"
 #include <sstream>
 
 std::string JsbUtils::FromV8String(v8::Isolate *isolate, v8::Local<v8::String> str)
@@ -1356,4 +1357,14 @@ bool JsbUtils::jsval_to_ccrect(v8::Isolate *isolate, v8::Local<v8::Value> value,
   ret->size.width = widthVal->NumberValue(isolate->GetCurrentContext()).FromJust();
   ret->size.height = heightVal->NumberValue(isolate->GetCurrentContext()).FromJust();
   return true;
+}
+
+v8::Local<v8::Value> JsbUtils::resourcedata_to_jsval(v8::Isolate *isolate, const cocos2d::ResourceData &v)
+{
+  v8::EscapableHandleScope handle_scope(isolate);
+  v8::Local<v8::Object> jsRet = v8::Object::New(isolate);
+  SetProperty(isolate, jsRet, "file", ToV8String(isolate, v.file));
+  SetProperty(isolate, jsRet, "plist", ToV8String(isolate, v.plist));
+  SetProperty(isolate, jsRet, "type", v8::Integer::New(isolate, (int)v.type));
+  return handle_scope.Escape(jsRet);
 }
