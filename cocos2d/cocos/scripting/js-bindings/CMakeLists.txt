@@ -19,6 +19,9 @@ set(JSB_SRC
     Wrapper/JsbScene.cpp
     Wrapper/JsbDirector.cpp
     Wrapper/JsbLabel.cpp
+    Wrapper/JsbSprite.cpp
+    Wrapper/JsbNodeSpecial.cpp
+    Wrapper/JsbWidget.cpp
 )
 
 set(JSB_HEADERS
@@ -43,6 +46,9 @@ set(JSB_HEADERS
     Wrapper/JsbScene.hpp
     Wrapper/JsbDirector.hpp
     Wrapper/JsbLabel.hpp
+    Wrapper/JsbSprite.hpp
+    Wrapper/JsbNodeSpecial.hpp
+    Wrapper/JsbWidget.hpp
 )
 
 add_library(jsb STATIC ${JSB_SRC} ${JSB_HEADERS})

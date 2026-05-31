@@ -1315,3 +1315,45 @@ bool JsbUtils::jsval_to_blendfunc(v8::Isolate *isolate, v8::Local<v8::Value> val
   outValue->dst = static_cast<cocos2d::backend::BlendFactor>(dstVal->Int32Value(isolate->GetCurrentContext()).FromJust());
   return true;
 }
+
+bool JsbUtils::jsval_to_ccrect(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::Rect *ret)
+{
+  v8::HandleScope handle_scope(isolate);
+
+  if (value->IsNull() || value->IsUndefined())
+  {
+    return true;
+  }
+
+  auto obj = value->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
+  v8::Local<v8::Value> xVal;
+  if (!obj->Get(isolate->GetCurrentContext(), ToV8String(isolate, "x")).ToLocal(&xVal))
+  {
+    SE_REPORT_ERROR("Failed to get property x from object");
+    return false;
+  }
+  v8::Local<v8::Value> yVal;
+  if (!obj->Get(isolate->GetCurrentContext(), ToV8String(isolate, "y")).ToLocal(&yVal))
+  {
+    SE_REPORT_ERROR("Failed to get property y from object");
+    return false;
+  }
+  v8::Local<v8::Value> widthVal;
+  if (!obj->Get(isolate->GetCurrentContext(), ToV8String(isolate, "width")).ToLocal(&widthVal))
+  {
+    SE_REPORT_ERROR("Failed to get property width from object");
+    return false;
+  }
+  v8::Local<v8::Value> heightVal;
+  if (!obj->Get(isolate->GetCurrentContext(), ToV8String(isolate, "height")).ToLocal(&heightVal))
+  {
+    SE_REPORT_ERROR("Failed to get property height from object");
+    return false;
+  }
+
+  ret->origin.x = xVal->NumberValue(isolate->GetCurrentContext()).FromJust();
+  ret->origin.y = yVal->NumberValue(isolate->GetCurrentContext()).FromJust();
+  ret->size.width = widthVal->NumberValue(isolate->GetCurrentContext()).FromJust();
+  ret->size.height = heightVal->NumberValue(isolate->GetCurrentContext()).FromJust();
+  return true;
+}

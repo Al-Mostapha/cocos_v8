@@ -121,5 +121,4 @@ v8::Local<v8::Object> jsb_ref_autoreleased_create_jsobject(T *ref)
 
 void CallCustomConstructor(const v8::FunctionCallbackInfo<v8::Value> &args, v8::Local<v8::Object> obj);
 
-
 v8::Local<v8::FunctionTemplate> CreateFunctionTemplateWithConstructor(const char *className, v8::FunctionCallback constructor);

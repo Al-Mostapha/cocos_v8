@@ -4,6 +4,8 @@
 #include "JsbNode.hpp"
 #include "ScriptEngine.hpp"
 #include "JsbScene.hpp"
+#include "JsbNodeSpecial.hpp"
+#include "JsbWidget.hpp"
 
 void register_all_cocos2dx(v8::Isolate *isolate, v8::Local<v8::Object> obj)
 {
@@ -17,4 +19,6 @@ void register_all_cocos2dx(v8::Isolate *isolate, v8::Local<v8::Object> obj)
   js_register_cocos2dx_Device(isolate, ns);
   js_register_cocos2dx_Node(isolate, ns);
   js_register_cocos2dx_Scene(isolate, ns);
+  js_register_cocos2dx_ProtectedNode(isolate, ns);
+  // jsb_register_all_cocos2dx_widget(isolate, ns);
 }

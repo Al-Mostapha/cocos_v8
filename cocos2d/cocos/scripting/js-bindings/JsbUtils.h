@@ -83,6 +83,7 @@ public:
     static bool jsval_to_ccvaluevector(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::ValueVector *ret);
     static bool jsval_to_ccsize(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::Size *ret);
     static bool jsval_to_cccolor4b(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::Color4B *ret);
+    static bool jsval_to_ccrect(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::Rect *ret);
 
     static v8::Local<v8::Value> ccvalue_to_jsval(v8::Isolate *isolate, const cocos2d::Value &v);
     static v8::Local<v8::Value> ccvaluemap_to_jsval(v8::Isolate *isolate, const cocos2d::ValueMap &v);
