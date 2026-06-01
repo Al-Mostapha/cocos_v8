@@ -239,16 +239,17 @@ void js_cocos2dx_Node_getGLProgram(const v8::FunctionCallbackInfo<v8::Value> &ar
   {
     cocos2d::backend::ProgramState *ret = cobj->getProgramState();
     v8::Isolate *isolate = args.GetIsolate();
-    v8::Local<v8::Object> jsret;
+
     if (ret)
     {
-      JsbUtils::NativePtrToObject(typeid(cocos2d::backend::ProgramState).name(), ret, &jsret);
+      v8::Local<v8::Object> jsret = JsbUtils::NativePtrToObject(ret);
+      args.GetReturnValue().Set(jsret);
     }
     else
     {
       // jsret = v8::Null(isolate);
+      args.GetReturnValue().SetNull();
     }
-    args.GetReturnValue().Set(jsret);
     return;
   }
 
@@ -580,16 +581,16 @@ void js_cocos2dx_Node_getChildByName(const v8::FunctionCallbackInfo<v8::Value> &
 
     cocos2d::Node *ret = cobj->getChildByName(cChildName);
 
-    v8::Local<v8::Object> jsret;
     if (ret)
     {
-      JsbUtils::NativePtrToObject(typeid(cocos2d::Node).name(), ret, &jsret);
+      v8::Local<v8::Object> jsret = JsbUtils::NativePtrToObject(ret);
+      args.GetReturnValue().Set(jsret);
     }
     else
     {
       // jsret = v8::Null(isolate).As;
+      args.GetReturnValue().SetNull();
     }
-    args.GetReturnValue().Set(jsret);
     return;
   }
 
@@ -1303,8 +1304,7 @@ void js_cocos2dx_Node_getScene(const v8::FunctionCallbackInfo<v8::Value> &args)
     v8::Local<v8::Object> jsret;
     if (ret)
     {
-      bool ok = JsbUtils::NativePtrToObject(typeid(cocos2d::Scene).name(), ret, &jsret);
-      SE_PRECONDITION2(ok, "js_cocos2dx_Node_getScene : Error processing arguments");
+      jsret = JsbUtils::NativePtrToObject(ret);
     }
     else
     {
@@ -1342,9 +1342,7 @@ void js_cocos2dx_Node_getEventDispatcher(const v8::FunctionCallbackInfo<v8::Valu
     //         };
     if (ret)
     {
-      v8::Local<v8::Object> jsret;
-      bool ok = JsbUtils::NativePtrToObject(typeid(cocos2d::EventDispatcher).name(), ret, &jsret);
-      SE_PRECONDITION2(ok, "js_cocos2dx_Node_getEventDispatcher : Error processing arguments");
+      v8::Local<v8::Object> jsret = JsbUtils::NativePtrToObject(ret);
       args.GetReturnValue().Set(jsret);
     }
     else
@@ -2789,8 +2787,7 @@ void js_cocos2dx_Node_runAction(const v8::FunctionCallbackInfo<v8::Value> &args)
     v8::Local<v8::Value> jsret;
     if (ret)
     {
-      v8::Local<v8::Object> jsObj;
-      JsbUtils::NativePtrToObject(typeid(cocos2d::Action).name(), ret, &jsObj);
+      v8::Local<v8::Object> jsObj = JsbUtils::NativePtrToObject(ret);
       jsret = jsObj;
     }
     else
@@ -3012,8 +3009,7 @@ void js_cocos2dx_Node_getPhysicsBody(const v8::FunctionCallbackInfo<v8::Value> &
     v8::Local<v8::Value> jsret;
     if (ret)
     {
-      v8::Local<v8::Object> jsObj;
-      JsbUtils::NativePtrToObject(typeid(cocos2d::PhysicsBody).name(), ret, &jsObj);
+      v8::Local<v8::Object> jsObj = JsbUtils::NativePtrToObject(ret);
       jsret = jsObj;
     }
     else
@@ -3195,8 +3191,7 @@ void js_cocos2dx_Node_getGLProgramState(const v8::FunctionCallbackInfo<v8::Value
     v8::Local<v8::Value> jsret;
     if (ret)
     {
-      v8::Local<v8::Object> jsObj;
-      JsbUtils::NativePtrToObject(typeid(cocos2d::backend::ProgramState).name(), ret, &jsObj);
+      v8::Local<v8::Object> jsObj = JsbUtils::NativePtrToObject(ret);
       jsret = jsObj;
     }
     else
@@ -3457,8 +3452,7 @@ void js_cocos2dx_Node_getActionByTag(const v8::FunctionCallbackInfo<v8::Value> &
     v8::Local<v8::Value> jsret;
     if (ret)
     {
-      v8::Local<v8::Object> jsObj;
-      JsbUtils::NativePtrToObject(typeid(cocos2d::Action).name(), ret, &jsObj);
+      v8::Local<v8::Object> jsObj = JsbUtils::NativePtrToObject(ret);
       jsret = jsObj;
     }
     else
@@ -3684,8 +3678,7 @@ void js_cocos2dx_Node_getScheduler(const v8::FunctionCallbackInfo<v8::Value> &ar
     v8::Local<v8::Value> jsret;
     if (ret)
     {
-      v8::Local<v8::Object> jsObj;
-      JsbUtils::NativePtrToObject(typeid(cocos2d::Scheduler).name(), ret, &jsObj);
+      v8::Local<v8::Object> jsObj = JsbUtils::NativePtrToObject(ret);
       jsret = jsObj;
     }
     else
@@ -3833,8 +3826,7 @@ void js_cocos2dx_Node_getParent(const v8::FunctionCallbackInfo<v8::Value> &args)
     v8::Local<v8::Value> jsret;
     if (ret)
     {
-      v8::Local<v8::Object> jsObj;
-      JsbUtils::NativePtrToObject(typeid(cocos2d::Node).name(), ret, &jsObj);
+      v8::Local<v8::Object> jsObj = JsbUtils::NativePtrToObject(ret);
       jsret = jsObj;
     }
     else
@@ -4322,8 +4314,7 @@ void js_cocos2dx_Node_getChildByTag(const v8::FunctionCallbackInfo<v8::Value> &a
     v8::Local<v8::Value> jsret;
     if (ret)
     {
-      v8::Local<v8::Object> jsobj;
-      JsbUtils::NativePtrToObject(typeid(cocos2d::Node).name(), ret, &jsobj);
+      v8::Local<v8::Object> jsobj = JsbUtils::NativePtrToObject(ret);
       jsret = jsobj;
     }
     else
@@ -4561,8 +4552,7 @@ void js_cocos2dx_Node_getComponent(const v8::FunctionCallbackInfo<v8::Value> &ar
     v8::Local<v8::Value> jsret;
     if (ret)
     {
-      v8::Local<v8::Object> jsobj;
-      JsbUtils::NativePtrToObject(typeid(cocos2d::Component).name(), ret, &jsobj);
+      v8::Local<v8::Object> jsobj = JsbUtils::NativePtrToObject(ret);
       jsret = jsobj;
     }
     else
@@ -5622,8 +5612,7 @@ void js_cocos2dx_Node_getActionManager(const v8::FunctionCallbackInfo<v8::Value>
     v8::Local<v8::Value> jsret;
     if (ret)
     {
-      v8::Local<v8::Object> jsObj;
-      JsbUtils::NativePtrToObject(typeid(cocos2d::ActionManager).name(), ret, &jsObj);
+      v8::Local<v8::Object> jsObj = JsbUtils::NativePtrToObject(ret);
       jsret = jsObj;
     }
     else
@@ -5651,8 +5640,7 @@ void js_cocos2dx_Node_getActionManager(const v8::FunctionCallbackInfo<v8::Value>
     v8::Local<v8::Value> jsret;
     if (ret)
     {
-      v8::Local<v8::Object> jsObj;
-      JsbUtils::NativePtrToObject(typeid(cocos2d::ActionManager).name(), ret, &jsObj);
+      v8::Local<v8::Object> jsObj = JsbUtils::NativePtrToObject(ret);
       jsret = jsObj;
     }
     else

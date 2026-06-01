@@ -547,8 +547,7 @@ void js_cocos2dx_Director_getNotificationNode(const v8::FunctionCallbackInfo<v8:
     cocos2d::Node *ret = cobj->getNotificationNode();
     if (ret)
     {
-      v8::Local<v8::Object> jsObj;
-      JsbUtils::NativePtrToObject(typeid(cocos2d::Node).name(), ret, &jsObj);
+      v8::Local<v8::Object> jsObj = JsbUtils::NativePtrToObject(ret);
       args.GetReturnValue().Set(jsObj);
     }
     else
@@ -653,8 +652,7 @@ void js_cocos2dx_Director_getTextureCache(const v8::FunctionCallbackInfo<v8::Val
     cocos2d::TextureCache *ret = cobj->getTextureCache();
     if (ret)
     {
-      v8::Local<v8::Object> jsObj;
-      JsbUtils::NativePtrToObject(typeid(cocos2d::TextureCache).name(), (cocos2d::TextureCache *)ret, &jsObj);
+      v8::Local<v8::Object> jsObj = JsbUtils::NativePtrToObject(ret);
       args.GetReturnValue().Set(jsObj);
     }
     else
@@ -1246,8 +1244,7 @@ void js_cocos2dx_Director_getOpenGLView(const v8::FunctionCallbackInfo<v8::Value
     cocos2d::GLView *ret = cobj->getOpenGLView();
     if (ret)
     {
-      v8::Local<v8::Object> jsObj;
-      JsbUtils::NativePtrToObject(typeid(cocos2d::GLView).name(), ret, &jsObj);
+      v8::Local<v8::Object> jsObj = JsbUtils::NativePtrToObject(ret);
       args.GetReturnValue().Set(jsObj);
     }
     else
@@ -1291,8 +1288,7 @@ void js_cocos2dx_Director_getRunningScene(const v8::FunctionCallbackInfo<v8::Val
     cocos2d::Scene *ret = cobj->getRunningScene();
     if (ret)
     {
-      v8::Local<v8::Object> jsObj;
-      JsbUtils::NativePtrToObject(typeid(cocos2d::Scene).name(), ret, &jsObj);
+      v8::Local<v8::Object> jsObj = JsbUtils::NativePtrToObject(ret);
       args.GetReturnValue().Set(jsObj);
     }
     else
@@ -2232,8 +2228,7 @@ void js_cocos2dx_Director_getScheduler(const v8::FunctionCallbackInfo<v8::Value>
     cocos2d::Scheduler *ret = cobj->getScheduler();
     if (ret)
     {
-      v8::Local<v8::Object> jsObj;
-      JsbUtils::NativePtrToObject(typeid(cocos2d::Scheduler).name(), ret, &jsObj);
+      v8::Local<v8::Object> jsObj = JsbUtils::NativePtrToObject(ret);
       args.GetReturnValue().Set(jsObj);
     }
     else
@@ -2465,8 +2460,7 @@ void js_cocos2dx_Director_getEventDispatcher(const v8::FunctionCallbackInfo<v8::
     cocos2d::EventDispatcher *ret = cobj->getEventDispatcher();
     if (ret)
     {
-      v8::Local<v8::Object> jsObj;
-      JsbUtils::NativePtrToObject(typeid(cocos2d::EventDispatcher).name(), ret, &jsObj);
+      v8::Local<v8::Object> jsObj = JsbUtils::NativePtrToObject(ret);
       args.GetReturnValue().Set(jsObj);
     }
     else
@@ -2614,8 +2608,7 @@ void js_cocos2dx_Director_getActionManager(const v8::FunctionCallbackInfo<v8::Va
     cocos2d::ActionManager *ret = cobj->getActionManager();
     if (ret)
     {
-      v8::Local<v8::Object> jsObj;
-      JsbUtils::NativePtrToObject(typeid(cocos2d::ActionManager).name(), ret, &jsObj);
+      v8::Local<v8::Object> jsObj = JsbUtils::NativePtrToObject(ret);
       args.GetReturnValue().Set(jsObj);
     }
     else
@@ -2647,8 +2640,7 @@ void js_cocos2dx_Director_getInstance(const v8::FunctionCallbackInfo<v8::Value> 
   if (args.Length() == 0)
   {
     auto ret = cocos2d::Director::getInstance();
-    v8::Local<v8::Object> jsObj;
-    JsbUtils::NativePtrToObject(typeid(cocos2d::Director).name(), ret, &jsObj);
+    v8::Local<v8::Object> jsObj = JsbUtils::NativePtrToObject(ret);
     args.GetReturnValue().Set(jsObj);
     return;
   }

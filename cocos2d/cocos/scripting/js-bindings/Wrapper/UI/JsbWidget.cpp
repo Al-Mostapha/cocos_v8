@@ -4,7 +4,7 @@
 #include "JsbUtils.h"
 #include "JsbWidget.hpp"
 #include "ScriptEngine.hpp"
-#include "JsbNodeSpecial.hpp"
+#include "../JsbNodeSpecial.hpp"
 
 // JSClass  *jsb_cocos2d_ui_Widget_class;
 // JSObject *jsb_cocos2d_ui_Widget_prototype;
@@ -246,8 +246,7 @@ void js_cocos2dx_ui_Widget_getVirtualRenderer(const v8::FunctionCallbackInfo<v8:
     v8::Local<v8::Value> jsRet;
     if (virtualRenderer)
     {
-      v8::Local<v8::Object> jsObj;
-      JsbUtils::NativePtrToObject(typeid(cocos2d::Node).name(), isolate, &jsObj);
+      v8::Local<v8::Object> jsObj = JsbUtils::NativePtrToObject(virtualRenderer);
       jsRet = jsObj;
     }
     else
@@ -657,9 +656,7 @@ void js_cocos2dx_ui_Widget_getLayoutParameter(const v8::FunctionCallbackInfo<v8:
     v8::Local<v8::Value> jsRet;
     if (layoutParameter)
     {
-      v8::Local<v8::Object> jsObj;
-      JsbUtils::NativePtrToObject(typeid(cocos2d::ui::LayoutParameter).name(), isolate, &jsObj);
-      jsRet = jsObj;
+      jsRet = JsbUtils::NativePtrToObject(layoutParameter);
     }
     else
     {
@@ -891,8 +888,7 @@ void js_cocos2dx_ui_Widget_findNextFocusedWidget(const v8::FunctionCallbackInfo<
   //         };
   if (nextFocusedWidget)
   {
-    v8::Local<v8::Object> jsObj;
-    JsbUtils::NativePtrToObject(typeid(cocos2d::ui::Widget).name(), isolate, &jsObj);
+    v8::Local<v8::Object> jsObj = JsbUtils::NativePtrToObject(isolate);
     jsRet = jsObj;
   }
   else
@@ -1510,8 +1506,7 @@ void js_cocos2dx_ui_Widget_clone(const v8::FunctionCallbackInfo<v8::Value> &args
     cocos2d::ui::Widget *clonedWidget = cWidget->clone();
     if (clonedWidget)
     {
-      v8::Local<v8::Object> jsRet;
-      JsbUtils::NativePtrToObject(typeid(cocos2d::ui::Widget).name(), clonedWidget, &jsRet);
+      v8::Local<v8::Object> jsRet = JsbUtils::NativePtrToObject(clonedWidget);
       args.GetReturnValue().Set(jsRet);
     }
     else
@@ -2758,10 +2753,9 @@ void js_cocos2dx_ui_Widget_getCurrentFocusedWidget(const v8::FunctionCallbackInf
   //         jsval jsret = JSVAL_NULL;
   //         if (ret) {
   //         jsret = OBJECT_TO_JSVAL(js_get_or_create_jsobject<cocos2d::ui::Widget>(cx, (cocos2d::ui::Widget*)ret));
-  v8::Local<v8::Object> jsret;
   if (currentFocusedWidget)
   {
-    JsbUtils::NativePtrToObject(typeid(cocos2d::ui::Widget).name(), currentFocusedWidget, &jsret);
+    v8::Local<v8::Object> jsret = JsbUtils::NativePtrToObject(currentFocusedWidget);
     args.GetReturnValue().Set(jsret);
   }
   else

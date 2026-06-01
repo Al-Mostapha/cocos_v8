@@ -6,7 +6,7 @@
 #include "Utils/MappingUtils.hpp"
 #include "base/CCValue.h"
 #include "math/CCAffineTransform.h"
-#include "editor-support/cocostudio/CocosStudioExtension.h"
+
 #include <sstream>
 
 std::string JsbUtils::FromV8String(v8::Isolate *isolate, v8::Local<v8::String> str)
@@ -276,48 +276,6 @@ bool JsbUtils::SetPrivate(v8::Isolate *isolate, void *nativePtr, v8::Local<v8::O
   }
 
   // _privateData = data;
-  return true;
-}
-
-bool JsbUtils::NativePtrToObject(const char *typeName, void *ptr, v8::Local<v8::Object> *outObj)
-{
-  v8::Isolate *isolate = v8::Isolate::GetCurrent();
-  v8::EscapableHandleScope handle_scope(isolate);
-  v8::Local<v8::Context> context = isolate->GetCurrentContext();
-  auto jsbObj = NativePtrToObjectMap::find(ptr);
-
-  if (jsbObj == NativePtrToObjectMap::end())
-  {
-    // If we couldn't find native object in map, then the native object is created from native code. e.g. TMXLayer::getTileAt
-    //        CCLOGWARN("WARNING: Ref type: (%s) isn't catched!", typeid(*v).name());
-    // assert(cls != nullptr);
-    // obj = se::Object::createObjectWithClass(cls);
-    // ret->setObject(obj, true);
-    // obj->setPrivateData(v);
-    // v->retain(); // Retain the native object to unify the logic in finalize method of js object.
-    // if (isReturnCachedValue != nullptr)
-    // {
-    //     *isReturnCachedValue = false;
-    // }
-    v8::Local<v8::Object> obj;
-    if (!CreateJsObjectByTypeName(typeName, &obj))
-    {
-      SE_REPORT_ERROR("Failed to create js object for native type: %s", typeName);
-      return false;
-    }
-
-    if (outObj != nullptr)
-      *outObj = handle_scope.Escape(obj);
-
-    SetPrivate(isolate, ptr, obj);
-    NativePtrToObjectMap::emplace(ptr, obj);
-  }
-  else
-  {
-    if (outObj != nullptr)
-      *outObj = handle_scope.Escape(jsbObj->second.Get(isolate));
-  }
-
   return true;
 }
 

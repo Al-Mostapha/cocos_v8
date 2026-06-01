@@ -315,8 +315,7 @@ void js_cocos2dx_Scene_getDefaultCamera(const v8::FunctionCallbackInfo<v8::Value
     cocos2d::Camera *ret = cobj->getDefaultCamera();
     if (ret)
     {
-      v8::Local<v8::Object> jsret;
-      JsbUtils::NativePtrToObject(typeid(cocos2d::Camera).name(), ret, &jsret);
+      v8::Local<v8::Object> jsret = JsbUtils::NativePtrToObject(ret);
       args.GetReturnValue().Set(jsret);
     }
     else
@@ -358,8 +357,7 @@ void js_cocos2dx_Scene_createWithSize(const v8::FunctionCallbackInfo<v8::Value> 
     }
 
     auto ret = cocos2d::Scene::createWithSize(arg0);
-    v8::Local<v8::Object> jsret;
-    JsbUtils::NativePtrToObject(typeid(cocos2d::Scene).name(), ret, &jsret);
+    v8::Local<v8::Object> jsret = jsb_ref_autoreleased_create_jsobject(ret);
     args.GetReturnValue().Set(jsret);
     return;
   }

@@ -21,9 +21,11 @@ set(JSB_SRC
     Wrapper/JsbLabel.cpp
     Wrapper/JsbSprite.cpp
     Wrapper/JsbNodeSpecial.cpp
-    Wrapper/JsbWidget.cpp
+    Wrapper/UI/JsbWidget.cpp
     Wrapper/UI/JsbButton.cpp
     Wrapper/UI/JsbText.cpp
+    Wrapper/UI/JsbImageView.cpp
+    Wrapper/UI/JsbUIScrollView.cpp
 )
 
 set(JSB_HEADERS
@@ -50,9 +52,11 @@ set(JSB_HEADERS
     Wrapper/JsbLabel.hpp
     Wrapper/JsbSprite.hpp
     Wrapper/JsbNodeSpecial.hpp
-    Wrapper/JsbWidget.hpp
+    Wrapper/UI/JsbWidget.hpp
     Wrapper/UI/JsbButton.hpp
     Wrapper/UI/JsbText.hpp
+    Wrapper/UI/JsbImageView.hpp
+    Wrapper/UI/JsbUIScrollView.hpp
 )
 
 add_library(jsb STATIC ${JSB_SRC} ${JSB_HEADERS})

@@ -5,7 +5,7 @@
 #include "ScriptEngine.hpp"
 #include "JsbScene.hpp"
 #include "JsbNodeSpecial.hpp"
-#include "JsbWidget.hpp"
+#include "UI/JsbWidget.hpp"
 #include "UI/JsbButton.hpp"
 #include "UI/JsbText.hpp"
 

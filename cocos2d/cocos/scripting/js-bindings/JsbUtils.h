@@ -7,6 +7,8 @@
 #include "base/CCVector.h"
 #include "base/ccTypes.h"
 #include "math/CCAffineTransform.h"
+#include "editor-support/cocostudio/CocosStudioExtension.h"
+#include "Utils/MappingUtils.hpp"
 // namespace cocos2d
 // {
 //     class Value;
@@ -47,7 +49,9 @@ public:
 
     static bool SetPrivate(v8::Isolate *isolate, void *nativePtr, v8::Local<v8::Object> obj);
     static bool CreateJsObjectByTypeName(const char *typeName, v8::Local<v8::Object> *outObj);
-    static bool NativePtrToObject(const char *typeName, void *ptr, v8::Local<v8::Object> *outObj);
+
+    template <typename T>
+    static v8::Local<v8::Object> NativePtrToObject(T *ptr);
 
     static bool GetOrCreateJsObject(v8::Isolate *isolate, v8::Local<v8::Object> obj, const char *name, v8::Local<v8::Object> *outObj);
 
@@ -55,7 +59,7 @@ public:
 
     static bool RegisterV8Class(const char *className, v8::Local<v8::FunctionTemplate> *constructor);
 
-        static std::function<void()> FromJsFunc(v8::Isolate *isolate, v8::Local<v8::Function> func, v8::Local<v8::Object> self)
+    static std::function<void()> FromJsFunc(v8::Isolate *isolate, v8::Local<v8::Function> func, v8::Local<v8::Object> self)
     {
         // TODO when delete the lambda, the jsGlobalFunc and jsSelf will be destructed, which will make the callback invalid. We need to make sure the callback is not called after the lambda is destructed.
         auto jsGlobalFunc = std::make_shared<v8::Global<v8::Function>>(isolate, func);
@@ -109,8 +113,7 @@ public:
         for (const auto &obj : v)
         {
             //     JS::RootedValue arrElement(cx);
-            v8::Local<v8::Object> arrElement;
-            JsbUtils::NativePtrToObject(typeid(*obj).name(), obj, &arrElement);
+            v8::Local<v8::Object> arrElement = JsbUtils::NativePtrToObject(obj);
             //     // First, check whether object is associated with js object.
             //     js_type_class_t *typeClass = js_get_type_from_native(obj);
             //     JS::RootedObject jsobject(cx, jsb_ref_get_or_create_jsobject(cx, obj, typeClass, typeid(*obj).name()));
@@ -149,3 +152,39 @@ public:
     static bool jsval_to_cccolor4f(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::Color4F *outValue);
     static bool jsval_to_blendfunc(v8::Isolate *isolate, v8::Local<v8::Value> value, cocos2d::BlendFunc *outValue);
 };
+
+template <typename T>
+static v8::Local<v8::Object> JsbUtils::NativePtrToObject(T *ptr)
+{
+    v8::Isolate *isolate = v8::Isolate::GetCurrent();
+    v8::EscapableHandleScope handle_scope(isolate);
+    v8::Local<v8::Context> context = isolate->GetCurrentContext();
+    auto jsbObj = NativePtrToObjectMap::find(ptr);
+    const char *typeName = typeid(T).name();
+
+    if (jsbObj == NativePtrToObjectMap::end())
+    {
+        // If we couldn't find native object in map, then the native object is created from native code. e.g. TMXLayer::getTileAt
+        //        CCLOGWARN("WARNING: Ref type: (%s) isn't catched!", typeid(*v).name());
+        // assert(cls != nullptr);
+        // obj = se::Object::createObjectWithClass(cls);
+        // ret->setObject(obj, true);
+        // obj->setPrivateData(v);
+        // v->retain(); // Retain the native object to unify the logic in finalize method of js object.
+        // if (isReturnCachedValue != nullptr)
+        // {
+        //     *isReturnCachedValue = false;
+        // }
+        v8::Local<v8::Object> obj;
+        if (!CreateJsObjectByTypeName(typeName, &obj))
+        {
+            SE_REPORT_ERROR("Failed to create js object for native type: %s", typeName);
+            return handle_scope.Escape(v8::Local<v8::Object>()); // Return empty handle
+        }
+
+        SetPrivate(isolate, ptr, obj);
+        NativePtrToObjectMap::emplace(ptr, obj);
+        return handle_scope.Escape(obj);
+    }
+    return handle_scope.Escape(jsbObj->second.Get(isolate));
+}

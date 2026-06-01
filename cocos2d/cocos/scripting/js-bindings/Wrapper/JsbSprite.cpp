@@ -181,8 +181,7 @@ void js_cocos2dx_Sprite_getTexture(const v8::FunctionCallbackInfo<v8::Value> &ar
   //         {
   if (texture)
   {
-    v8::Local<v8::Object> jsObj;
-    JsbUtils::NativePtrToObject(typeid(cocos2d::Texture2D).name(), texture, &jsObj);
+    v8::Local<v8::Object> jsObj = JsbUtils::NativePtrToObject(texture);
     args.GetReturnValue().Set(jsObj);
   }
   else
@@ -467,8 +466,7 @@ void js_cocos2dx_Sprite_getBatchNode(const v8::FunctionCallbackInfo<v8::Value> &
   v8::Local<v8::Value> jsret;
   if (batchNode)
   {
-    v8::Local<v8::Object> jsObj;
-    JsbUtils::NativePtrToObject(typeid(cocos2d::SpriteBatchNode).name(), batchNode, &jsObj);
+    v8::Local<v8::Object> jsObj = JsbUtils::NativePtrToObject(batchNode);
     jsret = jsObj;
   }
   else
@@ -1128,8 +1126,7 @@ void js_cocos2dx_Sprite_getSpriteFrame(const v8::FunctionCallbackInfo<v8::Value>
 
   if (spriteFrame)
   {
-    v8::Local<v8::Object> jsret;
-    JsbUtils::NativePtrToObject(typeid(cocos2d::SpriteFrame).name(), spriteFrame, &jsret);
+    v8::Local<v8::Object> jsret = JsbUtils::NativePtrToObject(spriteFrame);
     args.GetReturnValue().Set(jsret);
   }
   else
@@ -1609,8 +1606,7 @@ void js_cocos2dx_Sprite_getTextureAtlas(const v8::FunctionCallbackInfo<v8::Value
   cocos2d::TextureAtlas *textureAtlas = cSprite->getTextureAtlas();
   if (textureAtlas)
   {
-    v8::Local<v8::Object> jsret;
-    JsbUtils::NativePtrToObject(typeid(cocos2d::TextureAtlas).name(), textureAtlas, &jsret);
+    v8::Local<v8::Object> jsret = JsbUtils::NativePtrToObject(textureAtlas);
     args.GetReturnValue().Set(jsret);
   }
   else

@@ -901,8 +901,7 @@ void js_cocos2dx_Configuration_getInstance(const v8::FunctionCallbackInfo<v8::Va
     cocos2d::Configuration *ret = cocos2d::Configuration::getInstance();
     if (ret)
     {
-      v8::Local<v8::Object> jsret;
-      JsbUtils::NativePtrToObject(typeid(*ret).name(), ret, &jsret);
+      v8::Local<v8::Object> jsret = JsbUtils::NativePtrToObject(ret);
       args.GetReturnValue().Set(jsret);
     }
     else

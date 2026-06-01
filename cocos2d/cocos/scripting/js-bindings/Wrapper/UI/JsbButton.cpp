@@ -279,8 +279,7 @@ void js_cocos2dx_ui_Button_getTitleRenderer(const v8::FunctionCallbackInfo<v8::V
     //         JS::RootedValue jsret(cx);
     if (ret)
     {
-        v8::Local<v8::Object> jsObj;
-        JsbUtils::NativePtrToObject(typeid(cocos2d::Label).name(), ret, &jsObj);
+        v8::Local<v8::Object> jsObj = JsbUtils::NativePtrToObject(ret);
         args.GetReturnValue().Set(jsObj);
     }
     else
@@ -320,8 +319,7 @@ void js_cocos2dx_ui_Button_getRendererClicked(const v8::FunctionCallbackInfo<v8:
     cocos2d::ui::Scale9Sprite *ret = cBtn->getRendererClicked();
     if (ret)
     {
-        v8::Local<v8::Object> jsObj;
-        JsbUtils::NativePtrToObject(typeid(cocos2d::ui::Scale9Sprite).name(), ret, &jsObj);
+        v8::Local<v8::Object> jsObj = JsbUtils::NativePtrToObject(ret);
         args.GetReturnValue().Set(jsObj);
     }
     else
@@ -542,8 +540,7 @@ void js_cocos2dx_ui_Button_getRendererDisabled(const v8::FunctionCallbackInfo<v8
     cocos2d::ui::Scale9Sprite *ret = cBtn->getRendererDisabled();
     if (ret)
     {
-        v8::Local<v8::Object> jsObj;
-        JsbUtils::NativePtrToObject(typeid(cocos2d::ui::Scale9Sprite).name(), ret, &jsObj);
+        v8::Local<v8::Object> jsObj = JsbUtils::NativePtrToObject(ret);
         args.GetReturnValue().Set(jsObj);
     }
     else
@@ -1304,8 +1301,7 @@ void js_cocos2dx_ui_Button_getTitleLabel(const v8::FunctionCallbackInfo<v8::Valu
     v8::Local<v8::Value> jsret;
     if (ret)
     {
-        v8::Local<v8::Object> jsObj;
-        JsbUtils::NativePtrToObject(typeid(cocos2d::Label).name(), ret, &jsObj);
+        v8::Local<v8::Object> jsObj = JsbUtils::NativePtrToObject(ret);
         jsret = jsObj;
     }
     else
@@ -1369,8 +1365,7 @@ void js_cocos2dx_ui_Button_getRendererNormal(const v8::FunctionCallbackInfo<v8::
     v8::Local<v8::Value> jsret;
     if (ret)
     {
-        v8::Local<v8::Object> jsObj;
-        JsbUtils::NativePtrToObject(typeid(cocos2d::ui::Scale9Sprite).name(), ret, &jsObj);
+        v8::Local<v8::Object> jsObj = JsbUtils::NativePtrToObject(ret);
         jsret = jsObj;
     }
     else
@@ -1532,8 +1527,7 @@ void js_cocos2dx_ui_Button_create(const v8::FunctionCallbackInfo<v8::Value> &arg
         //             };
         if (ret)
         {
-            v8::Local<v8::Object> jsObj;
-            JsbUtils::NativePtrToObject(typeid(cocos2d::ui::Button).name(), ret, &jsObj);
+            v8::Local<v8::Object> jsObj = JsbUtils::NativePtrToObject(ret);
             args.GetReturnValue().Set(jsObj);
         }
         else
@@ -1566,8 +1560,7 @@ void js_cocos2dx_ui_Button_create(const v8::FunctionCallbackInfo<v8::Value> &arg
         //             };
         if (ret)
         {
-            v8::Local<v8::Object> jsObj;
-            JsbUtils::NativePtrToObject(typeid(cocos2d::ui::Button).name(), ret, &jsObj);
+            v8::Local<v8::Object> jsObj = JsbUtils::NativePtrToObject(ret);
             args.GetReturnValue().Set(jsObj);
         }
         else
@@ -1606,8 +1599,7 @@ void js_cocos2dx_ui_Button_create(const v8::FunctionCallbackInfo<v8::Value> &arg
         //             };
         if (ret)
         {
-            v8::Local<v8::Object> jsObj;
-            JsbUtils::NativePtrToObject(typeid(cocos2d::ui::Button).name(), ret, &jsObj);
+            v8::Local<v8::Object> jsObj = JsbUtils::NativePtrToObject(ret);
             args.GetReturnValue().Set(jsObj);
         }
         else
@@ -1651,8 +1643,7 @@ void js_cocos2dx_ui_Button_create(const v8::FunctionCallbackInfo<v8::Value> &arg
         //             };
         if (ret)
         {
-            v8::Local<v8::Object> jsObj;
-            JsbUtils::NativePtrToObject(typeid(cocos2d::ui::Button).name(), ret, &jsObj);
+            v8::Local<v8::Object> jsObj = JsbUtils::NativePtrToObject(ret);
             args.GetReturnValue().Set(jsObj);
         }
         else
@@ -1682,8 +1673,7 @@ void js_cocos2dx_ui_Button_create(const v8::FunctionCallbackInfo<v8::Value> &arg
         //             return true;
         if (ret)
         {
-            v8::Local<v8::Object> jsObj;
-            JsbUtils::NativePtrToObject(typeid(cocos2d::ui::Button).name(), ret, &jsObj);
+            v8::Local<v8::Object> jsObj = JsbUtils::NativePtrToObject(ret);
             args.GetReturnValue().Set(jsObj);
         }
         else

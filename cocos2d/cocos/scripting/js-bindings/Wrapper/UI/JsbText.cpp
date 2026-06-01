@@ -2,14 +2,16 @@
 #include "ui/UIText.h"
 #include "JsbCtor.hpp"
 #include "JsbUtils.h"
+#include "JsbWidget.hpp"
 #include "2d/CCSprite.h"
+#include "ScriptEngine.hpp"
 
 // JSClass  *jsb_cocos2d_ui_Text_class;
 // JSObject *jsb_cocos2d_ui_Text_prototype;
 
 // bool js_cocos2dx_ui_Text_enableShadow(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-void js_cocos2dx_ui_Button_constructor(const v8::FunctionCallbackInfo<v8::Value> &args)
+void js_cocos2dx_ui_Text_enableShadow(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
   v8::Isolate *isolate = args.GetIsolate();
   v8::HandleScope handleScope(isolate);
@@ -718,7 +720,7 @@ void js_cocos2dx_ui_Text_getStringLength(const v8::FunctionCallbackInfo<v8::Valu
   if (args.Length() == 0)
   {
     ssize_t ret = cText->getStringLength();
-    args.GetReturnValue().Set(JsbUtils::ssize_to_jsval(isolate, ret));
+    args.GetReturnValue().Set(v8::Integer::New(isolate, (int32_t)ret));
     return;
   }
 
@@ -1121,8 +1123,7 @@ void js_cocos2dx_ui_Text_getLetter(const v8::FunctionCallbackInfo<v8::Value> &ar
     cocos2d::Sprite *ret = cText->getLetter(arg0);
     if (ret)
     {
-      v8::Local<v8::Object> jsret;
-      JsbUtils::NativePtrToObject(typeid(cocos2d::Sprite).name(), ret, &jsret);
+      v8::Local<v8::Object> jsret = JsbUtils::NativePtrToObject(ret);
       args.GetReturnValue().Set(jsret);
     }
     else
@@ -1178,213 +1179,355 @@ void js_cocos2dx_ui_Text_setBlendFunc(const v8::FunctionCallbackInfo<v8::Value> 
 
 // bool js_cocos2dx_ui_Text_getTextVerticalAlignment(JSContext *cx, uint32_t argc, jsval *vp)
 // {
+void js_cocos2dx_ui_Text_getTextVerticalAlignment(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ui::Text* cobj = (cocos2d::ui::Text *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ui::Text *cText = (cocos2d::ui::Text *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_ui_Text_getTextVerticalAlignment : Invalid Native Object");
+  SE_PRECONDITION2(cText, "js_cocos2dx_ui_Text_getTextVerticalAlignment : Invalid Native Object");
+  //     if (argc == 0) {
+  //         int ret = (int)cobj->getTextVerticalAlignment();
+  //         JS::RootedValue jsret(cx);
+  //         jsret = int32_to_jsval(cx, ret);
+  //         args.rval().set(jsret);
+  //         return true;
+  //     }
+  if (args.Length() == 0)
+  {
+    int ret = (int)cText->getTextVerticalAlignment();
+    args.GetReturnValue().Set(v8::Integer::New(isolate, ret));
+    return;
+  }
 
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ui::Text* cobj = (cocos2d::ui::Text *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_ui_Text_getTextVerticalAlignment : Invalid Native Object");
-//     if (argc == 0) {
-//         int ret = (int)cobj->getTextVerticalAlignment();
-//         JS::RootedValue jsret(cx);
-//         jsret = int32_to_jsval(cx, ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+  SE_REPORT_ERROR("js_cocos2dx_ui_Text_getTextVerticalAlignment : wrong number of arguments: %d", args.Length());
 
-//     JS_ReportError(cx, "js_cocos2dx_ui_Text_getTextVerticalAlignment : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ui_Text_getTextVerticalAlignment : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_ui_Text_getTextAreaSize(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ui::Text* cobj = (cocos2d::ui::Text *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_ui_Text_getTextAreaSize : Invalid Native Object");
-//     if (argc == 0) {
-//         const cocos2d::Size& ret = cobj->getTextAreaSize();
-//         JS::RootedValue jsret(cx);
-//         jsret = ccsize_to_jsval(cx, ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ui_Text_getTextAreaSize(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ui::Text* cobj = (cocos2d::ui::Text *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ui::Text *cText = (cocos2d::ui::Text *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_ui_Text_getTextAreaSize : Invalid Native Object");
 
-//     JS_ReportError(cx, "js_cocos2dx_ui_Text_getTextAreaSize : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  SE_PRECONDITION2(cText, "js_cocos2dx_ui_Text_getTextAreaSize : Invalid Native Object");
+  //     if (argc == 0) {
+  //         const cocos2d::Size& ret = cobj->getTextAreaSize();
+  //         JS::RootedValue jsret(cx);
+  //         jsret = ccsize_to_jsval(cx, ret);
+  //         args.rval().set(jsret);
+  //         return true;
+  //     }
+  if (args.Length() == 0)
+  {
+    const cocos2d::Size &ret = cText->getTextAreaSize();
+    args.GetReturnValue().Set(JsbUtils::ccsize_to_jsval(isolate, ret));
+    return;
+  }
+
+  SE_REPORT_ERROR("js_cocos2dx_ui_Text_getTextAreaSize : wrong number of arguments: %d", args.Length());
+
+  //     JS_ReportError(cx, "js_cocos2dx_ui_Text_getTextAreaSize : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_ui_Text_setTextHorizontalAlignment(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ui::Text* cobj = (cocos2d::ui::Text *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_ui_Text_setTextHorizontalAlignment : Invalid Native Object");
-//     if (argc == 1) {
-//         cocos2d::TextHAlignment arg0;
-//         ok &= jsval_to_int32(cx, args.get(0), (int32_t *)&arg0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ui_Text_setTextHorizontalAlignment : Error processing arguments");
-//         cobj->setTextHorizontalAlignment(arg0);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ui_Text_setTextHorizontalAlignment(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ui::Text* cobj = (cocos2d::ui::Text *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ui::Text *cText = (cocos2d::ui::Text *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_ui_Text_setTextHorizontalAlignment : Invalid Native Object");
+  SE_PRECONDITION2(cText, "js_cocos2dx_ui_Text_setTextHorizontalAlignment : Invalid Native Object");
+  //     if (argc == 1) {
+  //         cocos2d::TextHAlignment arg0;
+  //         ok &= jsval_to_int32(cx, args.get(0), (int32_t *)&arg0);
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ui_Text_setTextHorizontalAlignment : Error processing arguments");
+  //         cobj->setTextHorizontalAlignment(arg0);
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
+  if (args.Length() == 1)
+  {
+    int arg0 = args[0]->Int32Value(isolate->GetCurrentContext()).FromJust();
+    cText->setTextHorizontalAlignment((cocos2d::TextHAlignment)arg0);
+    args.GetReturnValue().SetUndefined();
+    return;
+  }
 
-//     JS_ReportError(cx, "js_cocos2dx_ui_Text_setTextHorizontalAlignment : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
+  SE_REPORT_ERROR("js_cocos2dx_ui_Text_setTextHorizontalAlignment : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+  //     return false;
+}
+
 // bool js_cocos2dx_ui_Text_create(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
+void js_cocos2dx_ui_Text_create(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
 
-//     do {
-//         if (argc == 3) {
-//             std::string arg0;
-//             ok &= jsval_to_std_string(cx, args.get(0), &arg0);
-//             if (!ok) { ok = true; break; }
-//             std::string arg1;
-//             ok &= jsval_to_std_string(cx, args.get(1), &arg1);
-//             if (!ok) { ok = true; break; }
-//             double arg2 = 0;
-//             ok &= JS::ToNumber( cx, args.get(2), &arg2) && !std::isnan(arg2);
-//             if (!ok) { ok = true; break; }
-//             cocos2d::ui::Text* ret = cocos2d::ui::Text::create(arg0, arg1, arg2);
-//             jsval jsret = JSVAL_NULL;
-//             if (ret) {
-//                 jsret = OBJECT_TO_JSVAL(js_get_or_create_jsobject<cocos2d::ui::Text>(cx, (cocos2d::ui::Text*)ret));
-//             } else {
-//                 jsret = JSVAL_NULL;
-//             };
-//             args.rval().set(jsret);
-//             return true;
-//         }
-//     } while (0);
+  //         if (argc == 3) {
+  //             std::string arg0;
+  //             ok &= jsval_to_std_string(cx, args.get(0), &arg0);
+  //             if (!ok) { ok = true; break; }
+  //             std::string arg1;
+  //             ok &= jsval_to_std_string(cx, args.get(1), &arg1);
+  //             if (!ok) { ok = true; break; }
+  //             double arg2 = 0;
+  //             ok &= JS::ToNumber( cx, args.get(2), &arg2) && !std::isnan(arg2);
+  //             if (!ok) { ok = true; break; }
+  //             cocos2d::ui::Text* ret = cocos2d::ui::Text::create(arg0, arg1, arg2);
+  //             jsval jsret = JSVAL_NULL;
+  //             if (ret) {
+  //                 jsret = OBJECT_TO_JSVAL(js_get_or_create_jsobject<cocos2d::ui::Text>(cx, (cocos2d::ui::Text*)ret));
+  //             } else {
+  //                 jsret = JSVAL_NULL;
+  //             };
+  //             args.rval().set(jsret);
+  //             return true;
+  //         }
+  if (args.Length() == 3)
+  {
+    std::string arg0 = JsbUtils::FromV8String(isolate, args[0]);
+    std::string arg1 = JsbUtils::FromV8String(isolate, args[1]);
+    double arg2 = args[2]->NumberValue(isolate->GetCurrentContext()).FromJust();
+    cocos2d::ui::Text *ret = cocos2d::ui::Text::create(arg0, arg1, arg2);
+    if (ret)
+    {
+      v8::Local<v8::Object> jsret = JsbUtils::NativePtrToObject(ret);
+      args.GetReturnValue().Set(jsret);
+    }
+    else
+    {
+      args.GetReturnValue().Set(v8::Null(isolate));
+    }
+    return;
+  }
 
-//     do {
-//         if (argc == 0) {
-//             cocos2d::ui::Text* ret = cocos2d::ui::Text::create();
-//             jsval jsret = JSVAL_NULL;
-//             if (ret) {
-//                 jsret = OBJECT_TO_JSVAL(js_get_or_create_jsobject<cocos2d::ui::Text>(cx, (cocos2d::ui::Text*)ret));
-//             } else {
-//                 jsret = JSVAL_NULL;
-//             };
-//             args.rval().set(jsret);
-//             return true;
-//         }
-//     } while (0);
-//     JS_ReportError(cx, "js_cocos2dx_ui_Text_create : wrong number of arguments");
-//     return false;
-// }
+  //         if (argc == 0) {
+  //             cocos2d::ui::Text* ret = cocos2d::ui::Text::create();
+  //             jsval jsret = JSVAL_NULL;
+  //             if (ret) {
+  //                 jsret = OBJECT_TO_JSVAL(js_get_or_create_jsobject<cocos2d::ui::Text>(cx, (cocos2d::ui::Text*)ret));
+  //             } else {
+  //                 jsret = JSVAL_NULL;
+  //             };
+  //             args.rval().set(jsret);
+  //             return true;
+  //         }
+  if (args.Length() == 0)
+  {
+    cocos2d::ui::Text *ret = cocos2d::ui::Text::create();
+    if (ret)
+    {
+      v8::Local<v8::Object> jsret = JsbUtils::NativePtrToObject(ret);
+      args.GetReturnValue().Set(jsret);
+    }
+    else
+    {
+      args.GetReturnValue().Set(v8::Null(isolate));
+    }
+    return;
+  }
+  //     JS_ReportError(cx, "js_cocos2dx_ui_Text_create : wrong number of arguments");
+  SE_REPORT_ERROR("js_cocos2dx_ui_Text_create : wrong number of arguments: %d", args.Length());
+  //     return false;
+}
+
 // bool js_cocos2dx_ui_Text_constructor(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     cocos2d::ui::Text* cobj = new (std::nothrow) cocos2d::ui::Text();
+void js_cocos2dx_ui_Text_constructor(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     cocos2d::ui::Text* cobj = new (std::nothrow) cocos2d::ui::Text();
+  cocos2d::ui::Text *cText = new (std::nothrow) cocos2d::ui::Text();
 
-//     js_type_class_t *typeClass = js_get_type_from_native<cocos2d::ui::Text>(cobj);
+  //     js_type_class_t *typeClass = js_get_type_from_native<cocos2d::ui::Text>(cobj);
 
-//     // link the native object with the javascript object
-//     JS::RootedObject jsobj(cx, jsb_ref_create_jsobject(cx, cobj, typeClass, "cocos2d::ui::Text"));
-//     args.rval().set(OBJECT_TO_JSVAL(jsobj));
-//     if (JS_HasProperty(cx, jsobj, "_ctor", &ok) && ok)
-//         ScriptingCore::getInstance()->executeFunctionWithOwner(OBJECT_TO_JSVAL(jsobj), "_ctor", args);
-//     return true;
-// }
+  //     // link the native object with the javascript object
+  //     JS::RootedObject jsobj(cx, jsb_ref_create_jsobject(cx, cobj, typeClass, "cocos2d::ui::Text"));
+  //     args.rval().set(OBJECT_TO_JSVAL(jsobj));
+  v8::Local<v8::Object> jsobj = jsb_ref_create_jsobject(cText);
+  //     if (JS_HasProperty(cx, jsobj, "_ctor", &ok) && ok)
+  //         ScriptingCore::getInstance()->executeFunctionWithOwner(OBJECT_TO_JSVAL(jsobj), "_ctor", args);
+  args.GetReturnValue().Set(jsobj);
+  CallCustomConstructor(args, jsobj);
+  //     return true;
+}
+
 // static bool js_cocos2dx_ui_Text_ctor(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     cocos2d::ui::Text *nobj = new (std::nothrow) cocos2d::ui::Text();
-//     js_proxy_t* p = jsb_new_proxy(nobj, obj);
-//     jsb_ref_init(cx, &p->obj, nobj, "cocos2d::ui::Text");
-//     bool isFound = false;
-//     if (JS_HasProperty(cx, obj, "_ctor", &isFound) && isFound)
-//         ScriptingCore::getInstance()->executeFunctionWithOwner(OBJECT_TO_JSVAL(obj), "_ctor", args);
-//     args.rval().setUndefined();
-//     return true;
-// }
+void js_cocos2dx_ui_Text_ctor(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     cocos2d::ui::Text *nobj = new (std::nothrow) cocos2d::ui::Text();
+  cocos2d::ui::Text *nobj = new (std::nothrow) cocos2d::ui::Text();
+  //     js_proxy_t* p = jsb_new_proxy(nobj, obj);
+  //     jsb_ref_init(cx, &p->obj, nobj, "cocos2d::ui::Text");
+  //     bool isFound = false;
+  v8::Local<v8::Object> obj = jsb_ref_autoreleased_create_jsobject(nobj);
+  //     if (JS_HasProperty(cx, obj, "_ctor", &isFound) && isFound)
+  //         ScriptingCore::getInstance()->executeFunctionWithOwner(OBJECT_TO_JSVAL(obj), "_ctor", args);
+  CallCustomConstructor(args, obj);
+  //     args.rval().setUndefined();
+  args.GetReturnValue().SetUndefined();
+  //     return true;
+}
 
 // extern JSObject *jsb_cocos2d_ui_Widget_prototype;
 
 // void js_register_cocos2dx_ui_Text(JSContext *cx, JS::HandleObject global) {
-//     jsb_cocos2d_ui_Text_class = (JSClass *)calloc(1, sizeof(JSClass));
-//     jsb_cocos2d_ui_Text_class->name = "Text";
-//     jsb_cocos2d_ui_Text_class->addProperty = JS_PropertyStub;
-//     jsb_cocos2d_ui_Text_class->delProperty = JS_DeletePropertyStub;
-//     jsb_cocos2d_ui_Text_class->getProperty = JS_PropertyStub;
-//     jsb_cocos2d_ui_Text_class->setProperty = JS_StrictPropertyStub;
-//     jsb_cocos2d_ui_Text_class->enumerate = JS_EnumerateStub;
-//     jsb_cocos2d_ui_Text_class->resolve = JS_ResolveStub;
-//     jsb_cocos2d_ui_Text_class->convert = JS_ConvertStub;
-//     jsb_cocos2d_ui_Text_class->flags = JSCLASS_HAS_RESERVED_SLOTS(2);
+void js_register_cocos2dx_ui_Text(v8::Isolate *isolate, v8::Local<v8::Object> global)
+{
 
-//     static JSPropertySpec properties[] = {
-//         JS_PS_END
-//     };
+  //     jsb_cocos2d_ui_Text_class = (JSClass *)calloc(1, sizeof(JSClass));
+  v8::Local<v8::FunctionTemplate> tpl = v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_Text_constructor);
+  //     jsb_cocos2d_ui_Text_class->name = "Text";
+  //     jsb_cocos2d_ui_Text_class->addProperty = JS_PropertyStub;
+  //     jsb_cocos2d_ui_Text_class->delProperty = JS_DeletePropertyStub;
+  //     jsb_cocos2d_ui_Text_class->getProperty = JS_PropertyStub;
+  //     jsb_cocos2d_ui_Text_class->setProperty = JS_StrictPropertyStub;
+  //     jsb_cocos2d_ui_Text_class->enumerate = JS_EnumerateStub;
+  //     jsb_cocos2d_ui_Text_class->resolve = JS_ResolveStub;
+  //     jsb_cocos2d_ui_Text_class->convert = JS_ConvertStub;
+  //     jsb_cocos2d_ui_Text_class->flags = JSCLASS_HAS_RESERVED_SLOTS(2);
+  tpl->SetClassName(JsbUtils::ToV8String(isolate, "Text"));
+  tpl->InstanceTemplate()->SetInternalFieldCount(1);
+  JsbUtils::RegisterV8Class(typeid(cocos2d::ui::Text).name(), &tpl);
+  auto proto = tpl->PrototypeTemplate();
+  auto parentPrototype = ScriptEngine::getInstance()->getClassByName(typeid(cocos2d::ui::Widget).name());
+  tpl->Inherit(parentPrototype);
+  //     static JSPropertySpec properties[] = {
+  //         JS_PS_END
+  //     };
 
-//     static JSFunctionSpec funcs[] = {
-//         JS_FN("enableShadow", js_cocos2dx_ui_Text_enableShadow, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getFontSize", js_cocos2dx_ui_Text_getFontSize, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getString", js_cocos2dx_ui_Text_getString, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("disableEffect", js_cocos2dx_ui_Text_disableEffect, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getLabelEffectType", js_cocos2dx_ui_Text_getLabelEffectType, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getTextColor", js_cocos2dx_ui_Text_getTextColor, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getBlendFunc", js_cocos2dx_ui_Text_getBlendFunc, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setTextVerticalAlignment", js_cocos2dx_ui_Text_setTextVerticalAlignment, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setFontName", js_cocos2dx_ui_Text_setFontName, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setTouchScaleChangeEnabled", js_cocos2dx_ui_Text_setTouchScaleChangeEnabled, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getShadowOffset", js_cocos2dx_ui_Text_getShadowOffset, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setString", js_cocos2dx_ui_Text_setString, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getOutlineSize", js_cocos2dx_ui_Text_getOutlineSize, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("init", js_cocos2dx_ui_Text_init, 3, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getShadowBlurRadius", js_cocos2dx_ui_Text_getShadowBlurRadius, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("isTouchScaleChangeEnabled", js_cocos2dx_ui_Text_isTouchScaleChangeEnabled, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getFontName", js_cocos2dx_ui_Text_getFontName, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setTextAreaSize", js_cocos2dx_ui_Text_setTextAreaSize, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getStringLength", js_cocos2dx_ui_Text_getStringLength, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getAutoRenderSize", js_cocos2dx_ui_Text_getAutoRenderSize, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("enableOutline", js_cocos2dx_ui_Text_enableOutline, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getEffectColor", js_cocos2dx_ui_Text_getEffectColor, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getType", js_cocos2dx_ui_Text_getType, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getTextHorizontalAlignment", js_cocos2dx_ui_Text_getTextHorizontalAlignment, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("isShadowEnabled", js_cocos2dx_ui_Text_isShadowEnabled, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setFontSize", js_cocos2dx_ui_Text_setFontSize, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getShadowColor", js_cocos2dx_ui_Text_getShadowColor, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setTextColor", js_cocos2dx_ui_Text_setTextColor, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("enableGlow", js_cocos2dx_ui_Text_enableGlow, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getLetter", js_cocos2dx_ui_Text_getLetter, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setBlendFunc", js_cocos2dx_ui_Text_setBlendFunc, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getTextVerticalAlignment", js_cocos2dx_ui_Text_getTextVerticalAlignment, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getTextAreaSize", js_cocos2dx_ui_Text_getTextAreaSize, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setTextHorizontalAlignment", js_cocos2dx_ui_Text_setTextHorizontalAlignment, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("ctor", js_cocos2dx_ui_Text_ctor, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FS_END
-//     };
+  //     static JSFunctionSpec funcs[] = {
+  //         JS_FN("enableShadow", js_cocos2dx_ui_Text_enableShadow, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "enableShadow", v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_Text_enableShadow));
+  //         JS_FN("getFontSize", js_cocos2dx_ui_Text_getFontSize, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "getFontSize", v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_Text_getFontSize));
+  //         JS_FN("getString", js_cocos2dx_ui_Text_getString, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "getString", v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_Text_getString));
+  //         JS_FN("disableEffect", js_cocos2dx_ui_Text_disableEffect, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "disableEffect", v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_Text_disableEffect));
+  //         JS_FN("getLabelEffectType", js_cocos2dx_ui_Text_getLabelEffectType, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "getLabelEffectType", v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_Text_getLabelEffectType));
+  //         JS_FN("getTextColor", js_cocos2dx_ui_Text_getTextColor, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "getTextColor", v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_Text_getTextColor));
+  //         JS_FN("getBlendFunc", js_cocos2dx_ui_Text_getBlendFunc, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "getBlendFunc", v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_Text_getBlendFunc));
+  //         JS_FN("setTextVerticalAlignment", js_cocos2dx_ui_Text_setTextVerticalAlignment, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "setTextVerticalAlignment", v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_Text_setTextVerticalAlignment));
+  //         JS_FN("setFontName", js_cocos2dx_ui_Text_setFontName, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "setFontName", v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_Text_setFontName));
+  //         JS_FN("setTouchScaleChangeEnabled", js_cocos2dx_ui_Text_setTouchScaleChangeEnabled, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "setTouchScaleChangeEnabled", v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_Text_setTouchScaleChangeEnabled));
+  //         JS_FN("getShadowOffset", js_cocos2dx_ui_Text_getShadowOffset, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "getShadowOffset", v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_Text_getShadowOffset));
+  //         JS_FN("setString", js_cocos2dx_ui_Text_setString, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "setString", v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_Text_setString));
+  //         JS_FN("getOutlineSize", js_cocos2dx_ui_Text_getOutlineSize, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "getOutlineSize", v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_Text_getOutlineSize));
+  //         JS_FN("init", js_cocos2dx_ui_Text_init, 3, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "init", v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_Text_init));
+  //         JS_FN("getShadowBlurRadius", js_cocos2dx_ui_Text_getShadowBlurRadius, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "getShadowBlurRadius", v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_Text_getShadowBlurRadius));
+  //         JS_FN("isTouchScaleChangeEnabled", js_cocos2dx_ui_Text_isTouchScaleChangeEnabled, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "isTouchScaleChangeEnabled", v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_Text_isTouchScaleChangeEnabled));
+  //         JS_FN("getFontName", js_cocos2dx_ui_Text_getFontName, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "getFontName", v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_Text_getFontName));
+  //         JS_FN("setTextAreaSize", js_cocos2dx_ui_Text_setTextAreaSize, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "setTextAreaSize", v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_Text_setTextAreaSize));
+  //         JS_FN("getStringLength", js_cocos2dx_ui_Text_getStringLength, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "getStringLength", v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_Text_getStringLength));
+  //         JS_FN("getAutoRenderSize", js_cocos2dx_ui_Text_getAutoRenderSize, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "getAutoRenderSize", v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_Text_getAutoRenderSize));
+  //         JS_FN("enableOutline", js_cocos2dx_ui_Text_enableOutline, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "enableOutline", v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_Text_enableOutline));
+  //         JS_FN("getEffectColor", js_cocos2dx_ui_Text_getEffectColor, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "getEffectColor", v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_Text_getEffectColor));
+  //         JS_FN("getType", js_cocos2dx_ui_Text_getType, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "getType", v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_Text_getType));
+  //         JS_FN("getTextHorizontalAlignment", js_cocos2dx_ui_Text_getTextHorizontalAlignment, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "getTextHorizontalAlignment", v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_Text_getTextHorizontalAlignment));
+  //         JS_FN("isShadowEnabled", js_cocos2dx_ui_Text_isShadowEnabled, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "isShadowEnabled", v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_Text_isShadowEnabled));
+  //         JS_FN("setFontSize", js_cocos2dx_ui_Text_setFontSize, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "setFontSize", v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_Text_setFontSize));
+  //         JS_FN("getShadowColor", js_cocos2dx_ui_Text_getShadowColor, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "getShadowColor", v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_Text_getShadowColor));
+  //         JS_FN("setTextColor", js_cocos2dx_ui_Text_setTextColor, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "setTextColor", v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_Text_setTextColor));
+  //         JS_FN("enableGlow", js_cocos2dx_ui_Text_enableGlow, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "enableGlow", v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_Text_enableGlow));
+  //         JS_FN("getLetter", js_cocos2dx_ui_Text_getLetter, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "getLetter", v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_Text_getLetter));
+  //         JS_FN("setBlendFunc", js_cocos2dx_ui_Text_setBlendFunc, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "setBlendFunc", v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_Text_setBlendFunc));
+  //         JS_FN("getTextVerticalAlignment", js_cocos2dx_ui_Text_getTextVerticalAlignment, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "getTextVerticalAlignment", v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_Text_getTextVerticalAlignment));
+  //         JS_FN("getTextAreaSize", js_cocos2dx_ui_Text_getTextAreaSize, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "getTextAreaSize", v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_Text_getTextAreaSize));
+  //         JS_FN("setTextHorizontalAlignment", js_cocos2dx_ui_Text_setTextHorizontalAlignment, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "setTextHorizontalAlignment", v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_Text_setTextHorizontalAlignment));
+  //         JS_FN("ctor", js_cocos2dx_ui_Text_ctor, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "ctor", v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_Text_ctor));
+  //         JS_FS_END
+  //     };
 
-//     static JSFunctionSpec st_funcs[] = {
-//         JS_FN("create", js_cocos2dx_ui_Text_create, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FS_END
-//     };
+  //     static JSFunctionSpec st_funcs[] = {
+  //         JS_FN("create", js_cocos2dx_ui_Text_create, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->Set(isolate, "create", v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_Text_create));
+  //         JS_FS_END
+  //     };
 
-//     JS::RootedObject parent_proto(cx, jsb_cocos2d_ui_Widget_prototype);
-//     jsb_cocos2d_ui_Text_prototype = JS_InitClass(
-//         cx, global,
-//         parent_proto,
-//         jsb_cocos2d_ui_Text_class,
-//         js_cocos2dx_ui_Text_constructor, 0, // constructor
-//         properties,
-//         funcs,
-//         NULL, // no static properties
-//         st_funcs);
+  //     JS::RootedObject parent_proto(cx, jsb_cocos2d_ui_Widget_prototype);
+  //     jsb_cocos2d_ui_Text_prototype = JS_InitClass(
+  //         cx, global,
+  //         parent_proto,
+  //         jsb_cocos2d_ui_Text_class,
+  //         js_cocos2dx_ui_Text_constructor, 0, // constructor
+  //         properties,
+  //         funcs,
+  //         NULL, // no static properties
+  //         st_funcs);
 
-//     JS::RootedObject proto(cx, jsb_cocos2d_ui_Text_prototype);
-//     JS::RootedValue className(cx, std_string_to_jsval(cx, "Text"));
-//     JS_SetProperty(cx, proto, "_className", className);
-//     JS_SetProperty(cx, proto, "__nativeObj", JS::TrueHandleValue);
-//     JS_SetProperty(cx, proto, "__is_ref", JS::TrueHandleValue);
-//     // add the proto and JSClass to the type->js info hash table
-//     jsb_register_class<cocos2d::ui::Text>(cx, jsb_cocos2d_ui_Text_class, proto, parent_proto);
-//     anonEvaluate(cx, global, "(function () { ccui.Text.extend = cc.Class.extend; })()");
-// }
+  //     JS::RootedObject proto(cx, jsb_cocos2d_ui_Text_prototype);
+  //     JS::RootedValue className(cx, std_string_to_jsval(cx, "Text"));
+  //     JS_SetProperty(cx, proto, "_className", className);
+  proto->Set(isolate, "_className", JsbUtils::ToV8String(isolate, "Text"));
+  //     JS_SetProperty(cx, proto, "__nativeObj", JS::TrueHandleValue);
+  proto->Set(isolate, "__nativeObj", v8::True(isolate));
+  //     JS_SetProperty(cx, proto, "__is_ref", JS::TrueHandleValue);
+  proto->Set(isolate, "__is_ref", v8::True(isolate));
+  //     // add the proto and JSClass to the type->js info hash table
+  //     jsb_register_class<cocos2d::ui::Text>(cx, jsb_cocos2d_ui_Text_class, proto, parent_proto);
+  //     anonEvaluate(cx, global, "(function () { ccui.Text.extend = cc.Class.extend; })()");
+}

@@ -2104,8 +2104,7 @@ void js_cocos2dx_Label_getLetter(const v8::FunctionCallbackInfo<v8::Value> &args
     cocos2d::Sprite *ret = cobj->getLetter(arg0);
     if (ret)
     {
-      v8::Local<v8::Object> jsObj;
-      JsbUtils::NativePtrToObject(typeid(cocos2d::Sprite).name(), ret, &jsObj);
+      v8::Local<v8::Object> jsObj = JsbUtils::NativePtrToObject(ret);
       args.GetReturnValue().Set(jsObj);
     }
     else

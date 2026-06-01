@@ -48,8 +48,8 @@ v8::Local<v8::Object> jsb_ref_create_jsobject(T *ref)
   }
 
   const char *typeName = typeid(T).name();
-
-  if (!JsbUtils::NativePtrToObject(typeName, ref, &obj))
+  obj = JsbUtils::NativePtrToObject<T>(ref);
+  if (obj.IsEmpty())
   {
     SE_REPORT_ERROR("Failed to create js object for native type: %s", typeName);
     delete ref;
@@ -80,7 +80,8 @@ v8::Local<v8::Object> jsb_ref_autoreleased_create_jsobject(T *ref)
     return handle_scope.Escape(v8::Local<v8::Object>());
   }
   const char *typeName = typeid(T).name();
-  if (!JsbUtils::NativePtrToObject(typeName, ref, &obj))
+  obj= JsbUtils::NativePtrToObject<T>(ref);
+  if (obj.IsEmpty())
   {
     SE_REPORT_ERROR("Failed to create js object for native type: %s", typeName);
     delete ref;
