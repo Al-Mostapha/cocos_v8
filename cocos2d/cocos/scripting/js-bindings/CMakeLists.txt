@@ -25,6 +25,7 @@ set(JSB_SRC
     Wrapper/UI/JsbButton.cpp
     Wrapper/UI/JsbText.cpp
     Wrapper/UI/JsbImageView.cpp
+    Wrapper/UI/JsbLayout.cpp
     Wrapper/UI/JsbUIScrollView.cpp
 )
 
@@ -56,6 +57,7 @@ set(JSB_HEADERS
     Wrapper/UI/JsbButton.hpp
     Wrapper/UI/JsbText.hpp
     Wrapper/UI/JsbImageView.hpp
+    Wrapper/UI/JsbLayout.hpp
     Wrapper/UI/JsbUIScrollView.hpp
 )
 
