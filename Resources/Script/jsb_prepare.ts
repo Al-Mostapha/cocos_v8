@@ -37,28 +37,7 @@ export const jsb: any = {};
  */
 cc.container = null;
 
-/**
- * Iterate over an object or an array, executing a function for each matched element.
- * @param {object|array} obj
- * @param {function} iterator
- * @param {object} [context]
- */
-cc.each = function (
-  obj: Record<string, unknown> | any[],
-  iterator: (value: unknown, key: string | number, context?: any) => boolean,
-  context?: any,
-) {
-  if (!obj) return;
-  if (obj instanceof Array) {
-    for (var i = 0, li = obj.length; i < li; i++) {
-      if (iterator.call(context, obj[i], i) === false) return;
-    }
-  } else {
-    for (var key in obj) {
-      if (iterator.call(context, obj[key], key) === false) return;
-    }
-  }
-};
+
 
 /**
  * Copy all of the properties in source objects to target object and return the target object.
