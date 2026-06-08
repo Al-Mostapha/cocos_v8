@@ -2234,72 +2234,135 @@ void js_register_cocos2dx_ui_ScrollView(v8::Isolate *iso, v8::Local<v8::Object> 
 
   //     static JSFunctionSpec funcs[] = {
   //         JS_FN("scrollToTop", js_cocos2dx_ui_ScrollView_scrollToTop, 2, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "scrollToTop", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_scrollToTop));
   //         JS_FN("scrollToPercentHorizontal", js_cocos2dx_ui_ScrollView_scrollToPercentHorizontal, 3, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "scrollToPercentHorizontal", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_scrollToPercentHorizontal));
   //         JS_FN("setScrollBarOpacity", js_cocos2dx_ui_ScrollView_setScrollBarOpacity, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "setScrollBarOpacity", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_setScrollBarOpacity));
   //         JS_FN("setScrollBarEnabled", js_cocos2dx_ui_ScrollView_setScrollBarEnabled, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "setScrollBarEnabled", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_setScrollBarEnabled));
   //         JS_FN("isInertiaScrollEnabled", js_cocos2dx_ui_ScrollView_isInertiaScrollEnabled, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "isInertiaScrollEnabled", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_isInertiaScrollEnabled));
   //         JS_FN("scrollToBottom", js_cocos2dx_ui_ScrollView_scrollToBottom, 2, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "scrollToBottom", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_scrollToBottom));
   //         JS_FN("getScrolledPercentBothDirection", js_cocos2dx_ui_ScrollView_getScrolledPercentBothDirection, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "getScrolledPercentBothDirection", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_getScrolledPercentBothDirection));
   //         JS_FN("getDirection", js_cocos2dx_ui_ScrollView_getDirection, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "getDirection", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_getDirection));
   //         JS_FN("setScrollBarColor", js_cocos2dx_ui_ScrollView_setScrollBarColor, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "setScrollBarColor", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_setScrollBarColor));
   //         JS_FN("scrollToBottomLeft", js_cocos2dx_ui_ScrollView_scrollToBottomLeft, 2, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "scrollToBottomLeft", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_scrollToBottomLeft));
   //         JS_FN("getInnerContainer", js_cocos2dx_ui_ScrollView_getInnerContainer, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_getInnerContainer));
   //         JS_FN("jumpToBottom", js_cocos2dx_ui_ScrollView_jumpToBottom, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "jumpToBottom", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_jumpToBottom));
   //         JS_FN("setInnerContainerPosition", js_cocos2dx_ui_ScrollView_setInnerContainerPosition, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "setInnerContainerPosition", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_setInnerContainerPosition));
   //         JS_FN("setDirection", js_cocos2dx_ui_ScrollView_setDirection, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "setDirection", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_setDirection));
   //         JS_FN("scrollToTopLeft", js_cocos2dx_ui_ScrollView_scrollToTopLeft, 2, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "scrollToTopLeft", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_scrollToTopLeft));
   //         JS_FN("jumpToTopRight", js_cocos2dx_ui_ScrollView_jumpToTopRight, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "jumpToTopRight", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_jumpToTopRight));
   //         JS_FN("scrollToPercentBothDirection", js_cocos2dx_ui_ScrollView_scrollToPercentBothDirection, 3, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "scrollToPercentBothDirection", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_scrollToPercentBothDirection));
   //         JS_FN("setInnerContainerSize", js_cocos2dx_ui_ScrollView_setInnerContainerSize, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "setInnerContainerSize", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_setInnerContainerSize));
   //         JS_FN("getInnerContainerPosition", js_cocos2dx_ui_ScrollView_getInnerContainerPosition, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "getInnerContainerPosition", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_getInnerContainerPosition));
   //         JS_FN("jumpToTop", js_cocos2dx_ui_ScrollView_jumpToTop, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "jumpToTop", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_jumpToTop));
   //         JS_FN("getScrolledPercentVertical", js_cocos2dx_ui_ScrollView_getScrolledPercentVertical, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "getScrolledPercentVertical", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_getScrolledPercentVertical));
   //         JS_FN("isBounceEnabled", js_cocos2dx_ui_ScrollView_isBounceEnabled, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "isBounceEnabled", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_isBounceEnabled));
   //         JS_FN("jumpToPercentVertical", js_cocos2dx_ui_ScrollView_jumpToPercentVertical, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "jumpToPercentVertical", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_jumpToPercentVertical));
   //         JS_FN("addEventListener", js_cocos2dx_ui_ScrollView_addEventListener, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "addEventListener", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_addEventListener));
   //         JS_FN("setScrollBarAutoHideTime", js_cocos2dx_ui_ScrollView_setScrollBarAutoHideTime, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "setScrollBarAutoHideTime", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_setScrollBarAutoHideTime));
   //         JS_FN("stopScroll", js_cocos2dx_ui_ScrollView_stopScroll, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "stopScroll", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_stopScroll));
   //         JS_FN("setScrollBarPositionFromCornerForHorizontal", js_cocos2dx_ui_ScrollView_setScrollBarPositionFromCornerForHorizontal, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "setScrollBarPositionFromCornerForHorizontal", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_setScrollBarPositionFromCornerForHorizontal));
   //         JS_FN("setInertiaScrollEnabled", js_cocos2dx_ui_ScrollView_setInertiaScrollEnabled, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "setInertiaScrollEnabled", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_setInertiaScrollEnabled));
   //         JS_FN("setScrollBarAutoHideEnabled", js_cocos2dx_ui_ScrollView_setScrollBarAutoHideEnabled, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "setScrollBarAutoHideEnabled", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_setScrollBarAutoHideEnabled));
   //         JS_FN("getScrollBarColor", js_cocos2dx_ui_ScrollView_getScrollBarColor, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "getScrollBarColor", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_getScrollBarColor));
   //         JS_FN("jumpToTopLeft", js_cocos2dx_ui_ScrollView_jumpToTopLeft, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "jumpToTopLeft", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_jumpToTopLeft));
   //         JS_FN("isScrollBarEnabled", js_cocos2dx_ui_ScrollView_isScrollBarEnabled, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "isScrollBarEnabled", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_isScrollBarEnabled));
   //         JS_FN("isAutoScrolling", js_cocos2dx_ui_ScrollView_isAutoScrolling, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "isAutoScrolling", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_isAutoScrolling));
   //         JS_FN("jumpToBottomRight", js_cocos2dx_ui_ScrollView_jumpToBottomRight, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "jumpToBottomRight", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_jumpToBottomRight));
   //         JS_FN("setTouchTotalTimeThreshold", js_cocos2dx_ui_ScrollView_setTouchTotalTimeThreshold, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "setTouchTotalTimeThreshold", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_setTouchTotalTimeThreshold));
   //         JS_FN("getTouchTotalTimeThreshold", js_cocos2dx_ui_ScrollView_getTouchTotalTimeThreshold, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "getTouchTotalTimeThreshold", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_getTouchTotalTimeThreshold));
   //         JS_FN("getScrollBarPositionFromCornerForHorizontal", js_cocos2dx_ui_ScrollView_getScrollBarPositionFromCornerForHorizontal, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "getScrollBarPositionFromCornerForHorizontal", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_getScrollBarPositionFromCornerForHorizontal));
   //         JS_FN("getScrolledPercentHorizontal", js_cocos2dx_ui_ScrollView_getScrolledPercentHorizontal, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "getScrolledPercentHorizontal", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_getScrolledPercentHorizontal));
   //         JS_FN("setBounceEnabled", js_cocos2dx_ui_ScrollView_setBounceEnabled, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "setBounceEnabled", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_setBounceEnabled));
   //         JS_FN("stopAutoScroll", js_cocos2dx_ui_ScrollView_stopAutoScroll, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "stopAutoScroll", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_stopAutoScroll));
   //         JS_FN("scrollToTopRight", js_cocos2dx_ui_ScrollView_scrollToTopRight, 2, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "scrollToTopRight", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_scrollToTopRight));
   //         JS_FN("isScrolling", js_cocos2dx_ui_ScrollView_isScrolling, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "isScrolling", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_isScrolling));
   //         JS_FN("scrollToLeft", js_cocos2dx_ui_ScrollView_scrollToLeft, 2, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "scrollToLeft", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_scrollToLeft));
   //         JS_FN("jumpToPercentBothDirection", js_cocos2dx_ui_ScrollView_jumpToPercentBothDirection, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "jumpToPercentBothDirection", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_jumpToPercentBothDirection));
   //         JS_FN("stopOverallScroll", js_cocos2dx_ui_ScrollView_stopOverallScroll, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "stopOverallScroll", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_stopOverallScroll));
   //         JS_FN("scrollToPercentVertical", js_cocos2dx_ui_ScrollView_scrollToPercentVertical, 3, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "scrollToPercentVertical", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_scrollToPercentVertical));
   //         JS_FN("setScrollBarWidth", js_cocos2dx_ui_ScrollView_setScrollBarWidth, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "setScrollBarWidth", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_setScrollBarWidth));
   //         JS_FN("getScrollBarOpacity", js_cocos2dx_ui_ScrollView_getScrollBarOpacity, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "getScrollBarOpacity", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_getScrollBarOpacity));
   //         JS_FN("scrollToBottomRight", js_cocos2dx_ui_ScrollView_scrollToBottomRight, 2, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "scrollToBottomRight", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_scrollToBottomRight));
   //         JS_FN("setScrollBarPositionFromCorner", js_cocos2dx_ui_ScrollView_setScrollBarPositionFromCorner, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "setScrollBarPositionFromCorner", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_setScrollBarPositionFromCorner));
   //         JS_FN("setScrollBarPositionFromCornerForVertical", js_cocos2dx_ui_ScrollView_setScrollBarPositionFromCornerForVertical, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "setScrollBarPositionFromCornerForVertical", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_setScrollBarPositionFromCornerForVertical));
   //         JS_FN("getScrollBarAutoHideTime", js_cocos2dx_ui_ScrollView_getScrollBarAutoHideTime, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "getScrollBarAutoHideTime", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_getScrollBarAutoHideTime));
   //         JS_FN("jumpToLeft", js_cocos2dx_ui_ScrollView_jumpToLeft, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "jumpToLeft", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_jumpToLeft));
   //         JS_FN("scrollToRight", js_cocos2dx_ui_ScrollView_scrollToRight, 2, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "scrollToRight", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_scrollToRight));
   //         JS_FN("getScrollBarPositionFromCornerForVertical", js_cocos2dx_ui_ScrollView_getScrollBarPositionFromCornerForVertical, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "getScrollBarPositionFromCornerForVertical", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_getScrollBarPositionFromCornerForVertical));
   //         JS_FN("getScrollBarWidth", js_cocos2dx_ui_ScrollView_getScrollBarWidth, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "getScrollBarWidth", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_getScrollBarWidth));
   //         JS_FN("isScrollBarAutoHideEnabled", js_cocos2dx_ui_ScrollView_isScrollBarAutoHideEnabled, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "isScrollBarAutoHideEnabled", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_isScrollBarAutoHideEnabled));
   //         JS_FN("jumpToBottomLeft", js_cocos2dx_ui_ScrollView_jumpToBottomLeft, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "jumpToBottomLeft", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_jumpToBottomLeft));
   //         JS_FN("jumpToRight", js_cocos2dx_ui_ScrollView_jumpToRight, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "jumpToRight", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_jumpToRight));
   //         JS_FN("getInnerContainerSize", js_cocos2dx_ui_ScrollView_getInnerContainerSize, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "getInnerContainerSize", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_getInnerContainerSize));
   //         JS_FN("jumpToPercentHorizontal", js_cocos2dx_ui_ScrollView_jumpToPercentHorizontal, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "jumpToPercentHorizontal", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_jumpToPercentHorizontal));
   //         JS_FN("ctor", js_cocos2dx_ui_ScrollView_ctor, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(iso, "ctor", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_ctor));
   //         JS_FS_END
   //     };
 
   //     static JSFunctionSpec st_funcs[] = {
   //         JS_FN("create", js_cocos2dx_ui_ScrollView_create, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->Set(iso, "create", v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_create));
   //         JS_FS_END
   //     };
 
@@ -2317,8 +2380,11 @@ void js_register_cocos2dx_ui_ScrollView(v8::Isolate *iso, v8::Local<v8::Object> 
   //     JS::RootedObject proto(cx, jsb_cocos2d_ui_ScrollView_prototype);
   //     JS::RootedValue className(cx, std_string_to_jsval(cx, "ScrollView"));
   //     JS_SetProperty(cx, proto, "_className", className);
+  proto->Set(iso, "_className", JsbUtils::ToV8String(iso, "ScrollView"));
   //     JS_SetProperty(cx, proto, "__nativeObj", JS::TrueHandleValue);
+  proto->Set(iso, "__nativeObj", v8::True(iso));
   //     JS_SetProperty(cx, proto, "__is_ref", JS::TrueHandleValue);
+  proto->Set(iso, "__is_ref", v8::True(iso));
   //     // add the proto and JSClass to the type->js info hash table
   //     jsb_register_class<cocos2d::ui::ScrollView>(cx, jsb_cocos2d_ui_ScrollView_class, proto, parent_proto);
   //     anonEvaluate(cx, global, "(function () { ccui.ScrollView.extend = cc.Class.extend; })()");

@@ -1,25 +1,65 @@
 namespace cc {
   //+++++++++++++++++++++++++something about loader start+++++++++++++++++++++++++++
   export class loader {
-   static _resPath = "";
-   static _audioPath = "";
-   static _register: Record<string, any> = {}; //register of loaders
-   static cache: Map<string, any> =  new Map(); //cache for data loaded
-   static _langPathCache = {}; //cache for lang path
+    static _resPath = "";
+    static _audioPath = "";
+    static _register: Record<string, any> = {}; //register of loaders
+    static cache: Map<string, any> = new Map(); //cache for data loaded
+    static _langPathCache: Record<string, string> = {}; //cache for lang path
     //@MODE_BEGIN DEV
-   static _jsCache =  {}; //cache for js
+    static _jsCache: Record<string, any> = {}; //cache for js
+
+    // TODO
+    // cc.defineGetterSetter(
+    //   cc.loader,
+    //   "resPath",
+    //   function () {
+    //     return this._resPath;
+    //   },
+    //   function (resPath) {
+    //     this._resPath = resPath || "";
+    //     jsb.fileUtils.addSearchPath(this._resPath);
+    //   },
+    // );
+    static get resPath() {
+      return this._resPath;
+    }
+
+    static set resPath(resPath: string) {
+      this._resPath = resPath || "";
+      jsb.fileUtils.addSearchPath(this._resPath);
+    }
+    // cc.defineGetterSetter(
+    //   cc.loader,
+    //   "audioPath",
+    //   function () {
+    //     return this._audioPath;
+    //   },
+    //   function (audioPath) {
+    //     this._audioPath = audioPath || "";
+    //     jsb.fileUtils.addSearchPath(this._audioPath);
+    //   },
+    // );
+    static get audioPath() {
+      return this._audioPath;
+    }
+
+    static set audioPath(audioPath: string) {
+      this._audioPath = audioPath || "";
+      jsb.fileUtils.addSearchPath(this._audioPath);
+    }
 
     /**
      * Get XMLHttpRequest.
      * @returns {XMLHttpRequest}
      */
-    static  getXMLHttpRequest () {
+    static getXMLHttpRequest() {
       return new XMLHttpRequest();
     }
 
-
-
-   private static _getArgs4Js(args: [string | string[], (string | Function | string[])?  ,Function? ]) {
+    private static _getArgs4Js(
+      args: [string | string[], (string | Function | string[])?, Function?],
+    ) {
       const a0 = args[0],
         a1 = args[1],
         a2 = args[2],
@@ -58,7 +98,7 @@ namespace cc {
       for (const jsFile of jsList) {
         cc.require(cc.path.join(baseDir, jsFile));
       }
-     cb?.();
+      cb?.();
     }
 
     /**
@@ -69,7 +109,7 @@ namespace cc {
      * @param {function} [cb]
      */
     static loadJsWithImg(baseDir: string, jsList: string[], cb?: Function) {
-      this.loadJs( baseDir, jsList, cb);
+      this.loadJs(baseDir, jsList, cb);
     }
 
     //@MODE_END DEV
@@ -79,7 +119,7 @@ namespace cc {
      * @param {!string} url
      * @param {function} cb arguments are : err, txt
      */
-    loadTxt (url: string, cb?: Function) {
+    loadTxt(url: string, cb?: Function) {
       cb?.(null, jsb.fileUtils.getStringFromFile(url));
     }
 
@@ -147,7 +187,7 @@ namespace cc {
      */
     static _loadResIterator(item: any, index: number, cb: Function) {
       const self = this;
-      let url: string  = null as any;
+      let url: string = null as any;
       let type = item.type;
 
       if (type) {
@@ -190,7 +230,7 @@ namespace cc {
      * @param {string} [url]
      * @returns {*}
      */
-    getUrl: function (basePath: string, url: string) {
+    static getUrl(basePath: string, url: string) {
       var self = this,
         langPathCache = self._langPathCache,
         path = cc.path;
@@ -214,7 +254,7 @@ namespace cc {
           extname;
       }
       return url;
-    },
+    }
 
     /**
      * Load resources then call the callback.
@@ -223,13 +263,13 @@ namespace cc {
      * @param {function|Object} [loadCallback]
      * @return {cc.AsyncPool}
      */
-    load: function (
+    static load(
       resources: string | string[],
       option: any,
       loadCallback: Function,
     ) {
-      var self = this;
-      var len = arguments.length;
+      const self = this;
+      const len = arguments.length;
       if (len === 0) throw new Error("arguments error!");
 
       if (len === 3) {
@@ -275,7 +315,7 @@ namespace cc {
       );
       asyncPool.flow();
       return asyncPool;
-    },
+    }
 
     /**
      * <p>
@@ -306,35 +346,35 @@ namespace cc {
      * @param {String} filename  The plist file name.
      * @param {Function} cb     callback
      */
-    loadAliases: function (url: string, cb: Function) {
+    static loadAliases(url: string, cb: Function) {
       jsb.fileUtils.loadFilenameLookup(url);
       if (cb) cb();
-    },
+    }
 
     /**
      * Register a resource loader into loader.
      * @param {string} extNames
      * @param {function} loader
      */
-    register: function (extNames: string | string[], loader: Function) {
+    static register(extNames: string | string[], loader: Function) {
       if (!extNames || !loader) return;
-      var self = this;
+      const self = this;
       if (typeof extNames === "string")
         return (this._register[extNames.trim().toLowerCase()] = loader);
-      for (var i = 0, li = extNames.length; i < li; i++) {
+      for (let i = 0, li = extNames.length; i < li; i++) {
         self._register["." + extNames[i].trim().toLowerCase()] = loader;
       }
-    },
+    }
 
     /**
      * Get resource data by url.
      * @param url
      * @returns {*}
      */
-    getRes: function (url: string) {
-      var cached = this.cache[url];
+    static getRes(url: string) {
+      const cached = this.cache.get(url);
       if (cached) return cached;
-      var type = cc.path.extname(url);
+      const type = cc.path.extname(url);
       if (!type) return cc.log("cc.loader.getRes: Invalid url");
       var loader = this._register[type.toLowerCase()];
       if (!loader)
@@ -344,47 +384,68 @@ namespace cc {
       var basePath = loader.getBasePath ? loader.getBasePath() : this.resPath;
       var realUrl = this.getUrl(basePath, url);
       return loader.load(realUrl, url);
-    },
+    }
 
     /**
      * Release the cache of resource by url.
      * @param url
      */
-    release: function (url: string) {
-      var cache = this.cache;
-      delete cache[url];
-    },
+    static release(url: string) {
+      const cache = this.cache;
+      cache.delete(url);
+    }
 
     /**
      * Resource cache of all resources.
      */
-    releaseAll: function () {
-      var locCache = this.cache;
-      for (var key in locCache) delete locCache[key];
-    },
-  };
+    static releaseAll() {
+      const locCache = this.cache;
+      for (const key in locCache) locCache.delete(key);
+    }
+  }
 
-  // TODO
-  // cc.defineGetterSetter(
-  //   cc.loader,
-  //   "resPath",
-  //   function () {
-  //     return this._resPath;
-  //   },
-  //   function (resPath) {
-  //     this._resPath = resPath || "";
-  //     jsb.fileUtils.addSearchPath(this._resPath);
-  //   },
-  // );
-  // cc.defineGetterSetter(
-  //   cc.loader,
-  //   "audioPath",
-  //   function () {
-  //     return this._audioPath;
-  //   },
-  //   function (audioPath) {
-  //     this._audioPath = audioPath || "";
-  //     jsb.fileUtils.addSearchPath(this._audioPath);
-  //   },
-  // );
+  // Cocos2d-html5 supports multi scene resources preloading.
+  // This is a compatible function for JSB.
+
+  // TODO: cc.Class is not implemented yet, so we just use a normal class here.
+  export class Loader /*extends cc.Class*/ {
+    //   initWith: function (resources, selector, target) {
+    //     if (selector) {
+    //       this._selector = selector;
+    //       this._target = target;
+    //     }
+    //     this._selector.call(this._target);
+    //   },
+    static _instance: Loader | null = null;
+    _selector: (() => void) | null = null;
+    _target: cc.Node | null = null;
+    private initWith(
+      resources: string | string[],
+      selector?: () => void,
+      target?: cc.Node,
+    ) {
+      if (selector) {
+        this._selector = selector;
+        this._target = target;
+      }
+      this._selector?.call(this._target);
+    }
+    // cc.Loader.preload = function (resources, selector, target) {
+    static preload(
+      resources: string | string[],
+      selector?: () => void,
+      target?: cc.Node,
+    ) {
+      //   if (!this._instance) {
+      //     this._instance = new cc.Loader();
+      //   }
+      if (!this._instance) this._instance = new Loader();
+      //   this._instance.initWith(resources, selector, target);
+      this._instance.initWith(resources, selector, target);
+      //   return this._instance;
+      return this._instance;
+    }
+  }
+
+  export const LoaderScene = cc.Loader;
 }

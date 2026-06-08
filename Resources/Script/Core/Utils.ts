@@ -1,4 +1,7 @@
 namespace cc {
+  export const log = (...args: any[]) => {
+    console.log(...args);
+  };
   /**
    * Iterate over an object or an array, executing a function for each matched element.
    * @param {object|array} obj
@@ -56,5 +59,121 @@ namespace cc {
       }
     }
     return str;
+  };
+
+  // Array utils
+
+  /**
+   * Verify Array's Type
+   * @param {Array} arr
+   * @param {function} type
+   * @return {Boolean}
+   * @function
+   */
+  export const arrayVerifyType = (arr: any[], type: Function): boolean => {
+    if (arr && arr.length > 0) {
+      for (var i = 0; i < arr.length; i++) {
+        if (!(arr[i] instanceof type)) {
+          cc.log("element type is wrong!");
+          return false;
+        }
+      }
+    }
+    return true;
+  };
+
+  /**
+   * Searches for the first occurrence of object and removes it. If object is not found the function has no effect.
+   * @function
+   * @param {Array} arr Source Array
+   * @param {*} delObj  remove object
+   */
+  export const arrayRemoveObject = <T>(arr: T[], delObj: T) => {
+    for (let i = 0, l = arr.length; i < l; i++) {
+      if (arr[i] == delObj) {
+        arr.splice(i, 1);
+        break;
+      }
+    }
+  };
+
+  /**
+   * Removes from arr all values in minusArr. For each Value in minusArr, the first matching instance in arr will be removed.
+   * @function
+   * @param {Array} arr Source Array
+   * @param {Array} minusArr minus Array
+   */
+  export const arrayRemoveArray = <T>(arr: T[], minusArr: T[]) => {
+    for (var i = 0, l = minusArr.length; i < l; i++) {
+      cc.arrayRemoveObject(arr, minusArr[i]);
+    }
+  };
+
+  /**
+   * Inserts some objects at index
+   * @function
+   * @param {Array} arr
+   * @param {Array} addObjs
+   * @param {Number} index
+   * @return {Array}
+   */
+  export const arrayAppendObjectsToIndex = <T>(
+    arr: T[],
+    addObjs: T[],
+    index: number,
+  ) => {
+    arr.splice(index, 0, ...addObjs);
+    return arr;
+  };
+
+  /**
+   * Copy an array's item to a new array (its performance is better than Array.slice)
+   * @param {Array} arr
+   * @returns {Array}
+   */
+  export const copyArray = <T>(arr: T[]): T[] => {
+    let i,
+      len = arr.length,
+      arr_clone = new Array(len);
+    for (i = 0; i < len; i += 1) arr_clone[i] = arr[i];
+    return arr_clone;
+  };
+
+    // Predefined font definition
+  export class FontDefinition {
+    fontName: string;
+    fontSize: number;
+    textAlign: number;
+    verticalAlign: number;
+    fillStyle: cc.Color;
+    boundingWidth: number;
+    boundingHeight: number;
+    strokeEnabled: boolean;
+    strokeStyle: cc.Color;
+    lineWidth: number;
+    shadowEnabled: boolean;
+    shadowOffsetX: number;
+    shadowOffsetY: number;
+    shadowBlur: number;
+    shadowOpacity: number;
+
+    constructor() {
+      this.fontName = "Arial";
+      this.fontSize = 12;
+      this.textAlign = cc.TEXT_ALIGNMENT_CENTER;
+      this.verticalAlign = cc.VERTICAL_TEXT_ALIGNMENT_TOP;
+      this.fillStyle = cc.color(255, 255, 255, 255);
+      this.boundingWidth = 0;
+      this.boundingHeight = 0;
+
+      this.strokeEnabled = false;
+      this.strokeStyle = cc.color(255, 255, 255, 255);
+      this.lineWidth = 1;
+
+      this.shadowEnabled = false;
+      this.shadowOffsetX = 0;
+      this.shadowOffsetY = 0;
+      this.shadowBlur = 0;
+      this.shadowOpacity = 1.0;
   };
 }

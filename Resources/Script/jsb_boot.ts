@@ -69,15 +69,15 @@ namespace cc {
   cc.view.isAutoFullScreenEnabled = function () {
     return true;
   };
-  cc.view._setDesignResolutionSize = cc.view.setDesignResolutionSize;
+  (<any>cc).view._setDesignResolutionSize = cc.view.setDesignResolutionSize;
   cc.view.setDesignResolutionSize = function (
     width: number,
     height: number,
     resolutionPolicy: cc.ResolutionPolicy,
   ) {
-    cc.view._setDesignResolutionSize(width, height, resolutionPolicy);
-    cc.winSize = cc.director.getWinSize();
-    cc.visibleRect.init();
+    (<any>cc).view._setDesignResolutionSize(width, height, resolutionPolicy);
+    (<any>cc).winSize = cc.director.getWinSize();
+    (<any>cc).visibleRect.init();
   };
   cc.view.setRealPixelResolution = cc.view.setDesignResolutionSize;
   cc.view.setResolutionPolicy = function (resolutionPolicy) {
@@ -90,12 +90,15 @@ namespace cc {
   cc.view.setContentTranslateLeftTop = function () {
     return;
   };
+
   cc.view.getContentTranslateLeftTop = function () {
-    return null;
+    return null as any;
   };
+
   cc.view.setFrameZoomFactor = function () {
     return;
   };
+
   cc.view.setOrientation = function () {};
 }
 
@@ -115,6 +118,7 @@ cc.audioEngine.end = function () {
   this.stopMusic();
   this.stopAllEffects();
 };
+
 cc.audioEngine.features = {
   MULTI_CHANNEL: true,
   AUTOPLAY: true,

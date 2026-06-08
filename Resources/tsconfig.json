@@ -27,5 +27,6 @@
     "strict": true,
     "esModuleInterop": true
   },
-  "include": ["Src", "Script"]
+  "include": ["Src", "Script", "Types"],
+  "exclude": ["Types/CCStatic.d.ts"]
 }

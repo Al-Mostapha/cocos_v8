@@ -7,7 +7,7 @@
 // bool js_cocos2dx_ui_Layout_constructor(JSContext *cx, uint32_t argc, jsval *vp);
 // void js_cocos2dx_ui_Layout_finalize(JSContext *cx, JSObject *obj);
 // void js_register_cocos2dx_ui_Layout(JSContext *cx, JS::HandleObject global);
-void js_register_cocos2dx_ui_Layout(v8::Isolate * iso, v8::Local<v8::Object>)
+void js_register_cocos2dx_ui_Layout(v8::Isolate * iso, v8::Local<v8::Object>);
 // void register_all_cocos2dx_ui(JSContext* cx, JS::HandleObject obj);
 // bool js_cocos2dx_ui_Layout_setBackGroundColorVector(JSContext *cx, uint32_t argc, jsval *vp);
 // bool js_cocos2dx_ui_Layout_setClippingType(JSContext *cx, uint32_t argc, jsval *vp);

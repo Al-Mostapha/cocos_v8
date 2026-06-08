@@ -8,6 +8,8 @@
 #include "UI/JsbWidget.hpp"
 #include "UI/JsbButton.hpp"
 #include "UI/JsbText.hpp"
+#include "UI/JsbLayout.hpp"
+#include "UI/JsbUIScrollView.hpp"
 
 void register_all_cocos2dx(v8::Isolate *isolate, v8::Local<v8::Object> obj)
 {
@@ -25,4 +27,6 @@ void register_all_cocos2dx(v8::Isolate *isolate, v8::Local<v8::Object> obj)
   js_register_cocos2dx_ui_Widget(isolate, ns);
   js_register_cocos2dx_ui_Button(isolate, ns);
   js_register_cocos2dx_ui_Text(isolate, ns);
+  js_register_cocos2dx_ui_Layout(isolate, ns);
+  js_register_cocos2dx_ui_ScrollView(isolate, ns);
 }
