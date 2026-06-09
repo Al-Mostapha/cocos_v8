@@ -4,10 +4,13 @@
     "iostream": "cpp",
     "memory": "cpp"
   },
+  "clangd.arguments": ["--compile-commands-dir=${workspaceFolder}/build"],
   "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
   "C_Cpp.intelliSenseEngine": "default",
   "cmake.configureOnOpen": true,
+
   "cmake.configureSettings": {
-    "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+    "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+    "CMAKE_CXX_CLANG_TIDY": "clang-tidy",
   }
 }

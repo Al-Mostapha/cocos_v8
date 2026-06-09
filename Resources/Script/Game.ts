@@ -10,18 +10,6 @@ namespace cc {
     DEBUG_MODE_ERROR_FOR_WEB_PAGE,
   }
 
-  export type GameConfig = {
-    width: number;
-    height: number;
-    engineDir: string;
-    modules: "modules";
-    debugMode: EDebugMode;
-    showFPS: boolean;
-    frameRate?: number;
-    id?: string;
-    renderMode: number;
-    jsList: string[];
-  };
   /**
    * An object to boot the game.
    * @class
@@ -177,7 +165,7 @@ namespace cc {
         // Load game scripts
         const jsList = config.jsList;
         if (jsList) {
-          cc.loader.loadJsWithImg("", jsList, function (err) {
+          cc.loader.loadJsWithImg("", jsList, function (err: string | null) {
             if (err) throw new Error(err);
             self._prepared = true;
             if (cb) cb();

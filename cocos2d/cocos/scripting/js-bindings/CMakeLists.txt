@@ -27,6 +27,7 @@ set(JSB_SRC
     Wrapper/UI/JsbImageView.cpp
     Wrapper/UI/JsbLayout.cpp
     Wrapper/UI/JsbUIScrollView.cpp
+    Wrapper/Spec/JsbSpecifics.cpp
 )
 
 set(JSB_HEADERS
@@ -59,6 +60,7 @@ set(JSB_HEADERS
     Wrapper/UI/JsbImageView.hpp
     Wrapper/UI/JsbLayout.hpp
     Wrapper/UI/JsbUIScrollView.hpp
+    Wrapper/Spec/JsbSpecifics.hpp
 )
 
 add_library(jsb STATIC ${JSB_SRC} ${JSB_HEADERS})
@@ -66,6 +68,7 @@ add_library(jsb STATIC ${JSB_SRC} ${JSB_HEADERS})
 if(WINDOWS)
     target_link_directories(jsb PUBLIC ${V8_DIR}/Lib/Win32)
     target_link_libraries(jsb PUBLIC cocos2d v8_monolith.deb.lib winmm.lib dbghelp.lib shlwapi.lib)
+
     # target_compile_definitions(jsb PRIVATE _USRJSSTATIC)
 endif()
 
@@ -74,11 +77,9 @@ add_dependencies(jsb cocos2d)
 
 # PUBLIC: consumers of jsb (cocos2d, app) get V8 and jsb headers automatically
 target_include_directories(jsb
-    PUBLIC  ${CMAKE_CURRENT_SOURCE_DIR}
-    PUBLIC  ${V8_DIR}/Inc
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
+    PUBLIC ${V8_DIR}/Inc
 )
-
-
 
 set_target_properties(jsb PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
@@ -86,8 +87,8 @@ set_target_properties(jsb PROPERTIES
 )
 
 # if(WINDOWS)
-#     # precompiled header
-#     target_sources(jsb PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/precheader.cpp")
-#     set_target_properties(jsb PROPERTIES COMPILE_FLAGS "/Yuprecheader.h /FIprecheader.h")
-#     set_source_files_properties("${CMAKE_CURRENT_SOURCE_DIR}/precheader.cpp" PROPERTIES COMPILE_FLAGS "/Ycprecheader.h")
+# # precompiled header
+# target_sources(jsb PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/precheader.cpp")
+# set_target_properties(jsb PROPERTIES COMPILE_FLAGS "/Yuprecheader.h /FIprecheader.h")
+# set_source_files_properties("${CMAKE_CURRENT_SOURCE_DIR}/precheader.cpp" PROPERTIES COMPILE_FLAGS "/Ycprecheader.h")
 # endif()

@@ -20,12 +20,14 @@
 
 class JsbObject;
 
-struct JsbPrivateData {
+struct JsbPrivateData
+{
   void *data;
   JsbObject *seObj;
 };
 
-class JsbUtils {
+class JsbUtils
+{
 public:
   static std::string FromV8String(v8::Isolate *isolate,
                                   v8::Local<v8::String> str);
@@ -60,7 +62,8 @@ public:
   static bool CreateJsObjectByTypeName(const char *typeName,
                                        v8::Local<v8::Object> *outObj);
 
-  template <typename T> static v8::Local<v8::Object> NativePtrToObject(T *ptr);
+  template <typename T>
+  static v8::Local<v8::Object> NativePtrToObject(T *ptr);
 
   static bool GetOrCreateJsObject(v8::Isolate *isolate,
                                   v8::Local<v8::Object> obj, const char *name,
@@ -75,7 +78,8 @@ public:
 
   static std::function<void()> FromJsFunc(v8::Isolate *isolate,
                                           v8::Local<v8::Function> func,
-                                          v8::Local<v8::Object> self) {
+                                          v8::Local<v8::Object> self)
+  {
     // TODO when delete the lambda, the jsGlobalFunc and jsSelf will be
     // destructed, which will make the callback invalid. We need to make sure
     // the callback is not called after the lambda is destructed.
@@ -83,7 +87,8 @@ public:
         std::make_shared<v8::Global<v8::Function>>(isolate, func);
     auto jsSelf = std::make_shared<v8::Global<v8::Object>>(isolate, self);
 
-    return [jsGlobalFunc, jsSelf, isolate]() -> void {
+    return [jsGlobalFunc, jsSelf, isolate]() -> void
+    {
       v8::HandleScope handleScope(isolate);
       v8::Local<v8::Function> fn = jsGlobalFunc->Get(isolate);
       v8::Local<v8::Object> selfObj = jsSelf->Get(isolate);
@@ -91,7 +96,8 @@ public:
       v8::TryCatch tryCatch(isolate);
       fn->Call(isolate->GetCurrentContext(), selfObj, 0, nullptr)
           .ToLocalChecked();
-      if (tryCatch.HasCaught()) {
+      if (tryCatch.HasCaught())
+      {
         v8::String::Utf8Value error(isolate, tryCatch.Exception());
         SE_REPORT_ERROR("Exception occurred while invoking callback: %s",
                         *error ? *error : "unknown");
@@ -149,11 +155,13 @@ public:
 
   template <class T>
   static v8::Local<v8::Value> ccvector_to_jsval(v8::Isolate *isolate,
-                                                const cocos2d::Vector<T> &v) {
+                                                const cocos2d::Vector<T> &v)
+  {
     // JS::RootedObject jsretArr(isolate, JS_NewArrayObject(isolate, 0));
     v8::Local<v8::Array> jsretArr = v8::Array::New(isolate, 0);
     int i = 0;
-    for (const auto &obj : v) {
+    for (const auto &obj : v)
+    {
       //     JS::RootedValue arrElement(cx);
       v8::Local<v8::Object> arrElement = JsbUtils::NativePtrToObject(obj);
       //     // First, check whether object is associated with js object.
@@ -171,7 +179,8 @@ public:
       //     ++i;
       v8::Maybe<bool> maybe =
           jsretArr->Set(isolate->GetCurrentContext(), i, arrElement);
-      if (maybe.IsNothing() || !maybe.FromJust()) {
+      if (maybe.IsNothing() || !maybe.FromJust())
+      {
         SE_REPORT_ERROR("Failed to set array element at index %d", i);
         break;
       }
@@ -197,6 +206,9 @@ public:
                                cocos2d::Vec3 *outValue);
   static bool jsval_to_matrix(v8::Isolate *isolate, v8::Local<v8::Value> value,
                               cocos2d::Mat4 *outValue);
+  static bool jsval_to_ccaffinetransform(v8::Isolate *isolate,
+                                         v8::Local<v8::Value> value,
+                                         cocos2d::AffineTransform *outValue);
 
   static bool jsval_to_cccolor3b(v8::Isolate *isolate,
                                  v8::Local<v8::Value> value,
@@ -207,17 +219,21 @@ public:
   static bool jsval_to_blendfunc(v8::Isolate *isolate,
                                  v8::Local<v8::Value> value,
                                  cocos2d::BlendFunc *outValue);
+  static bool jsval_to_ccpoint(v8::Isolate *isolate, v8::Local<v8::Value> value,
+                               cocos2d::Point *outValue);
 };
 
 template <typename T>
-static v8::Local<v8::Object> JsbUtils::NativePtrToObject(T *ptr) {
+static v8::Local<v8::Object> JsbUtils::NativePtrToObject(T *ptr)
+{
   v8::Isolate *isolate = v8::Isolate::GetCurrent();
   v8::EscapableHandleScope handle_scope(isolate);
   v8::Local<v8::Context> context = isolate->GetCurrentContext();
   auto jsbObj = NativePtrToObjectMap::find(ptr);
   const char *typeName = typeid(T).name();
 
-  if (jsbObj == NativePtrToObjectMap::end()) {
+  if (jsbObj == NativePtrToObjectMap::end())
+  {
     // If we couldn't find native object in map, then the native object is
     // created from native code. e.g. TMXLayer::getTileAt
     //        CCLOGWARN("WARNING: Ref type: (%s) isn't catched!",
@@ -232,7 +248,8 @@ static v8::Local<v8::Object> JsbUtils::NativePtrToObject(T *ptr) {
     //     *isReturnCachedValue = false;
     // }
     v8::Local<v8::Object> obj;
-    if (!CreateJsObjectByTypeName(typeName, &obj)) {
+    if (!CreateJsObjectByTypeName(typeName, &obj))
+    {
       SE_REPORT_ERROR("Failed to create js object for native type: %s",
                       typeName);
       return handle_scope.Escape(

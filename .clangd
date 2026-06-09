@@ -1,0 +1,13 @@
+CompileFlags:
+  Add:
+    - "-std=c++17"
+    - "-Icocos2d"
+    - "-Icocos2d/cocos"
+    - "-Icocos2d/cocos/scripting/js-bindings"
+    - "-Icocos2d/external/V8/Inc"
+    - "-Icocos2d/cocos/editor-support"
+    - "-Icocos2d/extensions"
+    - "-Icocos2d/cocos/platform"
+    - "-Icocos2d/cocos/platform/win32"
+    - "-Icocos2d/cocos/audio/include"
+    - "-IClasses"

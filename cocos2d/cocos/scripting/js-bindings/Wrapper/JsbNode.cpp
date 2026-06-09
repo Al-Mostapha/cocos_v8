@@ -5,7 +5,44 @@
 #include "JsbConfig.h"
 #include "renderer/backend/opengl/ProgramGL.h"
 #include "JsbCtor.hpp"
+#include "ScriptEngine.hpp"
 // #include "ProgramGL.h"
+void js_cocos2dx_retain(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
+  // TODO
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  // #if ! CC_ENABLE_GC_FOR_NATIVE_OBJECTS
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::Ref* cobj = (cocos2d::Ref *)(proxy ? proxy->ptr : nullptr);
+  //     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_retain : Invalid Native Object");
+
+  //     cobj->retain();
+  // #endif // CC_ENABLE_GC_FOR_NATIVE_OBJECTS
+
+  //     args.rval().setUndefined();
+  //     return true;
+}
+
+void js_cocos2dx_release(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
+  // TODO
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  // #if ! CC_ENABLE_GC_FOR_NATIVE_OBJECTS
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::Ref* cobj = (cocos2d::Ref *)(proxy ? proxy->ptr : nullptr);
+  //     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_release : Invalid Native Object");
+
+  //     cobj->release();
+  // #endif // CC_ENABLE_GC_FOR_NATIVE_OBJECTS
+  //     args.rval().setUndefined();
+  //     return true;
+}
 
 // bool js_cocos2dx_Node_addChild(JSContext *cx, uint32_t argc, jsval *vp)
 // {
@@ -18,6 +55,8 @@ void js_cocos2dx_Node_addChild(const v8::FunctionCallbackInfo<v8::Value> &args)
   //     JS::RootedObject obj(cx);
   //     obj.set(args.thisv().toObjectOrNull());
   v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
+
   v8::Local<v8::Object> obj = args.This();
 
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -75,6 +114,8 @@ void js_cocos2dx_Node_addChild(const v8::FunctionCallbackInfo<v8::Value> &args)
 // {
 void js_cocos2dx_Node_removeComponent(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     bool ok = true;
   //     cocos2d::Node* cobj = nullptr;
 
@@ -159,6 +200,8 @@ void js_cocos2dx_Node_removeComponent(const v8::FunctionCallbackInfo<v8::Value> 
 // {
 void js_cocos2dx_Node_setPhysicsBody(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -215,7 +258,8 @@ void js_cocos2dx_Node_setPhysicsBody(const v8::FunctionCallbackInfo<v8::Value> &
 // {
 void js_cocos2dx_Node_getGLProgram(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
-
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   // TODO: change the name of this function to getProgramState, since GLProgram is deprecated in cocos2d-x v4.0
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -263,6 +307,8 @@ void js_cocos2dx_Node_getGLProgram(const v8::FunctionCallbackInfo<v8::Value> &ar
 void js_cocos2dx_Node_getDescription(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
 
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -295,6 +341,8 @@ void js_cocos2dx_Node_getDescription(const v8::FunctionCallbackInfo<v8::Value> &
 // {
 void js_cocos2dx_Node_setOpacityModifyRGB(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -328,6 +376,8 @@ void js_cocos2dx_Node_setOpacityModifyRGB(const v8::FunctionCallbackInfo<v8::Val
 // {
 void js_cocos2dx_Node_setCascadeOpacityEnabled(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -361,6 +411,8 @@ void js_cocos2dx_Node_setCascadeOpacityEnabled(const v8::FunctionCallbackInfo<v8
 // {
 void js_cocos2dx_Node_getChildren(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     bool ok = true;
   //     cocos2d::Node* cobj = nullptr;
   cocos2d::Node *cobj = static_cast<cocos2d::Node *>(args.This()->GetAlignedPointerFromInternalField(0));
@@ -465,6 +517,8 @@ void js_cocos2dx_Node_setOnExitCallback(const v8::FunctionCallbackInfo<v8::Value
 // {
 void js_cocos2dx_Node_setActionManager(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -521,6 +575,8 @@ void js_cocos2dx_Node_setActionManager(const v8::FunctionCallbackInfo<v8::Value>
 // {
 void js_cocos2dx_Node_isIgnoreAnchorPointForPosition(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -551,6 +607,8 @@ void js_cocos2dx_Node_isIgnoreAnchorPointForPosition(const v8::FunctionCallbackI
 // {
 void js_cocos2dx_Node_getChildByName(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -603,6 +661,8 @@ void js_cocos2dx_Node_getChildByName(const v8::FunctionCallbackInfo<v8::Value> &
 // {
 void js_cocos2dx_Node_updateDisplayedOpacity(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -636,6 +696,8 @@ void js_cocos2dx_Node_updateDisplayedOpacity(const v8::FunctionCallbackInfo<v8::
 // {
 void js_cocos2dx_Node_init(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -666,6 +728,8 @@ void js_cocos2dx_Node_init(const v8::FunctionCallbackInfo<v8::Value> &args)
 // {
 void js_cocos2dx_Node_getCameraMask(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -697,6 +761,8 @@ void js_cocos2dx_Node_getCameraMask(const v8::FunctionCallbackInfo<v8::Value> &a
 // {
 void js_cocos2dx_Node_setRotation(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -736,6 +802,8 @@ void js_cocos2dx_Node_setRotation(const v8::FunctionCallbackInfo<v8::Value> &arg
 // {
 void js_cocos2dx_Node_setScaleZ(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -775,6 +843,8 @@ void js_cocos2dx_Node_setScaleZ(const v8::FunctionCallbackInfo<v8::Value> &args)
 // {
 void js_cocos2dx_Node_setScaleY(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -815,6 +885,8 @@ void js_cocos2dx_Node_setScaleY(const v8::FunctionCallbackInfo<v8::Value> &args)
 // {
 void js_cocos2dx_Node_setScaleX(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -852,6 +924,8 @@ void js_cocos2dx_Node_setScaleX(const v8::FunctionCallbackInfo<v8::Value> &args)
 // {
 void js_cocos2dx_Node_getColor(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -884,6 +958,8 @@ void js_cocos2dx_Node_getColor(const v8::FunctionCallbackInfo<v8::Value> &args)
 // {
 void js_cocos2dx_Node_setonEnterTransitionDidFinishCallback(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -953,6 +1029,8 @@ void js_cocos2dx_Node_setonEnterTransitionDidFinishCallback(const v8::FunctionCa
 // {
 void js_cocos2dx_Node_removeAllComponents(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -981,6 +1059,8 @@ void js_cocos2dx_Node_removeAllComponents(const v8::FunctionCallbackInfo<v8::Val
 // {
 void js_cocos2dx_Node__setLocalZOrder(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -1014,6 +1094,8 @@ void js_cocos2dx_Node__setLocalZOrder(const v8::FunctionCallbackInfo<v8::Value> 
 // {
 void js_cocos2dx_Node_setCameraMask(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -1065,6 +1147,8 @@ void js_cocos2dx_Node_setCameraMask(const v8::FunctionCallbackInfo<v8::Value> &a
 // {
 void js_cocos2dx_Node_getTag(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -1096,6 +1180,8 @@ void js_cocos2dx_Node_getTag(const v8::FunctionCallbackInfo<v8::Value> &args)
 // {
 void js_cocos2dx_Node_getonEnterTransitionDidFinishCallback(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -1126,6 +1212,8 @@ void js_cocos2dx_Node_getonEnterTransitionDidFinishCallback(const v8::FunctionCa
 // {
 void js_cocos2dx_Node_getNodeToWorldAffineTransform(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   CCASSERT(false, "js_cocos2dx_Node_getNodeToWorldAffineTransform : Not supported in v8, please use getNodeToWorldTransform instead");
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -1148,6 +1236,8 @@ void js_cocos2dx_Node_getNodeToWorldAffineTransform(const v8::FunctionCallbackIn
 // {
 void js_cocos2dx_Node_getPosition3D(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -1180,6 +1270,8 @@ void js_cocos2dx_Node_getPosition3D(const v8::FunctionCallbackInfo<v8::Value> &a
 // {
 void js_cocos2dx_Node_removeChild(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -1279,6 +1371,8 @@ void js_cocos2dx_Node_removeChild(const v8::FunctionCallbackInfo<v8::Value> &arg
 // {
 void js_cocos2dx_Node_getScene(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -1322,6 +1416,8 @@ void js_cocos2dx_Node_getScene(const v8::FunctionCallbackInfo<v8::Value> &args)
 // {
 void js_cocos2dx_Node_getEventDispatcher(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -1363,6 +1459,8 @@ void js_cocos2dx_Node_getEventDispatcher(const v8::FunctionCallbackInfo<v8::Valu
 // {
 void js_cocos2dx_Node_setSkewX(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -1394,6 +1492,8 @@ void js_cocos2dx_Node_setSkewX(const v8::FunctionCallbackInfo<v8::Value> &args)
 // {
 void js_cocos2dx_Node_setGLProgramState(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -1488,6 +1588,8 @@ void js_cocos2dx_Node_setOnEnterCallback(const v8::FunctionCallbackInfo<v8::Valu
 // {
 void js_cocos2dx_Node_stopActionsByFlags(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -1521,6 +1623,8 @@ void js_cocos2dx_Node_stopActionsByFlags(const v8::FunctionCallbackInfo<v8::Valu
 // {
 void js_cocos2dx_Node_setNormalizedPosition(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -1559,6 +1663,8 @@ void js_cocos2dx_Node_setNormalizedPosition(const v8::FunctionCallbackInfo<v8::V
 // {
 void js_cocos2dx_Node_setonExitTransitionDidStartCallback(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -1615,6 +1721,8 @@ void js_cocos2dx_Node_setonExitTransitionDidStartCallback(const v8::FunctionCall
 // {
 void js_cocos2dx_Node_convertTouchToNodeSpace(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -1652,7 +1760,6 @@ void js_cocos2dx_Node_convertTouchToNodeSpace(const v8::FunctionCallbackInfo<v8:
   //         cocos2d::Vec2 ret = cobj->convertTouchToNodeSpace(arg0);
   cocos2d::Vec2 ret = cNode->convertTouchToNodeSpace(cTouch);
   //         JS::RootedValue jsret(cx);
-  v8::Isolate *isolate = args.GetIsolate();
   v8::Local<v8::Value> jsret = JsbUtils::vector2_to_jsval(isolate, ret);
   //         jsret = vector2_to_jsval(cx, ret);
   //         args.rval().set(jsret);
@@ -1663,6 +1770,8 @@ void js_cocos2dx_Node_convertTouchToNodeSpace(const v8::FunctionCallbackInfo<v8:
 // {
 void js_cocos2dx_Node_removeAllChildrenWithCleanup(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     bool ok = true;
   //     cocos2d::Node* cobj = nullptr;
 
@@ -1697,6 +1806,8 @@ void js_cocos2dx_Node_removeAllChildrenWithCleanup(const v8::FunctionCallbackInf
 // {
 void js_cocos2dx_Node_getRotationSkewX(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -1722,6 +1833,8 @@ void js_cocos2dx_Node_getRotationSkewX(const v8::FunctionCallbackInfo<v8::Value>
 // {
 void js_cocos2dx_Node_getRotationSkewY(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -1786,6 +1899,8 @@ void js_cocos2dx_Node_getNodeToWorldTransform(const v8::FunctionCallbackInfo<v8:
 // {
 void js_cocos2dx_Node_isCascadeOpacityEnabled(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -1818,6 +1933,8 @@ void js_cocos2dx_Node_isCascadeOpacityEnabled(const v8::FunctionCallbackInfo<v8:
 // {
 void js_cocos2dx_Node_setParent(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -1870,6 +1987,8 @@ void js_cocos2dx_Node_setParent(const v8::FunctionCallbackInfo<v8::Value> &args)
 // {
 void js_cocos2dx_Node_getName(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -1902,6 +2021,8 @@ void js_cocos2dx_Node_getName(const v8::FunctionCallbackInfo<v8::Value> &args)
 // {
 void js_cocos2dx_Node_getRotation3D(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -1934,6 +2055,8 @@ void js_cocos2dx_Node_getRotation3D(const v8::FunctionCallbackInfo<v8::Value> &a
 // {
 void js_cocos2dx_Node_getNodeToParentAffineTransform(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     bool ok = true;
   //     cocos2d::Node* cobj = nullptr;
 
@@ -2012,6 +2135,8 @@ void js_cocos2dx_Node_getNodeToParentAffineTransform(const v8::FunctionCallbackI
 // {
 void js_cocos2dx_Node_convertTouchToNodeSpaceAR(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -2070,6 +2195,8 @@ void js_cocos2dx_Node_convertTouchToNodeSpaceAR(const v8::FunctionCallbackInfo<v
 // {
 void js_cocos2dx_Node_getOnEnterCallback(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -2100,6 +2227,8 @@ void js_cocos2dx_Node_getOnEnterCallback(const v8::FunctionCallbackInfo<v8::Valu
 // {
 void js_cocos2dx_Node_setPositionNormalized(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -2137,6 +2266,8 @@ void js_cocos2dx_Node_setPositionNormalized(const v8::FunctionCallbackInfo<v8::V
 // {
 void js_cocos2dx_Node_isOpacityModifyRGB(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -2169,6 +2300,8 @@ void js_cocos2dx_Node_isOpacityModifyRGB(const v8::FunctionCallbackInfo<v8::Valu
 // {
 void js_cocos2dx_Node_stopActionByTag(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -2202,6 +2335,8 @@ void js_cocos2dx_Node_stopActionByTag(const v8::FunctionCallbackInfo<v8::Value> 
 // {
 void js_cocos2dx_Node_reorderChild(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -2261,6 +2396,8 @@ void js_cocos2dx_Node_reorderChild(const v8::FunctionCallbackInfo<v8::Value> &ar
 // {
 void js_cocos2dx_Node_setSkewY(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -2294,6 +2431,8 @@ void js_cocos2dx_Node_setSkewY(const v8::FunctionCallbackInfo<v8::Value> &args)
 // {
 void js_cocos2dx_Node_setRotation3D(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -2332,6 +2471,8 @@ void js_cocos2dx_Node_setRotation3D(const v8::FunctionCallbackInfo<v8::Value> &a
 // {
 void js_cocos2dx_Node_setPositionX(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -2365,6 +2506,8 @@ void js_cocos2dx_Node_setPositionX(const v8::FunctionCallbackInfo<v8::Value> &ar
 // {
 void js_cocos2dx_Node_setNodeToParentTransform(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -2403,6 +2546,8 @@ void js_cocos2dx_Node_setNodeToParentTransform(const v8::FunctionCallbackInfo<v8
 // {
 void js_cocos2dx_Node_getAnchorPoint(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -2432,6 +2577,8 @@ void js_cocos2dx_Node_getAnchorPoint(const v8::FunctionCallbackInfo<v8::Value> &
 // {
 void js_cocos2dx_Node_getNumberOfRunningActions(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -2463,6 +2610,8 @@ void js_cocos2dx_Node_getNumberOfRunningActions(const v8::FunctionCallbackInfo<v
 // {
 void js_cocos2dx_Node_updateTransform(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -2489,6 +2638,8 @@ void js_cocos2dx_Node_updateTransform(const v8::FunctionCallbackInfo<v8::Value> 
 // {
 void js_cocos2dx_Node_isVisible(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -2519,6 +2670,8 @@ void js_cocos2dx_Node_isVisible(const v8::FunctionCallbackInfo<v8::Value> &args)
 // {
 void js_cocos2dx_Node_getChildrenCount(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -2550,6 +2703,8 @@ void js_cocos2dx_Node_getChildrenCount(const v8::FunctionCallbackInfo<v8::Value>
 // {
 void js_cocos2dx_Node_getNodeToParentTransform(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     bool ok = true;
   //     cocos2d::Node* cobj = nullptr;
 
@@ -2630,6 +2785,8 @@ void js_cocos2dx_Node_getNodeToParentTransform(const v8::FunctionCallbackInfo<v8
 // {
 void js_cocos2dx_Node_convertToNodeSpaceAR(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -2672,6 +2829,8 @@ void js_cocos2dx_Node_convertToNodeSpaceAR(const v8::FunctionCallbackInfo<v8::Va
 // {
 void js_cocos2dx_Node_addComponent(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -2733,6 +2892,8 @@ void js_cocos2dx_Node_addComponent(const v8::FunctionCallbackInfo<v8::Value> &ar
 // {
 void js_cocos2dx_Node_runAction(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -2806,6 +2967,8 @@ void js_cocos2dx_Node_runAction(const v8::FunctionCallbackInfo<v8::Value> &args)
 // {
 void js_cocos2dx_Node_visit(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     bool ok = true;
   //     cocos2d::Node* cobj = nullptr;
 
@@ -2895,7 +3058,8 @@ void js_cocos2dx_Node_visit(const v8::FunctionCallbackInfo<v8::Value> &args)
 // {
 void js_cocos2dx_Node_setGLProgram(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
-
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -2954,6 +3118,8 @@ void js_cocos2dx_Node_setGLProgram(const v8::FunctionCallbackInfo<v8::Value> &ar
 // {
 void js_cocos2dx_Node_getRotation(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -2985,6 +3151,8 @@ void js_cocos2dx_Node_getRotation(const v8::FunctionCallbackInfo<v8::Value> &arg
 // {
 void js_cocos2dx_Node_getPhysicsBody(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -3029,6 +3197,8 @@ void js_cocos2dx_Node_getPhysicsBody(const v8::FunctionCallbackInfo<v8::Value> &
 // {
 void js_cocos2dx_Node_getAnchorPointInPoints(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -3058,6 +3228,8 @@ void js_cocos2dx_Node_getAnchorPointInPoints(const v8::FunctionCallbackInfo<v8::
 // {
 void js_cocos2dx_Node_getRotationQuat(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -3082,6 +3254,8 @@ void js_cocos2dx_Node_getRotationQuat(const v8::FunctionCallbackInfo<v8::Value> 
 // {
 void js_cocos2dx_Node_removeChildByName(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -3135,6 +3309,8 @@ void js_cocos2dx_Node_removeChildByName(const v8::FunctionCallbackInfo<v8::Value
 // {
 void js_cocos2dx_Node_setPositionZ(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -3167,6 +3343,8 @@ void js_cocos2dx_Node_setPositionZ(const v8::FunctionCallbackInfo<v8::Value> &ar
 // {
 void js_cocos2dx_Node_getGLProgramState(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -3211,6 +3389,8 @@ void js_cocos2dx_Node_getGLProgramState(const v8::FunctionCallbackInfo<v8::Value
 // {
 void js_cocos2dx_Node_setScheduler(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -3268,6 +3448,8 @@ void js_cocos2dx_Node_setScheduler(const v8::FunctionCallbackInfo<v8::Value> &ar
 // {
 void js_cocos2dx_Node_stopAllActions(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -3296,6 +3478,8 @@ void js_cocos2dx_Node_stopAllActions(const v8::FunctionCallbackInfo<v8::Value> &
 // {
 void js_cocos2dx_Node_getSkewX(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -3325,6 +3509,8 @@ void js_cocos2dx_Node_getSkewX(const v8::FunctionCallbackInfo<v8::Value> &args)
 // {
 void js_cocos2dx_Node_getSkewY(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -3356,6 +3542,8 @@ void js_cocos2dx_Node_getSkewY(const v8::FunctionCallbackInfo<v8::Value> &args)
 // {
 void js_cocos2dx_Node_isScheduled(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -3393,6 +3581,8 @@ void js_cocos2dx_Node_isScheduled(const v8::FunctionCallbackInfo<v8::Value> &arg
 // {
 void js_cocos2dx_Node_getDisplayedColor(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -3422,6 +3612,8 @@ void js_cocos2dx_Node_getDisplayedColor(const v8::FunctionCallbackInfo<v8::Value
 // {
 void js_cocos2dx_Node_getActionByTag(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -3472,6 +3664,8 @@ void js_cocos2dx_Node_getActionByTag(const v8::FunctionCallbackInfo<v8::Value> &
 // {
 void js_cocos2dx_Node_setRotationSkewX(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -3506,6 +3700,8 @@ void js_cocos2dx_Node_setRotationSkewX(const v8::FunctionCallbackInfo<v8::Value>
 // {
 void js_cocos2dx_Node_setRotationSkewY(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -3535,6 +3731,8 @@ void js_cocos2dx_Node_setRotationSkewY(const v8::FunctionCallbackInfo<v8::Value>
 // {
 void js_cocos2dx_Node_setName(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -3570,6 +3768,8 @@ void js_cocos2dx_Node_setName(const v8::FunctionCallbackInfo<v8::Value> &args)
 // {
 void js_cocos2dx_Node_update(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -3602,6 +3802,8 @@ void js_cocos2dx_Node_update(const v8::FunctionCallbackInfo<v8::Value> &args)
 // {
 void js_cocos2dx_Node_getDisplayedOpacity(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -3631,6 +3833,8 @@ void js_cocos2dx_Node_getDisplayedOpacity(const v8::FunctionCallbackInfo<v8::Val
 // {
 void js_cocos2dx_Node_getLocalZOrder(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -3662,6 +3866,8 @@ void js_cocos2dx_Node_getLocalZOrder(const v8::FunctionCallbackInfo<v8::Value> &
 // {
 void js_cocos2dx_Node_getScheduler(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
 
   cocos2d::Node *cNode = static_cast<cocos2d::Node *>(args.This()->GetAlignedPointerFromInternalField(0));
   //     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_Node_getScheduler : Invalid Native Object");
@@ -3698,6 +3904,8 @@ void js_cocos2dx_Node_getScheduler(const v8::FunctionCallbackInfo<v8::Value> &ar
 // {
 void js_cocos2dx_Node_getPositionNormalized(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -3729,6 +3937,8 @@ void js_cocos2dx_Node_getPositionNormalized(const v8::FunctionCallbackInfo<v8::V
 // {
 void js_cocos2dx_Node_getPosition(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     bool ok = true;
   //     cocos2d::Node* cobj = nullptr;
 
@@ -3765,6 +3975,8 @@ void js_cocos2dx_Node_getPosition(const v8::FunctionCallbackInfo<v8::Value> &arg
 // {
 void js_cocos2dx_Node_isRunning(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
 
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -3797,6 +4009,8 @@ void js_cocos2dx_Node_isRunning(const v8::FunctionCallbackInfo<v8::Value> &args)
 // {
 void js_cocos2dx_Node_getParent(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     bool ok = true;
   //     cocos2d::Node* cobj = nullptr;
 
@@ -3846,6 +4060,8 @@ void js_cocos2dx_Node_getParent(const v8::FunctionCallbackInfo<v8::Value> &args)
 // {
 void js_cocos2dx_Node_getWorldToNodeTransform(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -3877,6 +4093,8 @@ void js_cocos2dx_Node_getWorldToNodeTransform(const v8::FunctionCallbackInfo<v8:
 // {
 void js_cocos2dx_Node_getPositionY(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -3908,6 +4126,8 @@ void js_cocos2dx_Node_getPositionY(const v8::FunctionCallbackInfo<v8::Value> &ar
 // {
 void js_cocos2dx_Node_getPositionX(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -3938,6 +4158,8 @@ void js_cocos2dx_Node_getPositionX(const v8::FunctionCallbackInfo<v8::Value> &ar
 // {
 void js_cocos2dx_Node_removeChildByTag(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -3991,6 +4213,8 @@ void js_cocos2dx_Node_removeChildByTag(const v8::FunctionCallbackInfo<v8::Value>
 // {
 void js_cocos2dx_Node_setPositionY(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -4025,6 +4249,8 @@ void js_cocos2dx_Node_setPositionY(const v8::FunctionCallbackInfo<v8::Value> &ar
 // {
 void js_cocos2dx_Node_updateDisplayedColor(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -4063,6 +4289,8 @@ void js_cocos2dx_Node_updateDisplayedColor(const v8::FunctionCallbackInfo<v8::Va
 // {
 void js_cocos2dx_Node_setVisible(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -4097,6 +4325,8 @@ void js_cocos2dx_Node_setVisible(const v8::FunctionCallbackInfo<v8::Value> &args
 // {
 void js_cocos2dx_Node_getParentToNodeAffineTransform(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -4128,6 +4358,8 @@ void js_cocos2dx_Node_getParentToNodeAffineTransform(const v8::FunctionCallbackI
 // {
 void js_cocos2dx_Node_getPositionZ(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -4159,6 +4391,8 @@ void js_cocos2dx_Node_getPositionZ(const v8::FunctionCallbackInfo<v8::Value> &ar
 // {
 void js_cocos2dx_Node_setGlobalZOrder(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -4193,6 +4427,8 @@ void js_cocos2dx_Node_setGlobalZOrder(const v8::FunctionCallbackInfo<v8::Value> 
 // {
 void js_cocos2dx_Node_setScale(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     bool ok = true;
   //     cocos2d::Node* cobj = nullptr;
 
@@ -4252,6 +4488,8 @@ void js_cocos2dx_Node_setScale(const v8::FunctionCallbackInfo<v8::Value> &args)
 // {
 void js_cocos2dx_Node_getOnExitCallback(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -4284,6 +4522,8 @@ void js_cocos2dx_Node_getOnExitCallback(const v8::FunctionCallbackInfo<v8::Value
 // {
 void js_cocos2dx_Node_getChildByTag(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -4334,6 +4574,8 @@ void js_cocos2dx_Node_getChildByTag(const v8::FunctionCallbackInfo<v8::Value> &a
 // {
 void js_cocos2dx_Node_getScaleZ(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -4363,6 +4605,8 @@ void js_cocos2dx_Node_getScaleZ(const v8::FunctionCallbackInfo<v8::Value> &args)
 // {
 void js_cocos2dx_Node_getScaleY(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -4395,6 +4639,8 @@ void js_cocos2dx_Node_getScaleY(const v8::FunctionCallbackInfo<v8::Value> &args)
 // {
 void js_cocos2dx_Node_getScaleX(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -4426,6 +4672,8 @@ void js_cocos2dx_Node_getScaleX(const v8::FunctionCallbackInfo<v8::Value> &args)
 // {
 void js_cocos2dx_Node_setLocalZOrder(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -4458,6 +4706,8 @@ void js_cocos2dx_Node_setLocalZOrder(const v8::FunctionCallbackInfo<v8::Value> &
 // {
 void js_cocos2dx_Node_setCascadeColorEnabled(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -4490,6 +4740,8 @@ void js_cocos2dx_Node_setCascadeColorEnabled(const v8::FunctionCallbackInfo<v8::
 // {
 void js_cocos2dx_Node_setOpacity(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -4522,6 +4774,8 @@ void js_cocos2dx_Node_setOpacity(const v8::FunctionCallbackInfo<v8::Value> &args
 // {
 void js_cocos2dx_Node_getComponent(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -4572,6 +4826,8 @@ void js_cocos2dx_Node_getComponent(const v8::FunctionCallbackInfo<v8::Value> &ar
 // {
 void js_cocos2dx_Node_getContentSize(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -4603,6 +4859,8 @@ void js_cocos2dx_Node_getContentSize(const v8::FunctionCallbackInfo<v8::Value> &
 // {
 void js_cocos2dx_Node_stopAllActionsByTag(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -4637,6 +4895,8 @@ void js_cocos2dx_Node_stopAllActionsByTag(const v8::FunctionCallbackInfo<v8::Val
 // {
 void js_cocos2dx_Node_getBoundingBox(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -4668,6 +4928,8 @@ void js_cocos2dx_Node_getBoundingBox(const v8::FunctionCallbackInfo<v8::Value> &
 // {
 void js_cocos2dx_Node_setIgnoreAnchorPointForPosition(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -4702,6 +4964,8 @@ void js_cocos2dx_Node_setIgnoreAnchorPointForPosition(const v8::FunctionCallback
 // {
 void js_cocos2dx_Node_setEventDispatcher(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -4759,6 +5023,8 @@ void js_cocos2dx_Node_setEventDispatcher(const v8::FunctionCallbackInfo<v8::Valu
 // {
 void js_cocos2dx_Node_getGlobalZOrder(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -4791,6 +5057,8 @@ void js_cocos2dx_Node_getGlobalZOrder(const v8::FunctionCallbackInfo<v8::Value> 
 // {
 void js_cocos2dx_Node_draw(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     bool ok = true;
   //     cocos2d::Node* cobj = nullptr;
 
@@ -4879,6 +5147,8 @@ void js_cocos2dx_Node_draw(const v8::FunctionCallbackInfo<v8::Value> &args)
 // {
 void js_cocos2dx_Node_setUserObject(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -4936,6 +5206,8 @@ void js_cocos2dx_Node_setUserObject(const v8::FunctionCallbackInfo<v8::Value> &a
 // {
 void js_cocos2dx_Node_enumerateChildren(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -5010,6 +5282,8 @@ void js_cocos2dx_Node_enumerateChildren(const v8::FunctionCallbackInfo<v8::Value
 // {
 void js_cocos2dx_Node_getonExitTransitionDidStartCallback(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -5041,6 +5315,8 @@ void js_cocos2dx_Node_getonExitTransitionDidStartCallback(const v8::FunctionCall
 // {
 void js_cocos2dx_Node_removeFromParentAndCleanup(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     bool ok = true;
   //     cocos2d::Node* cobj = nullptr;
 
@@ -5092,6 +5368,8 @@ void js_cocos2dx_Node_removeFromParentAndCleanup(const v8::FunctionCallbackInfo<
 // {
 void js_cocos2dx_Node_setPosition3D(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -5131,6 +5409,8 @@ void js_cocos2dx_Node_setPosition3D(const v8::FunctionCallbackInfo<v8::Value> &a
 // {
 void js_cocos2dx_Node_getNumberOfRunningActionsByTag(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -5168,6 +5448,8 @@ void js_cocos2dx_Node_getNumberOfRunningActionsByTag(const v8::FunctionCallbackI
 // {
 void js_cocos2dx_Node_sortAllChildren(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -5196,6 +5478,8 @@ void js_cocos2dx_Node_sortAllChildren(const v8::FunctionCallbackInfo<v8::Value> 
 // {
 void js_cocos2dx_Node_getWorldToNodeAffineTransform(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -5227,6 +5511,8 @@ void js_cocos2dx_Node_getWorldToNodeAffineTransform(const v8::FunctionCallbackIn
 // {
 void js_cocos2dx_Node_getScale(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -5258,6 +5544,8 @@ void js_cocos2dx_Node_getScale(const v8::FunctionCallbackInfo<v8::Value> &args)
 // {
 void js_cocos2dx_Node_getOpacity(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -5289,6 +5577,8 @@ void js_cocos2dx_Node_getOpacity(const v8::FunctionCallbackInfo<v8::Value> &args
 // {
 void js_cocos2dx_Node_updateOrderOfArrival(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -5317,6 +5607,8 @@ void js_cocos2dx_Node_updateOrderOfArrival(const v8::FunctionCallbackInfo<v8::Va
 // {
 void js_cocos2dx_Node_getNormalizedPosition(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -5348,6 +5640,8 @@ void js_cocos2dx_Node_getNormalizedPosition(const v8::FunctionCallbackInfo<v8::V
 // {
 void js_cocos2dx_Node_getParentToNodeTransform(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -5377,6 +5671,8 @@ void js_cocos2dx_Node_getParentToNodeTransform(const v8::FunctionCallbackInfo<v8
 // {
 void js_cocos2dx_Node_convertToNodeSpace(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -5419,6 +5715,8 @@ void js_cocos2dx_Node_convertToNodeSpace(const v8::FunctionCallbackInfo<v8::Valu
 // {
 void js_cocos2dx_Node_setTag(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -5453,6 +5751,8 @@ void js_cocos2dx_Node_setTag(const v8::FunctionCallbackInfo<v8::Value> &args)
 // {
 void js_cocos2dx_Node_isCascadeColorEnabled(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
@@ -5485,6 +5785,8 @@ void js_cocos2dx_Node_isCascadeColorEnabled(const v8::FunctionCallbackInfo<v8::V
 // {
 void js_cocos2dx_Node_setRotationQuat(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -5524,6 +5826,8 @@ void js_cocos2dx_Node_setRotationQuat(const v8::FunctionCallbackInfo<v8::Value> 
 // {
 void js_cocos2dx_Node_stopAction(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
@@ -5583,6 +5887,8 @@ void js_cocos2dx_Node_stopAction(const v8::FunctionCallbackInfo<v8::Value> &args
 // {
 void js_cocos2dx_Node_getActionManager(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     bool ok = true;
   //     cocos2d::Node* cobj = nullptr;
 
@@ -5660,6 +5966,8 @@ void js_cocos2dx_Node_getActionManager(const v8::FunctionCallbackInfo<v8::Value>
 // {
 void js_cocos2dx_Node_getAttachedNodeCount(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     if (argc == 0) {
 
@@ -5681,10 +5989,1117 @@ void js_cocos2dx_Node_getAttachedNodeCount(const v8::FunctionCallbackInfo<v8::Va
   //     return false;
 }
 
+// bool js_cocos2dx_Node_onEnter(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_Node_onEnter(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::Node* cobj = (cocos2d::Node *)(proxy ? proxy->ptr : nullptr);
+  cocos2d::Node *cNode = static_cast<cocos2d::Node *>(args.This()->GetAlignedPointerFromInternalField(0));
+  //     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_Node_onEnter : Invalid Native Object");
+  SE_PRECONDITION2(cNode, "js_cocos2dx_Node_onEnter : Invalid Native Object");
+
+  // TODO
+  //     ScriptingCore::getInstance()->setCalledFromScript(true);
+
+  //     cobj->onEnter();
+  cNode->onEnter();
+  //     args.rval().setUndefined();
+  args.GetReturnValue().SetUndefined();
+}
+
+// bool js_cocos2dx_Node_onExit(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_Node_onExit(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::Node* cobj = (cocos2d::Node *)(proxy ? proxy->ptr : nullptr);
+  cocos2d::Node *cNode = static_cast<cocos2d::Node *>(args.This()->GetAlignedPointerFromInternalField(0));
+  //     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_Node_onExit : Invalid Native Object");
+  SE_PRECONDITION2(cNode, "js_cocos2dx_Node_onExit : Invalid Native Object");
+  // TODO
+  //     ScriptingCore::getInstance()->setCalledFromScript(true);
+  //     cobj->onExit();
+  cNode->onExit();
+  //     args.rval().setUndefined();
+  args.GetReturnValue().SetUndefined();
+  //     return true;
+}
+
+// bool js_cocos2dx_Node_onEnterTransitionDidFinish(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_Node_onEnterTransitionDidFinish(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::Node* cobj = (cocos2d::Node *)(proxy ? proxy->ptr : nullptr);
+  cocos2d::Node *cNode = static_cast<cocos2d::Node *>(args.This()->GetAlignedPointerFromInternalField(0));
+  //     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_Node_onEnterTransitionDidFinish : Invalid Native Object");
+  SE_PRECONDITION2(cNode, "js_cocos2dx_Node_onEnterTransitionDidFinish : Invalid Native Object");
+
+  //     ScriptingCore::getInstance()->setCalledFromScript(true);
+  //     cobj->onEnterTransitionDidFinish();
+  cNode->onEnterTransitionDidFinish();
+  //     args.rval().setUndefined();
+  args.GetReturnValue().SetUndefined();
+  //     return true;
+}
+
+// bool js_cocos2dx_Node_onExitTransitionDidStart(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_Node_onExitTransitionDidStart(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::Node* cobj = (cocos2d::Node *)(proxy ? proxy->ptr : nullptr);
+  cocos2d::Node *cNode = static_cast<cocos2d::Node *>(args.This()->GetAlignedPointerFromInternalField(0));
+  //     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_Node_onExitTransitionDidStart : Invalid Native Object");
+  SE_PRECONDITION2(cNode, "js_cocos2dx_Node_onExitTransitionDidStart : Invalid Native Object");
+
+  //     ScriptingCore::getInstance()->setCalledFromScript(true);
+  //     cobj->onExitTransitionDidStart();
+  cNode->onExitTransitionDidStart();
+  //     args.rval().setUndefined();
+  args.GetReturnValue().SetUndefined();
+  //     return true;
+}
+
+// bool js_cocos2dx_Node_cleanup(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_Node_cleanup(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::Node* cobj = (cocos2d::Node *)(proxy ? proxy->ptr : nullptr);
+  cocos2d::Node *cNode = static_cast<cocos2d::Node *>(args.This()->GetAlignedPointerFromInternalField(0));
+  //     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_Node_cleanup : Invalid Native Object");
+  SE_PRECONDITION2(cNode, "js_cocos2dx_Node_cleanup : Invalid Native Object");
+
+  //     ScriptingCore::getInstance()->setCalledFromScript(true);
+  //     cobj->cleanup();
+  cNode->cleanup();
+  //     args.rval().setUndefined();
+  args.GetReturnValue().SetUndefined();
+  //     return true;
+}
+
+void js_CCNode_unschedule(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
+
+  if (args.Length() == 1)
+  {
+    SE_REPORT_ERROR("js_CCNode_unschedule : unschedule is not supported in v8, please use unscheduleAllCallbacks instead");
+    return;
+  }
+  //         JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+
+  //         JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //         js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //         cocos2d::Node *node = (cocos2d::Node *)(proxy ? proxy->ptr : nullptr);
+  cocos2d::Node *node = static_cast<cocos2d::Node *>(args.This()->GetAlignedPointerFromInternalField(0));
+  //         JSB_PRECONDITION2(node, cx, false, "Invalid Native Object");
+  SE_PRECONDITION2(node, "js_CCNode_unschedule : Invalid Native Object");
+
+  //         Scheduler *sched = node->getScheduler();
+  cocos2d::Scheduler *sched = node->getScheduler();
+  // TODO
+  CCASSERT(false, "js_CCNode_unschedule : node doesn't have scheduler");
+  //         auto targetArray = JSScheduleWrapper::getTargetForSchedule(args.get(0));
+  //         if (targetArray) {
+  //             CCLOGINFO("unschedule target number: %ld", static_cast<long>(targetArray->size()));
+
+  //             for (const auto& tmp : *targetArray)
+  //             {
+  //                 JSScheduleWrapper* target = static_cast<JSScheduleWrapper*>(tmp);
+  //                 if (node == target->getTarget())
+  //                 {
+  //                     sched->unschedule(schedule_selector(JSScheduleWrapper::scheduleFunc), target);
+  //                     JSScheduleWrapper::removeTargetForJSObject(obj, target);
+  //                     break;
+  //                 }
+  //             }
+  //         }
+
+  //         args.rval().setUndefined();
+}
+
+// bool js_cocos2dx_CCNode_unscheduleAllSelectors(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_CCNode_unscheduleAllSelectors(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::Node* cobj = (cocos2d::Node *)(proxy ? proxy->ptr : nullptr);
+  cocos2d::Node *cNode = static_cast<cocos2d::Node *>(args.This()->GetAlignedPointerFromInternalField(0));
+  //     TEST_NATIVE_OBJECT(cx, cobj)
+  SE_PRECONDITION2(cNode, "js_cocos2dx_CCNode_unscheduleAllSelectors : Invalid Native Object");
+
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_CCNode_unscheduleAllSelectors : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+
+  //         cobj->unscheduleAllCallbacks();
+  cNode->unscheduleAllCallbacks();
+  // TODO
+  //         auto arr = JSScheduleWrapper::getTargetForJSObject(obj);
+  //         // If there aren't any targets, just return true.
+  //         // Otherwise, the for loop will break immediately.
+  //         // It will lead to logic errors.
+  //         // For details to reproduce it, please refer to SchedulerTest/SchedulerUpdate.
+  //         if(! arr) return true;
+  //         JSScheduleWrapper* wrapper = nullptr;
+  //         for(ssize_t i = 0; i < arr->size(); ++i) {
+  //             wrapper = (JSScheduleWrapper*)arr->at(i);
+  //             if(wrapper) {
+  //                 cobj->getScheduler()->unscheduleAllForTarget(wrapper);
+  //             }
+  //         }
+
+  //         JSScheduleWrapper::removeAllTargetsForJSObject(obj);
+
+  //         args.rval().setUndefined();
+  args.GetReturnValue().SetUndefined();
+  //         return true;
+}
+
+// bool js_CCNode_scheduleOnce(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_CCNode_scheduleOnce(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
+  if (args.Length() < 1)
+  {
+    SE_REPORT_ERROR("js_CCNode_scheduleOnce : wrong number of arguments: %d, was expecting at least %d", args.Length(), 1);
+    return;
+  }
+
+  //         bool ok = true;
+  //         JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+
+  //         JS::RootedValue thisValue(cx, args.thisv());
+  //         JS::RootedObject obj(cx, thisValue.toObjectOrNull());
+  //         js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //         cocos2d::Node *node = (cocos2d::Node *)(proxy ? proxy->ptr : nullptr);
+  cocos2d::Node *node = static_cast<cocos2d::Node *>(args.This()->GetAlignedPointerFromInternalField(0));
+  SE_PRECONDITION2(node, "js_CCNode_scheduleOnce : Invalid Native Object");
+  //         if (node == nullptr) {
+  //             return false;
+  //         }
+
+  //         Scheduler *sched = node->getScheduler();
+  cocos2d::Scheduler *sched = node->getScheduler();
+  SE_PRECONDITION2(sched, "js_CCNode_scheduleOnce : node doesn't have scheduler");
+  // TODO
+  CCASSERT(false, "js_CCNode_scheduleOnce : node doesn't have scheduler");
+  //         if (sched == nullptr) {
+  //             return false;
+  //         }
+  //         JSScheduleWrapper *tmpCobj = nullptr;
+
+  //         //
+  //         // delay
+  //         //
+  //         double delay;
+  //         if( argc >= 2 ) {
+  //             JS::RootedValue jsdelay(cx, args.get(1));
+  //             ok &= JS::ToNumber(cx, jsdelay, &delay);
+  //             JSB_PRECONDITION2(ok, cx, false, "Error processing arguments");
+  //         }
+
+  //         bool bFound = false;
+  //         auto pTargetArr = JSScheduleWrapper::getTargetForJSObject(obj);
+  //         if (pTargetArr)
+  //         {
+  //             for (auto&& pObj : *pTargetArr)
+  //             {
+  //                 JSScheduleWrapper* pTarget = static_cast<JSScheduleWrapper*>(pObj);
+  //                 if (args.get(0) == pTarget->getJSCallbackFunc())
+  //                 {
+  //                     tmpCobj = pTarget;
+  //                     bFound = true;
+  //                     break;
+  //                 }
+  //             }
+  //         }
+
+  //         if (!bFound)
+  //         {
+  //             tmpCobj = new (std::nothrow) JSScheduleWrapper();
+  //             tmpCobj->autorelease();
+  //             tmpCobj->setJSCallbackThis(thisValue);
+  //             tmpCobj->setJSCallbackFunc(args.get(0));
+  //             tmpCobj->setTarget(node);
+
+  //             JSScheduleWrapper::setTargetForSchedule(args.get(0), tmpCobj);
+  //             JSScheduleWrapper::setTargetForJSObject(obj, tmpCobj);
+  //         }
+
+  //         if(argc == 1) {
+  //             sched->schedule(schedule_selector(JSScheduleWrapper::scheduleFunc), tmpCobj, 0, 0, 0.0f, !node->isRunning());
+  //         } else {
+  //             sched->schedule(schedule_selector(JSScheduleWrapper::scheduleFunc), tmpCobj, 0, 0, delay, !node->isRunning());
+  //         }
+
+  //         /* We shouldn't set the js callback function to reserved slot,
+  //            since the target object may execute more than one schedule.
+  //            Therefore, previous js callback function will be replaced
+  //            by the current one. For example:
+  //               this.scheduleOnce(function() { temporary function 1 }, 0.5);
+  //               this.scheduleOnce(function() { temporary function 2 }, 0.5);
+  //            In this case, the temporary function 1 will be removed from reserved slot 0.
+  //            And temporary function 2 will be set to reserved slot 0 of this object.
+  //            If gc is triggered before the 'JSScheduleWrapper::scheduleFunc' is invoked,
+  //            crash will happen. You could simply reproduce it by adding '__jsc__.garbageCollect();' after scheduleOnce.
+
+  //            [Solution] Because one schedule corresponds to one JSScheduleWrapper, we root
+  //            the js callback function in JSScheduleWrapper::setJSCallbackFunc and unroot it
+  //            at the destructor of JSScheduleWrapper.
+  //         */
+  //         //jsb_set_reserved_slot(proxy->obj, 0, args.get(0));
+
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
+  //     JS_ReportError(cx, "wrong number of arguments");
+  //     return false;
+}
+
+// bool js_CCNode_schedule(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_CCNode_schedule(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
+  cocos2d::Node *node = static_cast<cocos2d::Node *>(args.This()->GetAlignedPointerFromInternalField(0));
+  SE_PRECONDITION2(node, "js_CCNode_schedule : Invalid Native Object");
+
+  // TODO
+  CCASSERT(false, "js_CCNode_schedule : node doesn't have scheduler");
+  //     if (argc >= 1) {
+  //         bool ok = true;
+  //         JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+
+  //         JS::RootedValue thisValue(cx, args.thisv());
+  //         JS::RootedObject obj(cx, thisValue.toObjectOrNull());
+  //         js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //         cocos2d::Node *node = (cocos2d::Node *)(proxy ? proxy->ptr : nullptr);
+  //         Scheduler *sched = node->getScheduler();
+
+  //         JSScheduleWrapper *tmpCobj = nullptr;
+
+  //         double interval = 0.0;
+  //         if( argc >= 2 ) {
+  //             JS::RootedValue jsinterval(cx, args.get(1));
+  //             ok &= JS::ToNumber(cx, jsinterval, &interval);
+  //         }
+
+  //         //
+  //         // repeat
+  //         //
+  //         double repeat = 0.0;
+  //         if( argc >= 3 ) {
+  //             JS::RootedValue jsrepeat(cx, args.get(2));
+  //             ok &= JS::ToNumber(cx, jsrepeat, &repeat);
+  //         }
+
+  //         //
+  //         // delay
+  //         //
+  //         double delay = 0.0;
+  //         if( argc >= 4 ) {
+  //             JS::RootedValue jsdelay(cx, args.get(3));
+  //             ok &= JS::ToNumber(cx, jsdelay, &delay);
+  //         }
+
+  //         JSB_PRECONDITION2(ok, cx, false, "Error processing arguments");
+
+  //         bool bFound = false;
+  //         auto targetArray = JSScheduleWrapper::getTargetForJSObject(obj);
+  //         if (targetArray)
+  //         {
+  //             for (auto&& pObj : *targetArray)
+  //             {
+  //                 auto target = static_cast<JSScheduleWrapper*>(pObj);
+  //                 if (args.get(0) == target->getJSCallbackFunc())
+  //                 {
+  //                     tmpCobj = target;
+  //                     bFound = true;
+  //                     break;
+  //                 }
+  //             }
+  //         }
+
+  //         if (!bFound)
+  //         {
+  //             tmpCobj = new (std::nothrow) JSScheduleWrapper();
+  //             tmpCobj->autorelease();
+  //             tmpCobj->setJSCallbackThis(thisValue);
+  //             tmpCobj->setJSCallbackFunc(args.get(0));
+  //             tmpCobj->setTarget(node);
+  //             JSScheduleWrapper::setTargetForSchedule(args.get(0), tmpCobj);
+  //             JSScheduleWrapper::setTargetForJSObject(obj, tmpCobj);
+  //         }
+
+  //         if(argc == 1) {
+  //             sched->schedule(schedule_selector(JSScheduleWrapper::scheduleFunc), tmpCobj, 0, !node->isRunning());
+  //         }else if(argc == 2) {
+  //             sched->schedule(schedule_selector(JSScheduleWrapper::scheduleFunc), tmpCobj, interval, !node->isRunning());
+  //         }else if(argc == 3) {
+  //             sched->schedule(schedule_selector(JSScheduleWrapper::scheduleFunc), tmpCobj, interval, (unsigned int)repeat, 0, !node->isRunning());
+  //         }else if (argc == 4) {
+  //             sched->schedule(schedule_selector(JSScheduleWrapper::scheduleFunc), tmpCobj, interval, (unsigned int)repeat, delay, !node->isRunning());
+  //         }
+
+  //         // I comment next line with the same reason in the js_CCNode_scheduleOnce.
+  //         //jsb_set_reserved_slot(proxy->obj, 0, args.get(0));
+
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
+  //     JS_ReportError(cx, "wrong number of arguments");
+  //     return false;
+}
+
+// bool js_cocos2dx_CCNode_scheduleUpdateWithPriority(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_CCNode_scheduleUpdateWithPriority(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedValue thisValue(cx, args.thisv());
+  //     JS::RootedObject obj(cx, thisValue.toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  cocos2d::Node *cNode = static_cast<cocos2d::Node *>(args.This()->GetAlignedPointerFromInternalField(0));
+  //     cocos2d::Node* cobj = (cocos2d::Node *)(proxy ? proxy->ptr : nullptr);
+  //     JSB_PRECONDITION2( cobj, cx, false, "Invalid Native Object");
+  SE_PRECONDITION2(cNode, "js_cocos2dx_CCNode_scheduleUpdateWithPriority : Invalid Native Object");
+  CCASSERT(false, "js_cocos2dx_CCNode_scheduleUpdateWithPriority : node doesn't have scheduler");
+  //     if (argc == 1) {
+  //         int arg0 = 0;
+  //         ok &= jsval_to_int32(cx, args.get(0), (int32_t *)&arg0);
+  //         JSB_PRECONDITION2(ok, cx, false, "Error processing arguments");
+
+  //         bool isFoundUpdate = false;
+  //         ok = JS_HasProperty(cx, obj, "update", &isFoundUpdate);
+  //         JS::RootedValue jsUpdateFunc(cx);
+  //         if (ok && isFoundUpdate) {
+  //             ok = JS_GetProperty(cx, obj, "update", &jsUpdateFunc);
+  //         }
+
+  //         // if no 'update' property, return true directly.
+  //         if (!ok) {
+  //             args.rval().setUndefined();
+  //             return true;
+  //         }
+
+  //         JSScheduleWrapper* tmpCobj = nullptr;
+
+  //         bool bFound = false;
+  //         auto pTargetArr = JSScheduleWrapper::getTargetForJSObject(obj);
+  //         if (pTargetArr)
+  //         {
+  //             for (auto&& pObj : *pTargetArr)
+  //             {
+  //                 JSScheduleWrapper* pTarget = static_cast<JSScheduleWrapper*>(pObj);
+  //                 if (jsUpdateFunc == pTarget->getJSCallbackFunc())
+  //                 {
+  //                     tmpCobj = pTarget;
+  //                     bFound = true;
+  //                     break;
+  //                 }
+  //             }
+  //         }
+
+  //         if (!bFound)
+  //         {
+  //             tmpCobj = new (std::nothrow) JSScheduleWrapper();
+  //             tmpCobj->autorelease();
+  //             tmpCobj->setJSCallbackThis(thisValue);
+  //             tmpCobj->setJSCallbackFunc(jsUpdateFunc);
+  //             tmpCobj->setTarget(cobj);
+  //             tmpCobj->setUpdateSchedule(true);
+  //             JSScheduleWrapper::setTargetForSchedule(jsUpdateFunc, tmpCobj);
+  //             JSScheduleWrapper::setTargetForJSObject(obj, tmpCobj);
+  //         }
+
+  //         tmpCobj->setPriority(arg0);
+  //         cobj->getScheduler()->scheduleUpdate(tmpCobj, arg0, !cobj->isRunning());
+
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
+
+  //     JS_ReportError(cx, "wrong number of arguments: %d, was expecting %d", argc, 1);
+  //     return false;
+}
+
+// bool js_cocos2dx_CCNode_unscheduleUpdate(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_CCNode_unscheduleUpdate(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
+  CCASSERT(false, "js_cocos2dx_CCNode_unscheduleUpdate : node doesn't have scheduler");
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::Node* cobj = (cocos2d::Node *)(proxy ? proxy->ptr : nullptr);
+  //     TEST_NATIVE_OBJECT(cx, cobj)
+
+  //     if (argc == 0)
+  //     {
+  //         cobj->unscheduleUpdate();
+  //         do {
+  //             auto arr = JSScheduleWrapper::getTargetForJSObject(obj);
+  //             // If there aren't any targets, just return true.
+  //             // Otherwise, the for loop will break immediately.
+  //             // It will lead to logic errors.
+  //             // For details to reproduce it, please refer to SchedulerTest/SchedulerUpdate.
+  //             if(! arr) return true;
+
+  //             JSScheduleWrapper* wrapper = nullptr;
+  //             for(ssize_t i = 0; i < arr->size(); ++i) {
+  //                 wrapper = (JSScheduleWrapper*)arr->at(i);
+  //                 if(wrapper && wrapper->isUpdateSchedule()) {
+  //                     cobj->getScheduler()->unscheduleUpdate(wrapper);
+  //                     CCASSERT(OBJECT_TO_JSVAL(obj) == wrapper->getJSCallbackThis(), "Wrong target object.");
+  //                     JSScheduleWrapper::removeTargetForJSObject(obj, wrapper);
+  //                     break;
+  //                 }
+  //             }
+  //         } while (0);
+
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
+  //     JS_ReportError(cx, "wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
+// bool js_cocos2dx_CCNode_scheduleUpdate(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_CCNode_scheduleUpdate(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
+  CCASSERT(false, "js_cocos2dx_CCNode_scheduleUpdate : node doesn't have scheduler");
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedValue thisValue(cx, args.thisv());
+  //     JS::RootedObject obj(cx, thisValue.toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::Node* cobj = (cocos2d::Node *)(proxy ? proxy->ptr : nullptr);
+  //     JSB_PRECONDITION2( cobj, cx, false, "Invalid Native Object");
+  //     if (argc == 0) {
+
+  //         bool isFoundUpdate = false;
+  //         ok = JS_HasProperty(cx, obj, "update", &isFoundUpdate);
+  //         JS::RootedValue jsUpdateFunc(cx);
+  //         if (ok && isFoundUpdate) {
+  //             ok = JS_GetProperty(cx, obj, "update", &jsUpdateFunc);
+  //         }
+
+  //         // if no 'update' property, return true directly.
+  //         if (!ok) {
+  //             args.rval().setUndefined();
+  //             return true;
+  //         }
+
+  //         JSScheduleWrapper* tmpCobj = nullptr;
+
+  //         bool bFound = false;
+  //         auto pTargetArr = JSScheduleWrapper::getTargetForJSObject(obj);
+  //         if (pTargetArr)
+  //         {
+  //             for (auto&& pObj : *pTargetArr)
+  //             {
+  //                 JSScheduleWrapper* pTarget = static_cast<JSScheduleWrapper*>(pObj);
+  //                 if (jsUpdateFunc == pTarget->getJSCallbackFunc())
+  //                 {
+  //                     tmpCobj = pTarget;
+  //                     bFound = true;
+  //                     break;
+  //                 }
+  //             }
+  //         }
+
+  //         if (!bFound)
+  //         {
+  //             tmpCobj = new (std::nothrow) JSScheduleWrapper();
+  //             tmpCobj->autorelease();
+  //             tmpCobj->setJSCallbackThis(thisValue);
+  //             tmpCobj->setJSCallbackFunc(jsUpdateFunc);
+  //             tmpCobj->setTarget(cobj);
+  //             tmpCobj->setUpdateSchedule(true);
+  //             JSScheduleWrapper::setTargetForSchedule(jsUpdateFunc, tmpCobj);
+  //             JSScheduleWrapper::setTargetForJSObject(obj, tmpCobj);
+  //         }
+
+  //         cobj->getScheduler()->scheduleUpdate(tmpCobj, 0, !cobj->isRunning());
+
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
+
+  //     JS_ReportError(cx, "wrong number of arguments: %d, was expecting %d", argc, 1);
+  //     return false;
+}
+
+// bool js_cocos2dx_CCScheduler_unscheduleAllSelectorsForTarget(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_CCScheduler_unscheduleAllSelectorsForTarget(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
+  CCASSERT(false, "js_cocos2dx_CCScheduler_unscheduleAllSelectorsForTarget : node doesn't have scheduler");
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::Scheduler* cobj = (cocos2d::Scheduler *)(proxy ? proxy->ptr : nullptr);
+  //     TEST_NATIVE_OBJECT(cx, cobj)
+
+  //     if (argc == 1) {
+  //         do {
+  //             JS::RootedObject tmpObj(cx, args.get(0).toObjectOrNull());
+
+  //             auto arr = JSScheduleWrapper::getTargetForJSObject(tmpObj);
+  //             // If there aren't any targets, just return true.
+  //             // Otherwise, the for loop will break immediately.
+  //             // It will lead to logic errors.
+  //             // For details to reproduce it, please refer to SchedulerTest/SchedulerUpdate.
+  //             if(! arr) return true;
+
+  //             JSScheduleWrapper* wrapper = nullptr;
+  //             for(ssize_t i = 0; i < arr->size(); ++i) {
+  //                 wrapper = (JSScheduleWrapper*)arr->at(i);
+  //                 if(wrapper) {
+  //                     cobj->unscheduleAllForTarget(wrapper);
+  //                 }
+  //             }
+  //             JSScheduleWrapper::removeAllTargetsForJSObject(tmpObj);
+
+  //         } while (0);
+
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
+  //     JS_ReportError(cx, "wrong number of arguments: %d, was expecting %d", argc, 1);
+  //     return false;
+}
+
+// bool js_cocos2dx_CCNode_setPosition(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_CCNode_setPosition(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     bool ok = true;
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::Node* cobj = (cocos2d::Node *)(proxy ? proxy->ptr : nullptr);
+  cocos2d::Node *cNode = static_cast<cocos2d::Node *>(args.This()->GetAlignedPointerFromInternalField(0));
+  //     TEST_NATIVE_OBJECT(cx, cobj)
+  SE_PRECONDITION2(cNode, "js_cocos2dx_CCNode_setPosition : Invalid Native Object");
+
+  //     if (argc == 1) {
+
+  if (args.Length() == 1)
+  {
+    //         cocos2d::Point arg0;
+    cocos2d::Point point;
+    //         ok &= jsval_to_ccpoint(cx, args.get(0), &arg0);
+    if (!JsbUtils::jsval_to_ccpoint(args.GetIsolate(), args[0], &point))
+    {
+      SE_REPORT_ERROR("js_cocos2dx_CCNode_setPosition : Error processing arguments");
+      return;
+    }
+    cNode->setPosition(point);
+    args.GetReturnValue().SetUndefined();
+    return;
+  }
+  else if (args.Length() == 2)
+  {
+    //         double x;
+    //         JS::RootedValue jsx(cx, args.get(0));
+    //         ok &= JS::ToNumber(cx, jsx, &x);
+    double x = args[0]->NumberValue(args.GetIsolate()->GetCurrentContext()).FromJust();
+    //         double y;
+    //         JS::RootedValue jsy(cx, args.get(1));
+    //         ok &= JS::ToNumber(cx, jsy, &y);
+    double y = args[1]->NumberValue(args.GetIsolate()->GetCurrentContext()).FromJust();
+    //         JSB_PRECONDITION2(ok, cx, false, "Error processing arguments");
+
+    //         cobj->setPosition(Point(x,y));
+    cNode->setPosition(cocos2d::Point(x, y));
+    //         args.rval().setUndefined();
+    args.GetReturnValue().SetUndefined();
+    //         return true;
+    return;
+  }
+
+  //     JS_ReportError(cx, "wrong number of arguments: %d, was expecting %d", argc, 1);
+  SE_REPORT_ERROR("js_cocos2dx_CCNode_setPosition : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+  //     return false;
+}
+
+// bool js_cocos2dx_CCNode_setContentSize(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_CCNode_setContentSize(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     bool ok = true;
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::Node* cobj = (cocos2d::Node *)(proxy ? proxy->ptr : nullptr);
+  cocos2d::Node *cNode = static_cast<cocos2d::Node *>(args.This()->GetAlignedPointerFromInternalField(0));
+  //     TEST_NATIVE_OBJECT(cx, cobj)
+  SE_PRECONDITION2(cNode, "js_cocos2dx_CCNode_setContentSize : Invalid Native Object");
+
+  //     if (argc == 1) {
+  //         cocos2d::Size arg0;
+  //         ok &= jsval_to_ccsize(cx, args.get(0), &arg0);
+  //         JSB_PRECONDITION2(ok, cx, false, "Error processing arguments");
+
+  //         cobj->setContentSize(arg0);
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
+  if (args.Length() == 1)
+  {
+    cocos2d::Size size;
+    if (!JsbUtils::jsval_to_ccsize(args.GetIsolate(), args[0], &size))
+    {
+      SE_REPORT_ERROR("js_cocos2dx_CCNode_setContentSize : Error processing arguments");
+      return;
+    }
+
+    cNode->setContentSize(size);
+    args.GetReturnValue().SetUndefined();
+    return;
+  }
+  // if (argc == 2) {
+  //         double width;
+  //         JS::RootedValue jsw(cx, args.get(0));
+  //         ok &= JS::ToNumber(cx, jsw, &width);
+  //         double height;
+  //         JS::RootedValue jsh(cx, args.get(1));
+  //         ok &= JS::ToNumber(cx, jsh, &height);
+  //         JSB_PRECONDITION2(ok, cx, false, "Error processing arguments");
+
+  //         cobj->setContentSize(Size(width,height));
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
+  if (args.Length() == 2)
+  {
+    double width = args[0]->NumberValue(args.GetIsolate()->GetCurrentContext()).FromJust();
+    double height = args[1]->NumberValue(args.GetIsolate()->GetCurrentContext()).FromJust();
+
+    cNode->setContentSize(cocos2d::Size(width, height));
+    args.GetReturnValue().SetUndefined();
+    return;
+  }
+  //     JS_ReportError(cx, "wrong number of arguments: %d, was expecting %d", argc, 1);
+  SE_REPORT_ERROR("js_cocos2dx_CCNode_setContentSize : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+  //     return false;
+}
+
+// bool js_cocos2dx_CCNode_setAnchorPoint(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_CCNode_setAnchorPoint(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     bool ok = true;
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::Node* cobj = (cocos2d::Node *)(proxy ? proxy->ptr : nullptr);
+  cocos2d::Node *cNode = static_cast<cocos2d::Node *>(args.This()->GetAlignedPointerFromInternalField(0));
+  //     TEST_NATIVE_OBJECT(cx, cobj)
+  SE_PRECONDITION2(cNode, "js_cocos2dx_CCNode_setAnchorPoint : Invalid Native Object");
+
+  //     if (argc == 1) {
+  //         cocos2d::Point arg0;
+  //         ok &= jsval_to_ccpoint(cx, args.get(0), &arg0);
+  //         JSB_PRECONDITION2(ok, cx, false, "Error processing arguments");
+
+  //         cobj->setAnchorPoint(arg0);
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
+
+  if (args.Length() == 1)
+  {
+    cocos2d::Point point;
+    if (!JsbUtils::jsval_to_ccpoint(args.GetIsolate(), args[0], &point))
+    {
+      SE_REPORT_ERROR("js_cocos2dx_CCNode_setAnchorPoint : Error processing arguments");
+      return;
+    }
+    cNode->setAnchorPoint(point);
+    args.GetReturnValue().SetUndefined();
+    return;
+  }
+  // if (argc == 2) {
+  //          double x;
+  //          ok &= JS::ToNumber(cx, args.get(0), &x );
+  //          double y;
+  //          ok &= JS::ToNumber(cx, args.get(1), &y );
+  //          JSB_PRECONDITION2(ok, cx, false, "Error processing arguments");
+
+  //         cobj->setAnchorPoint(Point(x,y));
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
+  if (args.Length() == 2)
+  {
+    double x = args[0]->NumberValue(args.GetIsolate()->GetCurrentContext()).FromJust();
+    double y = args[1]->NumberValue(args.GetIsolate()->GetCurrentContext()).FromJust();
+    cNode->setAnchorPoint(cocos2d::Point(x, y));
+    args.GetReturnValue().SetUndefined();
+    return;
+  }
+  //     JS_ReportError(cx, "wrong number of arguments: %d, was expecting %d", argc, 1);
+  SE_REPORT_ERROR("js_cocos2dx_CCNode_setAnchorPoint : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+  //     return false;
+}
+
+// bool js_cocos2dx_CCNode_setColor(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_CCNode_setColor(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::Node* cobj = (cocos2d::Node *)(proxy ? proxy->ptr : nullptr);
+  cocos2d::Node *cNode = static_cast<cocos2d::Node *>(args.This()->GetAlignedPointerFromInternalField(0));
+  //     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_Node_setColor : Invalid Native Object");
+  SE_PRECONDITION2(cNode, "js_cocos2dx_Node_setColor : Invalid Native Object");
+  //     if (argc == 1) {
+  //         cocos2d::Color3B arg0;
+  //         ok &= jsval_to_cccolor3b(cx, args.get(0), &arg0);
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_Node_setColor : Error processing arguments");
+  //         cobj->setColor(arg0);
+
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
+  if (args.Length() == 1)
+  {
+    cocos2d::Color3B color;
+    if (!JsbUtils::jsval_to_cccolor3b(args.GetIsolate(), args[0], &color))
+    {
+      SE_REPORT_ERROR("js_cocos2dx_Node_setColor : Error processing arguments");
+      return;
+    }
+    cNode->setColor(color);
+    args.GetReturnValue().SetUndefined();
+    return;
+  }
+
+  SE_REPORT_ERROR("js_cocos2dx_Node_setColor : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+}
+
+// bool js_cocos2dx_CCNode_pause(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_CCNode_pause(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::Node* cobj = (cocos2d::Node *)(proxy ? proxy->ptr : nullptr);
+  cocos2d::Node *cNode = static_cast<cocos2d::Node *>(args.This()->GetAlignedPointerFromInternalField(0));
+  //     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_Node_pause : Invalid Native Object");
+  SE_PRECONDITION2(cNode, "js_cocos2dx_Node_pause : Invalid Native Object");
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_Node_pause : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  // TODO
+  //             auto arr = JSScheduleWrapper::getTargetForJSObject(obj);
+  //             if(arr){
+  //                 JSScheduleWrapper* wrapper = nullptr;
+  //                 for(ssize_t i = 0; i < arr->size(); ++i) {
+  //                     wrapper = (JSScheduleWrapper*)arr->at(i);
+  //                     if(wrapper) {
+  //                         cobj->getScheduler()->pauseTarget(wrapper);
+  //                     }
+  //                 }
+  //             }
+
+  //         cobj->pause();
+  cNode->pause();
+  //         args.rval().setUndefined();
+  args.GetReturnValue().SetUndefined();
+  //         return true;
+}
+
+// bool js_cocos2dx_CCNode_resume(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_CCNode_resume(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::Node* cobj = (cocos2d::Node *)(proxy ? proxy->ptr : nullptr);
+  cocos2d::Node *cNode = static_cast<cocos2d::Node *>(args.This()->GetAlignedPointerFromInternalField(0));
+  //     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_Node_resume : Invalid Native Object");
+  SE_PRECONDITION2(cNode, "js_cocos2dx_Node_resume : Invalid Native Object");
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_Node_resume : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  // TODO
+  //             auto arr = JSScheduleWrapper::getTargetForJSObject(obj);
+  //             if(arr){
+  //                 JSScheduleWrapper* wrapper = nullptr;
+  //                 for(ssize_t i = 0; i < arr->size(); ++i) {
+  //                     wrapper = (JSScheduleWrapper*)arr->at(i);
+  //                     if(wrapper) {
+  //                         cobj->getScheduler()->resumeTarget(wrapper);
+  //                     }
+  //                 }
+  //             }
+
+  //         cobj->resume();
+  cNode->resume();
+  //         args.rval().setUndefined();
+  args.GetReturnValue().SetUndefined();
+}
+
+// bool js_cocos2dx_CCNode_convertToWorldSpace(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_CCNode_convertToWorldSpace(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::Node* cobj = (cocos2d::Node *)(proxy ? proxy->ptr : nullptr);
+  cocos2d::Node *cNode = static_cast<cocos2d::Node *>(args.This()->GetAlignedPointerFromInternalField(0));
+  //     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_CCNode_convertToWorldSpace : Invalid Native Object");
+  SE_PRECONDITION2(cNode, "js_cocos2dx_CCNode_convertToWorldSpace : Invalid Native Object");
+  //     cocos2d::Vec2 arg0;
+  cocos2d::Vec2 pos;
+  //     if (argc == 1) {
+  //         ok &= jsval_to_vector2(cx, args.get(0), &arg0);
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_CCNode_convertToWorldSpace : Error processing arguments");
+  //     }
+  if (args.Length() == 1)
+  {
+    if (!JsbUtils::jsval_to_vector2(args.GetIsolate(), args[0], &pos))
+    {
+      SE_REPORT_ERROR("js_cocos2dx_CCNode_convertToWorldSpace : Error processing arguments");
+      return;
+    }
+  }
+  //     else if (argc != 0) {
+  //         JS_ReportError(cx, "js_cocos2dx_CCNode_convertToWorldSpace : wrong number of arguments: %d, was expecting 0 or 1", argc);
+  //         return false;
+  //     }
+  else if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_CCNode_convertToWorldSpace : wrong number of arguments: %d, was expecting 0 or 1", args.Length());
+    return;
+  }
+
+  //     cocos2d::Vec2 ret = cobj->convertToWorldSpace(arg0);
+  cocos2d::Vec2 ret = cNode->convertToWorldSpace(pos);
+  //     jsval jsret = JSVAL_NULL;
+  //     jsret = vector2_to_jsval(cx, ret);
+  v8::Local<v8::Value> jsret = JsbUtils::vector2_to_jsval(args.GetIsolate(), ret);
+  args.GetReturnValue().Set(jsret);
+}
+
+// bool js_cocos2dx_CCNode_convertToWorldSpaceAR(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_CCNode_convertToWorldSpaceAR(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::Node* cobj = (cocos2d::Node *)(proxy ? proxy->ptr : nullptr);
+  cocos2d::Node *cNode = static_cast<cocos2d::Node *>(args.This()->GetAlignedPointerFromInternalField(0));
+  //     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_CCNode_convertToWorldSpaceAR : Invalid Native Object");
+  SE_PRECONDITION2(cNode, "js_cocos2dx_CCNode_convertToWorldSpaceAR : Invalid Native Object");
+  //     cocos2d::Vec2 arg0;
+  cocos2d::Vec2 pos;
+  //     if (argc == 1) {
+  //         ok &= jsval_to_vector2(cx, args.get(0), &arg0);
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_CCNode_convertToWorldSpaceAR : Error processing arguments");
+  //     }
+  if (args.Length() == 1)
+  {
+    if (!JsbUtils::jsval_to_vector2(args.GetIsolate(), args[0], &pos))
+    {
+      SE_REPORT_ERROR("js_cocos2dx_CCNode_convertToWorldSpaceAR : Error processing arguments");
+      return;
+    }
+  }
+  //     else if (argc != 0) {
+  //         JS_ReportError(cx, "js_cocos2dx_CCNode_convertToWorldSpaceAR : wrong number of arguments: %d, was expecting 0 or 1", argc);
+  //         return false;
+  //     }
+  else if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_CCNode_convertToWorldSpaceAR : wrong number of arguments: %d, was expecting 0 or 1", args.Length());
+    return;
+  }
+
+  //     cocos2d::Vec2 ret = cobj->convertToWorldSpaceAR(arg0);
+  cocos2d::Vec2 ret = cNode->convertToWorldSpaceAR(pos);
+  //     jsval jsret = JSVAL_NULL;
+  //     jsret = vector2_to_jsval(cx, ret);
+  v8::Local<v8::Value> jsret = JsbUtils::vector2_to_jsval(args.GetIsolate(), ret);
+  //     args.rval().set(jsret);
+  args.GetReturnValue().Set(jsret);
+  //     return true;
+}
+
+// bool js_cocos2dx_Node_setAdditionalTransform(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_Node_setAdditionalTransform(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+
+  //     JS::RootedObject obj(cx);
+  //     cocos2d::Node* cobj = nullptr;
+  //     obj = args.thisv().toObjectOrNull();
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cobj = (cocos2d::Node *)(proxy ? proxy->ptr : nullptr);
+  cocos2d::Node *cNode = static_cast<cocos2d::Node *>(args.This()->GetAlignedPointerFromInternalField(0));
+  //     JSB_PRECONDITION2( cobj, cx, false, "js_cocos2dx_Node_setAdditionalTransform : Invalid Native Object");
+  SE_PRECONDITION2(cNode, "js_cocos2dx_Node_setAdditionalTransform : Invalid Native Object");
+
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_Node_setAdditionalTransform : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+
+  //         if (argc == 1) {
+  //             cocos2d::Mat4 arg0;
+  //             ok &= jsval_to_matrix(cx, args.get(0), &arg0);
+  //             if (!ok) { ok = true; break; }
+  //             cobj->setAdditionalTransform(&arg0);
+  //             args.rval().setUndefined();
+  //             return true;
+  //         }
+  cocos2d::Mat4 mat;
+  if (JsbUtils::jsval_to_matrix(args.GetIsolate(), args[0], &mat))
+  {
+    cNode->setAdditionalTransform(&mat);
+    args.GetReturnValue().SetUndefined();
+    return;
+  }
+
+  //         if (argc == 1) {
+  //             cocos2d::AffineTransform arg0;
+  //             ok &= jsval_to_ccaffinetransform(cx, args.get(0), &arg0);
+  //             if (!ok) { ok = true; break; }
+  //             cobj->setAdditionalTransform(arg0);
+  //             args.rval().setUndefined();
+  //             return true;
+  //         }
+  cocos2d::AffineTransform at;
+  if (JsbUtils::jsval_to_ccaffinetransform(args.GetIsolate(), args[0], &at))
+  {
+    cNode->setAdditionalTransform(at);
+    args.GetReturnValue().SetUndefined();
+    return;
+  }
+
+  //     JS_ReportError(cx, "js_cocos2dx_Node_setAdditionalTransform : wrong number of arguments");
+  //     return false;
+}
+
+// bool js_cocos2dx_CCTMXLayer_getTiles(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_CCTMXLayer_getTiles(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
+  CCASSERT(false, "js_cocos2dx_CCTMXLayer_getTiles : not implemented yet");
+  // TODO
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::TMXLayer* cobj = (cocos2d::TMXLayer *)(proxy ? proxy->ptr : nullptr);
+  //     JSB_PRECONDITION2( cobj, cx, false, "Invalid Native Object");
+  //     if (argc == 0) {
+  //         auto ret = cobj->getTiles();
+  //         Size size = cobj->getLayerSize();
+  //         int count = size.width * size.height;
+  //         JS::RootedObject array(cx, JS_NewUint32Array(cx, count));
+  //         if (nullptr == array) {
+  //             JS_ReportError(cx, "Can't allocate enough memory.");
+  //             return false;
+  //         }
+  //         uint32_t* bufdata = (uint32_t*)JS_GetArrayBufferViewData(array);
+  //         memcpy(bufdata, ret, count*sizeof(int32_t));
+
+  //         args.rval().set(OBJECT_TO_JSVAL(array));
+  //         return true;
+  //     }
+
+  //     JS_ReportError(cx, "wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_Node_create(JSContext *cx, uint32_t argc, jsval *vp)
 // {
 void js_cocos2dx_Node_create(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     if (argc == 0) {
 
@@ -5708,6 +7123,8 @@ void js_cocos2dx_Node_create(const v8::FunctionCallbackInfo<v8::Value> &args)
 // {
 void js_cocos2dx_Node_constructor(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     cocos2d::Node* cobj = new (std::nothrow) cocos2d::Node();
@@ -5731,6 +7148,8 @@ void js_cocos2dx_Node_constructor(const v8::FunctionCallbackInfo<v8::Value> &arg
 // {
 void js_cocos2dx_Node_ctor(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handle_scope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //     cocos2d::Node *nobj = new (std::nothrow) cocos2d::Node();
@@ -6052,6 +7471,53 @@ void js_register_cocos2dx_Node(v8::Isolate *isolate, v8::Local<v8::Object> globa
   tpl->PrototypeTemplate()->Set(isolate, "ctor", v8::FunctionTemplate::New(isolate, js_cocos2dx_Node_ctor));
   //     JS_FS_END
   // };
+
+  // JS_DefineFunction(cx, tmpObj, "retain", js_cocos2dx_retain, 0, JSPROP_ENUMERATE | JSPROP_PERMANENT);
+  tpl->Set(isolate, "retain", v8::FunctionTemplate::New(isolate, js_cocos2dx_retain));
+  // JS_DefineFunction(cx, tmpObj, "release", js_cocos2dx_release, 0, JSPROP_ENUMERATE | JSPROP_PERMANENT);
+  tpl->Set(isolate, "release", v8::FunctionTemplate::New(isolate, js_cocos2dx_release));
+  // JS_DefineFunction(cx, tmpObj, "onEnter", js_cocos2dx_Node_onEnter, 0, JSPROP_ENUMERATE  | JSPROP_PERMANENT);
+  tpl->Set(isolate, "onEnter", v8::FunctionTemplate::New(isolate, js_cocos2dx_Node_onEnter));
+  // JS_DefineFunction(cx, tmpObj, "onExit", js_cocos2dx_Node_onExit, 0, JSPROP_ENUMERATE  | JSPROP_PERMANENT);
+  tpl->Set(isolate, "onExit", v8::FunctionTemplate::New(isolate, js_cocos2dx_Node_onExit));
+  // JS_DefineFunction(cx, tmpObj, "onEnterTransitionDidFinish", js_cocos2dx_Node_onEnterTransitionDidFinish, 0, JSPROP_ENUMERATE  | JSPROP_PERMANENT);
+  tpl->Set(isolate, "onEnterTransitionDidFinish", v8::FunctionTemplate::New(isolate, js_cocos2dx_Node_onEnterTransitionDidFinish));
+  // JS_DefineFunction(cx, tmpObj, "onExitTransitionDidStart", js_cocos2dx_Node_onExitTransitionDidStart, 0, JSPROP_ENUMERATE  | JSPROP_PERMANENT);
+  tpl->Set(isolate, "onExitTransitionDidStart", v8::FunctionTemplate::New(isolate, js_cocos2dx_Node_onExitTransitionDidStart));
+  // JS_DefineFunction(cx, tmpObj, "cleanup", js_cocos2dx_Node_cleanup, 0, JSPROP_ENUMERATE  | JSPROP_PERMANENT);
+  tpl->Set(isolate, "cleanup", v8::FunctionTemplate::New(isolate, js_cocos2dx_Node_cleanup));
+  // JS_DefineFunction(cx, tmpObj, "schedule", js_CCNode_schedule, 1, JSPROP_ENUMERATE | JSPROP_PERMANENT);
+  tpl->Set(isolate, "schedule", v8::FunctionTemplate::New(isolate, js_CCNode_schedule));
+  // JS_DefineFunction(cx, tmpObj, "scheduleOnce", js_CCNode_scheduleOnce, 1, JSPROP_ENUMERATE | JSPROP_PERMANENT);
+  tpl->Set(isolate, "scheduleOnce", v8::FunctionTemplate::New(isolate, js_CCNode_scheduleOnce));
+  // JS_DefineFunction(cx, tmpObj, "scheduleUpdateWithPriority", js_cocos2dx_CCNode_scheduleUpdateWithPriority, 1, JSPROP_ENUMERATE | JSPROP_PERMANENT);
+  tpl->Set(isolate, "scheduleUpdateWithPriority", v8::FunctionTemplate::New(isolate, js_cocos2dx_CCNode_scheduleUpdateWithPriority));
+  // JS_DefineFunction(cx, tmpObj, "unscheduleUpdate", js_cocos2dx_CCNode_unscheduleUpdate, 0, JSPROP_ENUMERATE | JSPROP_PERMANENT);
+  tpl->Set(isolate, "unscheduleUpdate", v8::FunctionTemplate::New(isolate, js_cocos2dx_CCNode_unscheduleUpdate));
+  // JS_DefineFunction(cx, tmpObj, "scheduleUpdate", js_cocos2dx_CCNode_scheduleUpdate, 0, JSPROP_ENUMERATE | JSPROP_PERMANENT);
+  tpl->Set(isolate, "scheduleUpdate", v8::FunctionTemplate::New(isolate, js_cocos2dx_CCNode_scheduleUpdate));
+  // JS_DefineFunction(cx, tmpObj, "unschedule", js_CCNode_unschedule, 1, JSPROP_ENUMERATE | JSPROP_PERMANENT);
+  tpl->Set(isolate, "unschedule", v8::FunctionTemplate::New(isolate, js_CCNode_unschedule));
+  // JS_DefineFunction(cx, tmpObj, "unscheduleAllCallbacks", js_cocos2dx_CCNode_unscheduleAllSelectors, 0, JSPROP_ENUMERATE | JSPROP_PERMANENT);
+  tpl->Set(isolate, "unscheduleAllCallbacks", v8::FunctionTemplate::New(isolate, js_cocos2dx_CCNode_unscheduleAllSelectors));
+  // JS_DefineFunction(cx, tmpObj, "setPosition", js_cocos2dx_CCNode_setPosition, 1, JSPROP_ENUMERATE | JSPROP_PERMANENT);
+  tpl->Set(isolate, "setPosition", v8::FunctionTemplate::New(isolate, js_cocos2dx_CCNode_setPosition));
+  // JS_DefineFunction(cx, tmpObj, "setContentSize", js_cocos2dx_CCNode_setContentSize, 1, JSPROP_ENUMERATE | JSPROP_PERMANENT);
+  tpl->Set(isolate, "setContentSize", v8::FunctionTemplate::New(isolate, js_cocos2dx_CCNode_setContentSize));
+  // JS_DefineFunction(cx, tmpObj, "setAnchorPoint", js_cocos2dx_CCNode_setAnchorPoint, 1, JSPROP_ENUMERATE | JSPROP_PERMANENT);
+  tpl->Set(isolate, "setAnchorPoint", v8::FunctionTemplate::New(isolate, js_cocos2dx_CCNode_setAnchorPoint));
+  // JS_DefineFunction(cx, tmpObj, "setColor", js_cocos2dx_CCNode_setColor, 1, JSPROP_ENUMERATE | JSPROP_PERMANENT);
+  tpl->Set(isolate, "setColor", v8::FunctionTemplate::New(isolate, js_cocos2dx_CCNode_setColor));
+  // JS_DefineFunction(cx, tmpObj, "pause", js_cocos2dx_CCNode_pause, 0, JSPROP_ENUMERATE | JSPROP_PERMANENT);
+  tpl->Set(isolate, "pause", v8::FunctionTemplate::New(isolate, js_cocos2dx_CCNode_pause));
+  // JS_DefineFunction(cx, tmpObj, "resume", js_cocos2dx_CCNode_resume, 0, JSPROP_ENUMERATE | JSPROP_PERMANENT);
+  tpl->Set(isolate, "resume", v8::FunctionTemplate::New(isolate, js_cocos2dx_CCNode_resume));
+  // JS_DefineFunction(cx, tmpObj, "convertToWorldSpace", js_cocos2dx_CCNode_convertToWorldSpace, 0, JSPROP_ENUMERATE | JSPROP_PERMANENT);
+  tpl->Set(isolate, "convertToWorldSpace", v8::FunctionTemplate::New(isolate, js_cocos2dx_CCNode_convertToWorldSpace));
+  // JS_DefineFunction(cx, tmpObj, "convertToWorldSpaceAR", js_cocos2dx_CCNode_convertToWorldSpaceAR, 0, JSPROP_ENUMERATE | JSPROP_PERMANENT);
+  tpl->Set(isolate, "convertToWorldSpaceAR", v8::FunctionTemplate::New(isolate, js_cocos2dx_CCNode_convertToWorldSpaceAR));
+  // JS_DefineFunction(cx, tmpObj, "setAdditionalTransform", js_cocos2dx_Node_setAdditionalTransform, 1, JSPROP_ENUMERATE | JSPROP_PERMANENT);
+  tpl->Set(isolate, "setAdditionalTransform", v8::FunctionTemplate::New(isolate, js_cocos2dx_Node_setAdditionalTransform));
 
   // static JSFunctionSpec st_funcs[] = {
   //     JS_FN("create", js_cocos2dx_Node_create, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),

@@ -24,26 +24,19 @@
 namespace cc {
   export const ENGINE_VERSION = "Cocos2d-JS v3.17";
 
-  export const FIX_ARTIFACTS_BY_STRECHING_TEXEL = 0;
   export const DIRECTOR_STATS_POSITION = { x: 0, y: 0 };
   export const DIRECTOR_FPS_INTERVAL = 0.5;
   export const COCOSNODE_RENDER_SUBPIXEL = 1;
-  export const SPRITEBATCHNODE_RENDER_SUBPIXEL = 1;
   export const OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA = 0;
-  export const TEXTURE_ATLAS_USE_TRIANGLE_STRIP = 0;
-  export const TEXTURE_ATLAS_USE_VAO = 0;
   export const TEXTURE_NPOT_SUPPORT = 0;
   export const RETINA_DISPLAY_SUPPORT = 1;
   export const RETINA_DISPLAY_FILENAME_SUFFIX = "-hd";
   export const USE_LA88_LABELS = 1;
-  export const SPRITE_DEBUG_DRAW = 0;
   export const SPRITEBATCHNODE_DEBUG_DRAW = 0;
-  export const LABELBMFONT_DEBUG_DRAW = 0;
-  export const LABELATLAS_DEBUG_DRAW = 0;
+
   export const IS_RETINA_DISPLAY_SUPPORTED = 1;
   export const DEFAULT_ENGINE = cc.ENGINE_VERSION + "-native";
-  export const ENABLE_STACKABLE_ACTIONS = 1;
-  export const ENABLE_GL_STATE_CACHE = 1;
+
 
   export enum ResolutionPolicy {
     // The entire application is visible in the specified area without trying to preserve the original aspect ratio.
@@ -94,17 +87,12 @@ namespace cc {
   export const DEVICE_ORIENTATION_LANDSCAPE_RIGHT = 3;
   export const DEVICE_MAX_ORIENTATIONS = 2;
 
-  export const IMAGE_FORMAT_JPEG = 0;
-  export const IMAGE_FORMAT_PNG = 1;
+
   export const IMAGE_FORMAT_RAWDATA = 9;
 
   export const TOUCH_ALL_AT_ONCE = 0;
   export const TOUCH_ONE_BY_ONE = 1;
 
-  export const TRANSITION_ORIENTATION_LEFT_OVER = 0;
-  export const TRANSITION_ORIENTATION_RIGHT_OVER = 1;
-  export const TRANSITION_ORIENTATION_UP_OVER = 0;
-  export const TRANSITION_ORIENTATION_DOWN_OVER = 1;
 
   export const RED = { r: 255, g: 0, b: 0 };
   export const GREEN = { r: 0, g: 255, b: 0 };
@@ -117,14 +105,12 @@ namespace cc {
 
   export const PARTICLE_DEFAULT_CAPACITY = 500;
 
-  export const MENU_STATE_WAITING = 0;
-  export const MENU_STATE_TRACKING_TOUCH = 1;
-  export const MENU_HANDLER_PRIORITY = -128;
   export const DEFAULT_PADDING = 5;
 
+  // TODO
   // cc.Scheduler.PRIORITY_SYSTEM = -2147483648;
-  cc.Scheduler.PRIORITY_SYSTEM = -2147483648;
-  cc.Scheduler.PRIORITY_NON_SYSTEM = cc.Scheduler.PRIORITY_SYSTEM + 1;
+  // cc.Scheduler.PRIORITY_SYSTEM = -2147483648;
+  // cc.Scheduler.PRIORITY_NON_SYSTEM = cc.Scheduler.PRIORITY_SYSTEM + 1;
 
   // var _Class = cc.Texture2D;
 
@@ -251,12 +237,8 @@ namespace cc {
   export const UNIFORM_PMATRIX = 0;
   export const UNIFORM_MVMATRIX = 1;
   export const UNIFORM_MVPMATRIX = 2;
-  export const UNIFORM_TIME = 3;
   export const UNIFORM_SINTIME = 4;
   export const UNIFORM_COSTIME = 5;
-  export const UNIFORM_RANDOM01 = 6;
-  export const UNIFORM_SAMPLER = 7;
-  export const UNIFORM_MAX = 8;
 
   // Shaders
   export const UNIFORM_TIME_S = "CC_Time";
@@ -274,7 +256,6 @@ namespace cc {
   export const UNIFORM_SAMPLER_S = "CC_Texture0";
   export const UNIFORM_ALPHA_TEST_VALUE_S = "CC_AlphaValue";
 
-  export const ITEM_SIZE = 32;
 
   export const CURRENT_ITEM = 0xc0c05001;
   export const ZOOM_ACTION_TAG = 0xc0c05002;
@@ -284,7 +265,7 @@ namespace cc {
 
   export const stencilBits = -1; //CCClippingNode.js
 
-  export const g_NumberOfDraws = 0; //CCDirector.js
+  export let g_NumberOfDraws = 0; //CCDirector.js
 
   export const s_globalOrderOfArrival = 1;
 
@@ -493,20 +474,6 @@ namespace cc {
   // cc.REPEAT_FOREVER = 0xffffffff;
   export const REPEAT_FOREVER = 0xffffffff;
 
-  /**
-   * default gl blend src function. Compatible with premultiplied alpha images.
-   * @constant
-   * @type Number
-   */
-  // cc.BLEND_SRC = cc.OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA ? 1 : 0x0302;
-  export const BLEND_SRC = cc.OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA;
-  /**
-   * default gl blend dst function. Compatible with premultiplied alpha images.
-   * @constant
-   * @type Number
-   */
-  // cc.BLEND_DST = 0x0303;
-  export const BLEND_DST = 0x0303;
 
   /**
    * Helpful macro that setups the GL server state, the correct GL program and sets the Model View Projection matrix
@@ -724,7 +691,6 @@ namespace cc {
 
   //
 
-
   /**
    * Clamp a value between from and to.
    * @param {Number} value
@@ -749,10 +715,6 @@ namespace cc {
         : max_inclusive;
   };
 
-
-
-
-
   // //
   // // Grid
   // //
@@ -761,11 +723,6 @@ namespace cc {
   //   cc._reuse_grid.y = y;
   //   return cc._reuse_grid;
   // };
-
-
-
-
-
 
   // var ConfigType = {
   //   NONE: 0,
@@ -1139,12 +1096,6 @@ namespace cc {
   // };
   // cc.visibleRect.init();
 
-
-
-
-
-
-
   // //
   // // setBlendFunc JS API Wrapper
   // //
@@ -1419,10 +1370,6 @@ namespace cc {
   //       return 1;
   //     }
   //   };
-
-
-
-
 
   // //
   // // cc.BlendFunc
