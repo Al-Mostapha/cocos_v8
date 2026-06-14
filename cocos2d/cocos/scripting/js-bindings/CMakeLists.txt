@@ -21,6 +21,7 @@ set(JSB_SRC
     Wrapper/JsbLabel.cpp
     Wrapper/JsbSprite.cpp
     Wrapper/JsbNodeSpecial.cpp
+    Wrapper/JsbParticle.cpp
     Wrapper/UI/JsbWidget.cpp
     Wrapper/UI/JsbButton.cpp
     Wrapper/UI/JsbText.cpp
@@ -54,6 +55,7 @@ set(JSB_HEADERS
     Wrapper/JsbLabel.hpp
     Wrapper/JsbSprite.hpp
     Wrapper/JsbNodeSpecial.hpp
+    Wrapper/JsbParticle.hpp
     Wrapper/UI/JsbWidget.hpp
     Wrapper/UI/JsbButton.hpp
     Wrapper/UI/JsbText.hpp

@@ -1,22 +1,22 @@
 declare module cc {
-  /**
-   * @constant
-   * @type Number
-   */
-  const INVALID_INDEX: number;
+  // /**
+  //  * @constant
+  //  * @type Number
+  //  */
+  // const INVALID_INDEX: number;
 
-  /**
-   * PI is the ratio of a circle's circumference to its diameter.
-   * @constant
-   * @type Number
-   */
-  const PI: number;
+  // /**
+  //  * PI is the ratio of a circle's circumference to its diameter.
+  //  * @constant
+  //  * @type Number
+  //  */
+  // const PI: number;
 
-  /**
-   * @constant
-   * @type Number
-   */
-  const FLT_MAX: number;
+  // /**
+  //  * @constant
+  //  * @type Number
+  //  */
+  // const FLT_MAX: number;
 
   /**
    * @constant
@@ -24,24 +24,24 @@ declare module cc {
    */
   const FLT_MIN: number;
 
-  /**
-   * @constant
-   * @type Number
-   */
-  const RAD: number;
+  // /**
+  //  * @constant
+  //  * @type Number
+  //  */
+  // const RAD: number;
 
-  /**
-   * @constant
-   * @type Number
-   */
-  const DEG: number;
+  // /**
+  //  * @constant
+  //  * @type Number
+  //  */
+  // const DEG: number;
 
-  /**
-   * maximum unsigned int value
-   * @constant
-   * @type Number
-   */
-  const UINT_MAX: number;
+  // /**
+  //  * maximum unsigned int value
+  //  * @constant
+  //  * @type Number
+  //  */
+  // const UINT_MAX: number;
   //#region cocos2d/platform/CCMacro.js
   /**
    * <p>
@@ -561,7 +561,7 @@ declare module cc {
    * @constant
    * @type Number
    */
-  const REPEAT	= 0x2901;
+  const REPEAT = 0x2901;
 
   // /**
   //  * the constant variable equals gl.CLAMP_TO_EDGE for texture
