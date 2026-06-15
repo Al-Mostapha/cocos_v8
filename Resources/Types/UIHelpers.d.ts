@@ -1,4 +1,4 @@
- declare module ccui {
+ declare namespace ccui {
  
  export class Helper{
 //     /****************************************************************************

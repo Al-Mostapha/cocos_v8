@@ -1,4 +1,4 @@
-declare module gl {
+declare namespace gl {
   const GCCSO_SHADER_BINARY_FJ: number; // 0x9260
   const _3DC_XY_AMD: number; // 0x87fa
   const _3DC_X_AMD: number; // 0x87f9

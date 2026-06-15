@@ -1,4 +1,4 @@
-declare module ccui {
+declare namespace ccui {
   // class Widget extends cc.ProtectedNode {
   //   // /**
   //   // * The base class for ccui controls and layout
@@ -1056,7 +1056,7 @@ declare module ccui {
       normalImage?: string,
       selectedImage?: string,
       disableImage?: string,
-      texType?: number
+      texType?: number,
     );
 
     /**
@@ -1095,7 +1095,7 @@ declare module ccui {
       normal: string,
       selected: string,
       disabled: string,
-      texType: number
+      texType: number,
     ): void;
 
     /**
@@ -1264,8 +1264,6 @@ declare module ccui {
     get titleColor(): cc.Color;
     set titleColor(value: cc.Color);
 
-
-    
     // Constants
     /**
      * The normal renderer's zOrder value of ccui.Button.
@@ -1307,11 +1305,16 @@ declare module ccui {
   }
 
   class Scale9Sprite extends cc.Node {
-    constructor(file?: string | cc.SpriteFrame, rect?: cc.Rect, capInsets?: cc.Rect);
+    constructor(
+      file?: string | cc.SpriteFrame,
+      rect?: cc.Rect,
+      capInsets?: cc.Rect,
+    );
     public setCapInsets(CapInsets: cc.Rect): void;
     public setPreferredSize(size: cc.Size): void;
     public setSpriteFrame(frame: cc.SpriteFrame): void;
-    public setBlendFunc(src: number | cc.BlendFunc, dest?: number): void;
+    // TODO
+    public setBlendFunc(src: number | any, dest?: number): void;
     setState(state: number): void;
     static state: { NORMAL: 0; GRAY: 1 };
     getSpriteFrame(): cc.SpriteFrame;
@@ -1611,7 +1614,7 @@ declare module ccui {
     scrollToPercentVertical(
       percent: number,
       time: number,
-      attenuated: boolean
+      attenuated: boolean,
     ): void;
 
     ScrollTo(x: number, y: number): void;
@@ -1625,7 +1628,7 @@ declare module ccui {
     scrollToPercentHorizontal(
       percent: number,
       time: number,
-      attenuated: boolean
+      attenuated: boolean,
     ): void;
 
     /**
@@ -1637,7 +1640,7 @@ declare module ccui {
     scrollToPercentBothDirection(
       percent: cc.Point,
       time: number,
-      attenuated: boolean
+      attenuated: boolean,
     ): void;
 
     /**
@@ -1650,15 +1653,15 @@ declare module ccui {
      */
     jumpToTop(): void;
 
-        /**
-         * Move inner container to left boundary of ScrollView.
-         */
-        jumpToLeft(): void;
+    /**
+     * Move inner container to left boundary of ScrollView.
+     */
+    jumpToLeft(): void;
 
-        /**
-         * Move inner container to right boundary of ScrollView.
-         */
-        jumpToRight(): void;
+    /**
+     * Move inner container to right boundary of ScrollView.
+     */
+    jumpToRight(): void;
 
     //     /**
     //      * Move inner container to top and left boundary of ScrollView.

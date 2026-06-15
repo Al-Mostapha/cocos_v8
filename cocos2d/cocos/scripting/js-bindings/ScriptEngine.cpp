@@ -478,7 +478,7 @@ bool ScriptEngine::didStart()
     // }
     runScript("test.js");
     runScript("script/jsb_boot.js");
-    runScript("main.js");
+    runScript("dist/ss.es.js");
     return true;
 }
 

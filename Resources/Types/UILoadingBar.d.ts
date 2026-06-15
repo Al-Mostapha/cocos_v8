@@ -1,4 +1,4 @@
-declare module ccui {
+declare namespace ccui {
 
     /**
      * The LoadingBar control of Cocos UI.

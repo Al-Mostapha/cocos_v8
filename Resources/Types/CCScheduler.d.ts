@@ -1,4 +1,4 @@
-declare module cc {
+declare namespace cc {
   export class Scheduler extends Class {
     /**
      * <p>

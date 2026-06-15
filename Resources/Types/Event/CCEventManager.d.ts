@@ -631,8 +631,19 @@ declare namespace cc {
      */
     static addListener(
       listener: cc.EventListener | Object,
-      nodeOrPriority: cc.Node | Number
+      nodeOrPriority: cc.Node | number,
+    ): cc.EventListener | undefined;
+
+    static addEventListenerWithFixedPriority(
+      listener: cc.EventListener | Object,
+      fixedPriority: number,
     ): cc.EventListener;
+
+    static addEventListenerWithSceneGraphPriority(
+      listener: cc.EventListener | Object,
+      node: cc.Node | number,
+    ): cc.EventListener;
+    dispatchCustomEvent(eventName: string, optionalUserData?: any): void;
     //     /**
     //      * Adds a Custom event listener. It will use a fixed priority of 1.
     //      * @param {string} eventName

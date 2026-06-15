@@ -1,5 +1,5 @@
 // /* global ccui */
-declare module cc {
+declare namespace cc {
 
 // /****************************************************************************
 //  Copyright (c) 2008-2010 Ricardo Quesada

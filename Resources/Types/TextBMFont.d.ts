@@ -1,4 +1,4 @@
-declare module ccui {
+declare namespace ccui {
   /**
    * The TextBMFont control of Cocos UI, it rendered by LabelBMFont.
    * @class

@@ -1,4 +1,4 @@
-declare module ccui {
+declare namespace ccui {
   
   /**
    * ccui.Layout is the base class of  ccui.PageView and ccui.ScrollView, it does layout by layout manager

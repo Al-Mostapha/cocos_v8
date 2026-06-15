@@ -1,5 +1,5 @@
 namespace cc {
-  export const log = (...args: any[]) => {
+  export let log = (...args: any[]) => {
     console.log(...args);
   };
   /**
@@ -139,7 +139,7 @@ namespace cc {
     return arr_clone;
   };
 
-    // Predefined font definition
+  // Predefined font definition
   export class FontDefinition {
     fontName: string;
     fontSize: number;
@@ -175,5 +175,6 @@ namespace cc {
       this.shadowOffsetY = 0;
       this.shadowBlur = 0;
       this.shadowOpacity = 1.0;
-  };
+    }
+  }
 }

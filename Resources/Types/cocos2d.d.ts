@@ -31,7 +31,7 @@
  * 29/JUN/2013 - Adam Davidson
  */
 
-declare module ccs {
+declare namespace ccs {
   var uiReader: any;
   var csLoader: any;
   class ActionTimeline extends cc.Action {
@@ -66,7 +66,7 @@ declare module ccs {
   ): { node: cc.Node; action: ActionTimeline };
 }
 
-declare module cc {
+declare namespace cc {
   var War: any;
   var path: any;
   var math: any;
@@ -75,7 +75,6 @@ declare module cc {
   var _renderType: any;
   var _renderContext: any;
   var TMXLayer: any;
-  var textureCache: any;
 
   var renderer: any;
 
@@ -83,7 +82,7 @@ declare module cc {
 
   var SHADER_SPRITE_POSITION_TEXTURECOLORALPHATEST: string;
   var SHADER_SPRITE_POSITION_TEXTURECOLOR: string;
-  var UNIFORM_ALPHA_TEST_VALUE_S: string;
+  // var UNIFORM_ALPHA_TEST_VALUE_S: string;
 
   var shaderCache: any;
 
@@ -91,12 +90,12 @@ declare module cc {
 
   // var GLProgramState: GLProgramState | any;
 
-  function pointPixelsToPoints(val: cc.Point): cc.Point;
-  function sizePixelsToPoints(val: cc.Size): cc.Size;
+  // function pointPixelsToPoints(val: cc.Point): cc.Point;
+  // function sizePixelsToPoints(val: cc.Size): cc.Size;
 
-  function rectPixelsToPoints(rect: cc.Rect): cc.Rect;
+  // function rectPixelsToPoints(rect: cc.Rect): cc.Rect;
 
-  function glBindTexture2D(texture: cc.Texture2D): void;
+  // function glBindTexture2D(texture: cc.Texture2D): void;
   /**
    * @constant
    * @type Number
@@ -140,19 +139,19 @@ declare module cc {
    * @constant
    * @type Number
    */
-  const TMX_TILE_HORIZONTAL_FLAG = 0x80000000;
+  // const TMX_TILE_HORIZONTAL_FLAG = 0x80000000;
 
   /**
    * @constant
    * @type Number
    */
-  const TMX_TILE_VERTICAL_FLAG = 0x40000000;
+  // const TMX_TILE_VERTICAL_FLAG = 0x40000000;
 
   /**
    * @constant
    * @type Number
    */
-  const TMX_TILE_DIAGONAL_FLAG = 0x20000000;
+  // const TMX_TILE_DIAGONAL_FLAG = 0x20000000;
 
   /**
    * @constant
@@ -209,24 +208,21 @@ declare module cc {
    * @param {Number} [a=255]
    * @return {cc.Color}
    */
-  function color(
-    r: number | String | cc.Color,
-    g?: number,
-    b?: number,
-    a?: number,
-  ): cc.Color;
+  // function color(
+  //   r: number | String | cc.Color,
+  //   g?: number,
+  //   b?: number,
+  //   a?: number,
+  // ): cc.Color;
 
-  class SAXParser {
-    ctor: any;
-    _parseXML(xmlStr: string): Document;
-  }
+  // class SAXParser {
+  //   ctor: any;
+  //   _parseXML(xmlStr: string): Document;
+  // }
 
   const _txtLoader: any;
 
-  class spriteFrameCache {
-    static addSpriteFrames(url: string, tex?: any): void;
-    static getSpriteFrame(fileName: string): SpriteFrame;
-  }
+  let spriteFrameCache: cc.SpriteFrameCache;
 
   //#region cocos2d/CCCommon.js
   /**
@@ -237,31 +233,6 @@ declare module cc {
    */
   function clone(obj: any): any;
 
-  class Color {
-    r: number;
-    g: number;
-    b: number;
-    a?: number;
-    constructor(r: number, g: number, b: number, a?: number);
-    /** @expose */
-    static readonly WHITE: Color;
-    /** @expose */
-    static readonly YELLOW: Color;
-    /** @expose */
-    static readonly BLUE: Color;
-    /** @expose */
-    static readonly GREEN: Color;
-    /** @expose */
-    static readonly RED: Color;
-    /** @expose */
-    static readonly MAGENTA: Color;
-    /** @expose */
-    static readonly BLACK: Color;
-    /** @expose */
-    static readonly ORANGE: Color;
-    /** @expose */
-    static readonly GRAY: Color;
-  }
   /**
    * Function added for JS bindings compatibility. Not needed in cocos2d-html5.
    * @function
@@ -282,7 +253,7 @@ declare module cc {
    * @function
    * @param {String} message
    */
-  function log(...message: any[]): void;
+  // function log(...message: any[]): void;
 
   function error(...message: any[]): void;
   function warn(...message: any[]): void;
@@ -300,7 +271,7 @@ declare module cc {
    * @param {Boolean} cond If cond is false, assert.
    * @param {String} message
    */
-  function assert(cond: boolean, message: string): string;
+  function assert(cond: boolean, message: string, ...args: any[]): void;
 
   /**
    * Update Debug setting.
@@ -816,6 +787,9 @@ declare module cc {
      * @return {Number}
      */
     getDeltaTime(): number;
+
+    getEventDispatcher(): eventManager;
+    getTextureCache(): any;
   }
   //#endregion cocos2d/CCDirector.js
 
@@ -1015,86 +989,86 @@ declare module cc {
    * @class
    * @extends cc.Scene
    */
-  export class Loader extends Class {
-    /**
-     * Preload resources in the background
-     * @param {Array} resources
-     * @param {Function|String} selector
-     * @param {Object} target
-     * @return {cc.Loader}
-     * @example
-     * //example
-     * var g_mainmenu = [
-     *    {src:"res/hello.png"},
-     *    {src:"res/hello.plist"},
-     *
-     *    {src:"res/logo.png"},
-     *    {src:"res/btn.png"},
-     *
-     *    {src:"res/boom.mp3"},
-     * ]
-     *
-     * var g_level = [
-     *    {src:"res/level01.png"},
-     *    {src:"res/level02.png"},
-     *    {src:"res/level03.png"}
-     * ]
-     *
-     * //load a list of resources
-     * cc.Loader.preload(g_mainmenu, this.startGame, this);
-     *
-     * //load multi lists of resources
-     * cc.Loader.preload([g_mainmenu,g_level], this.startGame, this);
-     */
-    static preload(
-      resources: any[],
-      selector: () => void,
-      target: Node,
-    ): Loader;
-  }
+  // export class Loader extends Class {
+  //   /**
+  //    * Preload resources in the background
+  //    * @param {Array} resources
+  //    * @param {Function|String} selector
+  //    * @param {Object} target
+  //    * @return {cc.Loader}
+  //    * @example
+  //    * //example
+  //    * var g_mainmenu = [
+  //    *    {src:"res/hello.png"},
+  //    *    {src:"res/hello.plist"},
+  //    *
+  //    *    {src:"res/logo.png"},
+  //    *    {src:"res/btn.png"},
+  //    *
+  //    *    {src:"res/boom.mp3"},
+  //    * ]
+  //    *
+  //    * var g_level = [
+  //    *    {src:"res/level01.png"},
+  //    *    {src:"res/level02.png"},
+  //    *    {src:"res/level03.png"}
+  //    * ]
+  //    *
+  //    * //load a list of resources
+  //    * cc.Loader.preload(g_mainmenu, this.startGame, this);
+  //    *
+  //    * //load multi lists of resources
+  //    * cc.Loader.preload([g_mainmenu,g_level], this.startGame, this);
+  //    */
+  //   static preload(
+  //     resources: any[],
+  //     selector: () => void,
+  //     target: Node,
+  //   ): Loader;
+  // }
 
   /**
    * Used to display the loading screen
    * @class
    * @extends cc.Scene
    */
-  export class LoaderScene extends Scene {
-    /**
-     * Preload multi scene resources.
-     * @param {Array} resources
-     * @param {Function|String} selector
-     * @param {Object} target
-     * @return {cc.LoaderScene}
-     * @example
-     * //example
-     * var g_mainmenu = [
-     *    {src:"res/hello.png"},
-     *    {src:"res/hello.plist"},
-     *
-     *    {src:"res/logo.png"},
-     *    {src:"res/btn.png"},
-     *
-     *    {src:"res/boom.mp3"},
-     * ]
-     *
-     * var g_level = [
-     *    {src:"res/level01.png"},
-     *    {src:"res/level02.png"},
-     *    {src:"res/level03.png"}
-     * ]
-     *
-     * //load a list of resources
-     * cc.LoaderScene.preload(g_mainmenu, this.startGame, this);
-     *
-     * //load multi lists of resources
-     * cc.LoaderScene.preload([g_mainmenu,g_level], this.startGame, this);
-     */
-    static preload(
-      resources: any[],
-      selector: () => void,
-      target: any,
-    ): LoaderScene;
-  }
+  // export class LoaderScene extends Scene {
+  //   /**
+  //    * Preload multi scene resources.
+  //    * @param {Array} resources
+  //    * @param {Function|String} selector
+  //    * @param {Object} target
+  //    * @return {cc.LoaderScene}
+  //    * @example
+  //    * //example
+  //    * var g_mainmenu = [
+  //    *    {src:"res/hello.png"},
+  //    *    {src:"res/hello.plist"},
+  //    *
+  //    *    {src:"res/logo.png"},
+  //    *    {src:"res/btn.png"},
+  //    *
+  //    *    {src:"res/boom.mp3"},
+  //    * ]
+  //    *
+  //    * var g_level = [
+  //    *    {src:"res/level01.png"},
+  //    *    {src:"res/level02.png"},
+  //    *    {src:"res/level03.png"}
+  //    * ]
+  //    *
+  //    * //load a list of resources
+  //    * cc.LoaderScene.preload(g_mainmenu, this.startGame, this);
+  //    *
+  //    * //load multi lists of resources
+  //    * cc.LoaderScene.preload([g_mainmenu,g_level], this.startGame, this);
+  //    */
+  //   static preload(
+  //     resources: any[],
+  //     selector: () => void,
+  //     target: any,
+  //   ): LoaderScene;
+  // }
   //#endregion cocos2d/CCLoader.js
 
   //#region cocos2d/CCScheduler.js
@@ -1946,7 +1920,6 @@ declare module cc {
   function rectIntersection(rectA: Rect, rectB: Rect): Rect;
   //#endregion cocos2d/cocoa/CCGeometry.js
 
-  class FontDefinition {}
   //#endregion cocos2d/label_nodes/CCLabelTTF.js
 
   //#region cocos2d/layers_scenes_transitions_nodes/CCScene.js
@@ -2451,25 +2424,25 @@ declare module cc {
    * @constant
    * @type Number
    */
-  var TRANSITION_ORIENTATION_LEFT_OVER: number;
+  // var TRANSITION_ORIENTATION_LEFT_OVER: number;
   /**
    * horizontal orientation type where the Right is nearer
    * @constant
    * @type Number
    */
-  var TRANSITION_ORIENTATION_RIGHT_OVER: number;
+  // var TRANSITION_ORIENTATION_RIGHT_OVER: number;
   /**
    * vertical orientation type where the Up is nearer
    * @constant
    * @type Number
    */
-  var TRANSITION_ORIENTATION_UP_OVER: number;
+  // var TRANSITION_ORIENTATION_UP_OVER: number;
   /**
    * vertical orientation type where the Bottom is nearer
    * @constant
    * @type Number
    */
-  var TRANSITION_ORIENTATION_DOWN_OVER: number;
+  // var TRANSITION_ORIENTATION_DOWN_OVER: number;
 
   /**
    * @class
@@ -3179,16 +3152,18 @@ declare module cc {
    * @extends cc.Class
    */
   export class Application extends Class {
-    getInstance(): Application;
+    static getInstance(): Application;
+    getCurrentLanguage(): number;
+    openURL(url: string): boolean;
   }
   //#endregion cocos2d/platform/CCApplication.js
 
   //#region cocos2d/platform/CCClass.js
-  export class Class {
-    static extend(props: any): any;
-    constructor();
-    _className: string;
-  }
+  // export class Class {
+  //   static extend(props: any): any;
+  //   constructor();
+  //   _className: string;
+  // }
   //#endregion cocos2d/platform/CCClass.js
 
   //#region cocos2d/platform/CCTypes.js
@@ -3444,42 +3419,42 @@ declare module cc {
    * @constant
    * @type Number
    */
-  var TEXT_ALIGNMENT_LEFT: number;
+  // var TEXT_ALIGNMENT_LEFT: number;
 
   /**
    * text alignment : center
    * @constant
    * @type Number
    */
-  var TEXT_ALIGNMENT_CENTER: number;
+  // var TEXT_ALIGNMENT_CENTER: number;
 
   /**
    * text alignment : right
    * @constant
    * @type Number
    */
-  var TEXT_ALIGNMENT_RIGHT: number;
+  // var TEXT_ALIGNMENT_RIGHT: number;
 
   /**
    * text alignment : top
    * @constant
    * @type Number
    */
-  var VERTICAL_TEXT_ALIGNMENT_TOP: number;
+  // var VERTICAL_TEXT_ALIGNMENT_TOP: number;
 
   /**
    * text alignment : center
    * @constant
    * @type Number
    */
-  var VERTICAL_TEXT_ALIGNMENT_CENTER: number;
+  // var VERTICAL_TEXT_ALIGNMENT_CENTER: number;
 
   /**
    * text alignment : bottom
    * @constant
    * @type Number
    */
-  var VERTICAL_TEXT_ALIGNMENT_BOTTOM: number;
+  // var VERTICAL_TEXT_ALIGNMENT_BOTTOM: number;
 
   //#endregion cocos2d/platform/CCTypes.js
 
@@ -3603,7 +3578,170 @@ declare module cc {
   //#endregion cocos2d/touch_dispatcher/CCTouchDelegateProtocol.js
 
   //#region CocosDension/SimpleAudioEngine.js
-  class AudioEngine extends Class {}
+  class AudioEngine extends Class {
+    static getInstance(): AudioEngine;
+    /**
+     * Indicates whether any background music can be played or not.
+     * @returns {boolean} <i>true</i> if the background music is playing, otherwise <i>false</i>
+     */
+    willPlayMusic(): boolean;
+    /**
+     * Play music.
+     * @param {String} url The path of the music file without filename extension.
+     * @param {Boolean} loop Whether the music loop or not.
+     * @example
+     * //example
+     * cc.audioEngine.playMusic(path, false);
+     */
+    playMusic(url: string, loop: boolean): void;
+    /**
+     * Stop playing music.
+     * @param {Boolean} [releaseData] If release the music data or not.As default value is false.
+     * @example
+     * //example
+     * cc.audioEngine.stopMusic();
+     */
+    stopMusic(releaseData?: boolean | any): void;
+    /**
+     * Pause playing music.
+     * @example
+     * //example
+     * cc.audioEngine.pauseMusic();
+     */
+    pauseMusic(): void;
+    /**
+     * Resume playing music.
+     * @example
+     * //example
+     * cc.audioEngine.resumeMusic();
+     */
+    resumeMusic(): void;
+    /**
+     * Rewind playing music.
+     * @example
+     * //example
+     * cc.audioEngine.rewindMusic();
+     */
+    rewindMusic(): void;
+    /**
+     * The volume of the music max value is 1.0,the min value is 0.0 .
+     * @return {Number}
+     * @example
+     * //example
+     * var volume = cc.audioEngine.getMusicVolume();
+     */
+    getMusicVolume(): number;
+    /**
+     * Set the volume of music.
+     * @param {Number} volume Volume must be in 0.0~1.0 .
+     * @example
+     * //example
+     * cc.audioEngine.setMusicVolume(0.5);
+     */
+    setMusicVolume(volume: number): void;
+    /**
+     * Whether the music is playing.
+     * @return {Boolean} If is playing return true,or return false.
+     * @example
+     * //example
+     *  if (cc.audioEngine.isMusicPlaying()) {
+     *      cc.log("music is playing");
+     *  }
+     *  else {
+     *      cc.log("music is not playing");
+     *  }
+     */
+    isMusicPlaying(): boolean;
+    /**
+     * Play sound effect.
+     * @param {String} url The path of the sound effect with filename extension.
+     * @param {Boolean} loop Whether to loop the effect playing, default value is false
+     * @return {Number|null} the audio id
+     * @example
+     * //example
+     * var soundId = cc.audioEngine.playEffect(path);
+     */
+    playEffect(url: string, loop: boolean): number | null;
+    /**
+     * Set the volume of sound effects.
+     * @param {Number} volume Volume must be in 0.0~1.0 .
+     * @example
+     * //example
+     * cc.audioEngine.setEffectsVolume(0.5);
+     */
+    setEffectsVolume(volume: number): void;
+    /**
+     * The volume of the effects max value is 1.0,the min value is 0.0 .
+     * @return {Number}
+     * @example
+     * //example
+     * var effectVolume = cc.audioEngine.getEffectsVolume();
+     */
+    getEffectsVolume(): number;
+    /**
+     * Pause playing sound effect.
+     * @param {Number} audio The return value of function playEffect.
+     * @example
+     * //example
+     * cc.audioEngine.pauseEffect(audioID);
+     */
+    pauseEffect(audio: number): void;
+    /**
+     * Pause all playing sound effect.
+     * @example
+     * //example
+     * cc.audioEngine.pauseAllEffects();
+     */
+    pauseAllEffects(): void;
+    /**
+     * Resume playing sound effect.
+     * @param {Number} audio The return value of function playEffect.
+     * @audioID
+     * //example
+     * cc.audioEngine.resumeEffect(audioID);
+     */
+    resumeEffect(audio: number): void;
+    /**
+     * Resume all playing sound effect
+     * @example
+     * //example
+     * cc.audioEngine.resumeAllEffects();
+     */
+    resumeAllEffects(): void;
+    /**
+     * Stop playing sound effect.
+     * @param {Number} audio The return value of function playEffect.
+     * @example
+     * //example
+     * cc.audioEngine.stopEffect(audioID);
+     */
+    stopEffect(audio: number): void;
+    /**
+     * Stop all playing sound effects.
+     * @example
+     * //example
+     * cc.audioEngine.stopAllEffects();
+     */
+    stopAllEffects(): void;
+    /**
+     * Unload the preloaded effect from internal buffer
+     * @param {String} url
+     * @example
+     * //example
+     * cc.audioEngine.unloadEffect(EFFECT_FILE);
+     */
+    unloadEffect(url: string): void;
+    /**
+     * End music and effects.
+     */
+    end(): void;
+
+    features: {
+      MULTI_CHANNEL: boolean;
+      WEBAUDIO?: boolean;
+      AUTOPLAY: boolean;
+    };
+  }
 
   /**
    * The Audio Engine implementation via <audio> tag in HTML5.

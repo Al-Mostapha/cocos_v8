@@ -30,7 +30,7 @@
  * @class
  * @extends cc.Class
  */
-declare module cc {
+declare namespace cc {
   // cc.PointObject = cc.Class.extend(/** @lends cc.PointObject# */{
   //     _ratio:null,
   //     _offset:null,

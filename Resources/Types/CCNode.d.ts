@@ -1,15 +1,15 @@
-declare module cc {
+declare namespace cc {
   /**
    * Default Node tag
    * @constant
    * @type Number
    */
-  const NODE_TAG_INVALID = -1;
+  // const NODE_TAG_INVALID = -1;
 
   /**
    * XXX: Yes, nodes might have a sort problem once every 15 days if the game runs at 60 FPS and each frame sprites are reordered.
    */
-  const s_globalOrderOfArrival = 1;
+  // const s_globalOrderOfArrival = 1;
 
   /**
    * <p>cc.Node is the root class of all node. Anything that gets drawn or contains things that get drawn is a cc.Node.<br/>
@@ -112,6 +112,7 @@ declare module cc {
     _visible: boolean;
     _children: cc.Node[];
     _reorderChildDirty: boolean;
+    _shaderProgram: cc.GLProgram;
     ctor: any;
     /**
      * Constructor function, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.

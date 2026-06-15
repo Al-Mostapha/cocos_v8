@@ -1,4 +1,4 @@
-declare module ccui {
+declare namespace ccui {
   /**
    * Base class for ccui.Margin
    * @class

@@ -1,4 +1,4 @@
-declare module cc{
+declare namespace cc{
 // /**
 //  * <p>cc.Point extensions based on Chipmunk's cpVect file.<br />
 //  * These extensions work both with cc.Point</p>

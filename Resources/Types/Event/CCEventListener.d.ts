@@ -186,49 +186,49 @@ declare namespace cc {
      * @constant
      * @type {number}
      */
-    static readonly UNKNOWN = 0;
+    static UNKNOWN: number;
     /**
      * The type code of one by one touch event listener.
      * @constant
      * @type {number}
      */
-    static readonly TOUCH_ONE_BY_ONE = 1;
+    static TOUCH_ONE_BY_ONE: number;
     /**
      * The type code of all at once touch event listener.
      * @constant
      * @type {number}
      */
-    static readonly TOUCH_ALL_AT_ONCE = 2;
+    static TOUCH_ALL_AT_ONCE: number;
     /**
      * The type code of keyboard event listener.
      * @constant
      * @type {number}
      */
-    static readonly KEYBOARD = 3;
+    static KEYBOARD: number;
     /**
      * The type code of mouse event listener.
      * @constant
      * @type {number}
      */
-    static readonly MOUSE = 4;
+    static MOUSE: number;
     /**
      * The type code of acceleration event listener.
      * @constant
      * @type {number}
      */
-    static readonly ACCELERATION = 6;
+    static ACCELERATION: number;
     /**
      * The type code of Focus change event listener.
      * @constant
      * @type {number}
      */
-    static readonly FOCUS = 7;
+    static FOCUS: number;
     /**
      * The type code of custom event listener.
      * @constant
      * @type {number}
      */
-    static readonly CUSTOM = 8;
+    static CUSTOM: number;
     // cc._EventListenerCustom = cc.EventListener.extend({
     //     _onCustomEvent: null,
     //     ctor: function (listenerId, callback, target) {

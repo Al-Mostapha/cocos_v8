@@ -1,4 +1,4 @@
-declare module cc {
+declare namespace cc {
   class SpriteBatchNode extends cc.Node{
     prototype: any;
     ctor: any;

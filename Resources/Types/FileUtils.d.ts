@@ -1,5 +1,6 @@
-declare module cc {
+declare namespace cc {
   class FileUtils {
+    static getInstance(): cc.FileUtils;
     /**
      * @method fullPathForFilename
      * @param {String} arg0
@@ -42,7 +43,7 @@ declare module cc {
       str: string,
       str2: string,
       str3?: string | Function,
-      func?: Function
+      func?: Function,
     ): boolean;
 
     /**
@@ -217,7 +218,7 @@ declare module cc {
     writeValueMapToFile(
       map: Record<string, any>,
       str: string,
-      func?: Function
+      func?: Function,
     ): boolean;
 
     /**
@@ -278,12 +279,14 @@ declare module cc {
      * @param {String} arg0
      * @param {Array} arg1
      */
-  listFilesRecursively(str: string): string[];
+    listFilesRecursively(str: string): string[];
+    getDataFromFile(str: string): ArrayBuffer;
+    loadFilenameLookup(str: string): void;
   }
 
-  const fileUtils: FileUtils;
+  let fileUtils: FileUtils;
 }
 
-declare module jsb {
-  const fileUtils: cc.FileUtils;
+declare namespace jsb {
+  // let fileUtils: cc.FileUtils;
 }

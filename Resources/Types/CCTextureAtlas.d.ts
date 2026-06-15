@@ -1,4 +1,4 @@
-declare module cc {
+declare namespace cc {
 
   class Texture2D{
     setTexParameters(texParams: number, magFilter: number, wrapS: number, wrapT: number): void;

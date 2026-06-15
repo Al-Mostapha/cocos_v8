@@ -27,14 +27,13 @@
 /**
  * @ignore
  */
-declare module cc{
-  var Touches : [];
-  var TouchesIntergerDict : {}; 
-  var DENSITYDPI_DEVICE : "device-dpi";
-  var DENSITYDPI_HIGH : "high-dpi";
-  var DENSITYDPI_MEDIUM : "medium-dpi";
-  var DENSITYDPI_LOW : "low-dpi";
-
+declare namespace cc {
+  var Touches: [];
+  var TouchesIntergerDict: {};
+  // var DENSITYDPI_DEVICE : "device-dpi";
+  // var DENSITYDPI_HIGH : "high-dpi";
+  // var DENSITYDPI_MEDIUM : "medium-dpi";
+  // var DENSITYDPI_LOW : "low-dpi";
 
   class EGLView extends Class {
     /**
@@ -54,7 +53,7 @@ declare module cc{
      * Returns the current target-densitydpi value of cc.view.
      * @returns {String}
      */
-    getTargetDensityDPI() : string;
+    getTargetDensityDPI(): string;
 
     /**
      * Sets whether resize canvas automatically when browser's size changed.<br/>
@@ -160,7 +159,7 @@ declare module cc{
      * Returns the resolution translate on EGLView
      * @return {cc.Size|Object}
      */
-    getContentTranslateLeftTop() : Size | object;
+    getContentTranslateLeftTop(): Size | object;
 
     /**
      * Returns the canvas size of the view.<br/>
@@ -202,7 +201,7 @@ declare module cc{
      * Returns the visible origin of the view port.
      * @return {cc.Point}
      */
-    getVisibleOrigin() : Point;
+    getVisibleOrigin(): Point;
 
     /**
      * Returns the visible origin of the view port.
@@ -221,7 +220,7 @@ declare module cc{
      * @see cc.ResolutionPolicy
      * @return {cc.ResolutionPolicy}
      */
-    getResolutionPolicy() : ResolutionPolicy;
+    getResolutionPolicy(): ResolutionPolicy;
 
     /**
      * Sets the current resolution policy
@@ -243,7 +242,11 @@ declare module cc{
      * @param {Number} height Design resolution height.
      * @param {cc.ResolutionPolicy|Number} resolutionPolicy The resolution policy desired
      */
-    setDesignResolutionSize(width: number, height: number, resolutionPolicy: ResolutionPolicy | number): void;
+    setDesignResolutionSize(
+      width: number,
+      height: number,
+      resolutionPolicy: ResolutionPolicy | number,
+    ): void;
 
     /**
      * Returns the designed size for the view.
@@ -266,7 +269,11 @@ declare module cc{
      * @param {Number} height Design resolution height.
      * @param {cc.ResolutionPolicy|Number} resolutionPolicy The resolution policy desired
      */
-    setRealPixelResolution(width: number, height: number, resolutionPolicy: ResolutionPolicy | number): void;
+    setRealPixelResolution(
+      width: number,
+      height: number,
+      resolutionPolicy: ResolutionPolicy | number,
+    ): void;
 
     /**
      * Sets view port rectangle with points.
@@ -289,7 +296,7 @@ declare module cc{
      * Returns whether GL_SCISSOR_TEST is enable
      * @return {Boolean}
      */
-    isScissorEnabled() : boolean;
+    isScissorEnabled(): boolean;
 
     /**
      * Returns the current scissor rectangle
@@ -301,13 +308,13 @@ declare module cc{
      * Sets the name of the view
      * @param {String} viewName
      */
-    setViewName(viewName: string) : void;
+    setViewName(viewName: string): void;
 
     /**
      * Returns the name of the view
      * @return {String}
      */
-    getViewName() : string;
+    getViewName(): string;
 
     /**
      * Returns the view port rectangle.
@@ -333,6 +340,8 @@ declare module cc{
      */
     getDevicePixelRatio(): number;
 
+    getRetinaFactor(): number;
+
     /**
      * Returns the real location in view for a translation based on a related position
      * @param {Number} tx The X axis translation
@@ -341,122 +350,119 @@ declare module cc{
      * @return {cc.Point}
      */
     convertToLocationInView(tx: number, ty: number, relatedPos: object): Point;
-
   }
 
-  class ContainerStrategy extends Class{}
-  class ContentStrategy extends Class{}
+  class ContainerStrategy extends Class {}
+  class ContentStrategy extends Class {}
 
-  class ResolutionPolicy extends Class{
-    /**
-     * @memberOf cc.ResolutionPolicy#
-     * @name EXACT_FIT
-     * @constant
-     * @type Number
-     * @static
-     * The entire application is visible in the specified area without trying to preserve the original aspect ratio.<br/>
-     * Distortion can occur, and the application may appear stretched or compressed.
-     */
-    static EXACT_FIT: 0;
+  // class ResolutionPolicy extends Class{
+  //   /**
+  //    * @memberOf cc.ResolutionPolicy#
+  //    * @name EXACT_FIT
+  //    * @constant
+  //    * @type Number
+  //    * @static
+  //    * The entire application is visible in the specified area without trying to preserve the original aspect ratio.<br/>
+  //    * Distortion can occur, and the application may appear stretched or compressed.
+  //    */
+  //   static EXACT_FIT: 0;
 
-    /**
-     * @memberOf cc.ResolutionPolicy#
-     * @name NO_BORDER
-     * @constant
-     * @type Number
-     * @static
-     * The entire application fills the specified area, without distortion but possibly with some cropping,<br/>
-     * while maintaining the original aspect ratio of the application.
-     */
-    static NO_BORDER: 1;
+  //   /**
+  //    * @memberOf cc.ResolutionPolicy#
+  //    * @name NO_BORDER
+  //    * @constant
+  //    * @type Number
+  //    * @static
+  //    * The entire application fills the specified area, without distortion but possibly with some cropping,<br/>
+  //    * while maintaining the original aspect ratio of the application.
+  //    */
+  //   static NO_BORDER: 1;
 
-    /**
-     * @memberOf cc.ResolutionPolicy#
-     * @name SHOW_ALL
-     * @constant
-     * @type Number
-     * @static
-     * The entire application is visible in the specified area without distortion while maintaining the original<br/>
-     * aspect ratio of the application. Borders can appear on two sides of the application.
-     */
-    static SHOW_ALL: 2;
+  //   /**
+  //    * @memberOf cc.ResolutionPolicy#
+  //    * @name SHOW_ALL
+  //    * @constant
+  //    * @type Number
+  //    * @static
+  //    * The entire application is visible in the specified area without distortion while maintaining the original<br/>
+  //    * aspect ratio of the application. Borders can appear on two sides of the application.
+  //    */
+  //   static SHOW_ALL: 2;
 
-    /**
-     * @memberOf cc.ResolutionPolicy#
-     * @name FIXED_HEIGHT
-     * @constant
-     * @type Number
-     * @static
-     * The application takes the height of the design resolution size and modifies the width of the internal<br/>
-     * canvas so that it fits the aspect ratio of the device<br/>
-     * no distortion will occur however you must make sure your application works on different<br/>
-     * aspect ratios
-     */
-    static FIXED_HEIGHT: 3;
+  //   /**
+  //    * @memberOf cc.ResolutionPolicy#
+  //    * @name FIXED_HEIGHT
+  //    * @constant
+  //    * @type Number
+  //    * @static
+  //    * The application takes the height of the design resolution size and modifies the width of the internal<br/>
+  //    * canvas so that it fits the aspect ratio of the device<br/>
+  //    * no distortion will occur however you must make sure your application works on different<br/>
+  //    * aspect ratios
+  //    */
+  //   static FIXED_HEIGHT: 3;
 
-    /**
-     * @memberOf cc.ResolutionPolicy#
-     * @name FIXED_WIDTH
-     * @constant
-     * @type Number
-     * @static
-     * The application takes the width of the design resolution size and modifies the height of the internal<br/>
-     * canvas so that it fits the aspect ratio of the device<br/>
-     * no distortion will occur however you must make sure your application works on different<br/>
-     * aspect ratios
-     */
-    static FIXED_WIDTH: 4;
+  //   /**
+  //    * @memberOf cc.ResolutionPolicy#
+  //    * @name FIXED_WIDTH
+  //    * @constant
+  //    * @type Number
+  //    * @static
+  //    * The application takes the width of the design resolution size and modifies the height of the internal<br/>
+  //    * canvas so that it fits the aspect ratio of the device<br/>
+  //    * no distortion will occur however you must make sure your application works on different<br/>
+  //    * aspect ratios
+  //    */
+  //   static FIXED_WIDTH: 4;
 
-    /**
-     * @memberOf cc.ResolutionPolicy#
-     * @name UNKNOWN
-     * @constant
-     * @type Number
-     * @static
-     * Unknow policy
-     */
-    static UNKNOWN: 5;
-    /**
-     * Constructor of cc.ResolutionPolicy
-     * @param {cc.ContainerStrategy} containerStg
-     * @param {cc.ContentStrategy} contentStg
-     */
-    constructor(containerStg?: ContainerStrategy, contentStg?: ContentStrategy);
+  //   /**
+  //    * @memberOf cc.ResolutionPolicy#
+  //    * @name UNKNOWN
+  //    * @constant
+  //    * @type Number
+  //    * @static
+  //    * Unknow policy
+  //    */
+  //   static UNKNOWN: 5;
+  //   /**
+  //    * Constructor of cc.ResolutionPolicy
+  //    * @param {cc.ContainerStrategy} containerStg
+  //    * @param {cc.ContentStrategy} contentStg
+  //    */
+  //   constructor(containerStg?: ContainerStrategy, contentStg?: ContentStrategy);
 
-    /**
-     * Manipulation before applying the resolution policy
-     * @param {cc.view} view The target view
-     */
-    preApply(view: EGLView): void;
+  //   /**
+  //    * Manipulation before applying the resolution policy
+  //    * @param {cc.view} view The target view
+  //    */
+  //   preApply(view: EGLView): void;
 
-    /**
-     * Function to apply this resolution policy
-     * The return value is {scale: [scaleX, scaleY], viewport: {cc.Rect}},
-     * The target view can then apply these value to itself, it's preferred not to modify directly its private variables
-     * @param {cc.view} view The target view
-     * @param {cc.Size} designedResolution The user defined design resolution
-     * @return {object} An object contains the scale X/Y values and the viewport rect
-     */
-    apply(view: EGLView, designedResolution: Size): object;
+  //   /**
+  //    * Function to apply this resolution policy
+  //    * The return value is {scale: [scaleX, scaleY], viewport: {cc.Rect}},
+  //    * The target view can then apply these value to itself, it's preferred not to modify directly its private variables
+  //    * @param {cc.view} view The target view
+  //    * @param {cc.Size} designedResolution The user defined design resolution
+  //    * @return {object} An object contains the scale X/Y values and the viewport rect
+  //    */
+  //   apply(view: EGLView, designedResolution: Size): object;
 
-    /**
-     * Manipulation after appyling the strategy
-     * @param {cc.view} view The target view
-     */
-    postApply(view: EGLView): void;
+  //   /**
+  //    * Manipulation after appyling the strategy
+  //    * @param {cc.view} view The target view
+  //    */
+  //   postApply(view: EGLView): void;
 
-    /**
-     * Setup the container's scale strategy
-     * @param {cc.ContainerStrategy} containerStg
-     */
-    setContainerStrategy(containerStg: ContainerStrategy): void;
+  //   /**
+  //    * Setup the container's scale strategy
+  //    * @param {cc.ContainerStrategy} containerStg
+  //    */
+  //   setContainerStrategy(containerStg: ContainerStrategy): void;
 
-    /**
-     * Setup the content's scale strategy
-     * @param {cc.ContentStrategy} contentStg
-     */
-    setContentStrategy(contentStg: ContentStrategy): void;
-  }
-
-
+  //   /**
+  //    * Setup the content's scale strategy
+  //    * @param {cc.ContentStrategy} contentStg
+  //    */
+  //   setContentStrategy(contentStg: ContentStrategy): void;
+  // }
 }

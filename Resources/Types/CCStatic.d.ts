@@ -1,4 +1,4 @@
-declare module cc{
+declare namespace cc{
   var COCOS2D_DEBUG: number;
   var winSize: Size;
   var UISize: Size;

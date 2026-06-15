@@ -1,4 +1,4 @@
-declare module ccui {
+declare namespace ccui {
   class Widget extends cc.ProtectedNode {
     _touchBeganPosition: cc.Point;
     _touchMovePosition: cc.Point;

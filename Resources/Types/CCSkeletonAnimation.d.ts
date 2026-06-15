@@ -3,7 +3,7 @@
 //  * @namespace
 //  * @name sp
 //  */
-declare module sp {
+declare namespace sp {
   /**
    * <p>
    *     The skeleton of Spine.                                                                          <br/>

@@ -1,4 +1,4 @@
-declare module ccui {
+declare namespace ccui {
   /**
    * The Slider control of Cocos UI.
    * @class

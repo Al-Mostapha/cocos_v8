@@ -1,4 +1,4 @@
-declare module cc {
+declare namespace cc {
    
 
 /**
@@ -6,7 +6,7 @@ declare module cc {
  * @constant
  * @type Number
  */
- const PARTICLE_DEFAULT_CAPACITY = 500;
+//  const PARTICLE_DEFAULT_CAPACITY = 500;
 
 /**
  * <p>

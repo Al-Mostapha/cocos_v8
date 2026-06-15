@@ -1,4 +1,4 @@
-declare module cc {
+declare namespace cc {
   class ProgressTimer extends Node{
 
     /**

@@ -1,5 +1,5 @@
 
-declare module cc {
+declare namespace cc {
 /**
  * <p>
  *     Particle System base class. <br/>

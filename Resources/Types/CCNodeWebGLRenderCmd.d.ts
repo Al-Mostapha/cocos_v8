@@ -1,6 +1,6 @@
 
 // ------------------------------ The cc.Node's render command for WebGL ----------------------------------
-declare module cc {
+declare namespace cc {
     class NodeWebGLRenderCmd {
         _node: cc.Node;
         _anchorPointInPoints: cc.Point;

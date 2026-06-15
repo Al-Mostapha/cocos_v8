@@ -1,4 +1,4 @@
-declare module cc {
+declare namespace cc {
   /**
    * <p>cc.Sprite is a 2d image ( http://en.wikipedia.org/wiki/Sprite_(computer_graphics) )  <br/>
    *

@@ -22,7 +22,7 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 //  ****************************************************************************/
-declare module ccui {
+declare namespace ccui {
   /**
    * The text control of Cocos UI.
    * @class

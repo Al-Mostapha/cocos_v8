@@ -1,4 +1,4 @@
-export namespace cc {
+namespace cc {
   export namespace sys {
     /**
      * System variables
@@ -424,7 +424,7 @@ export namespace cc {
      * @name platform
      * @type {Number}
      */
-    const platform = (sys.platform = __getPlatform());
+    export const platform = __getPlatform();
 
     /**
      * Indicate whether system is mobile system

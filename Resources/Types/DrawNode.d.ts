@@ -1,4 +1,4 @@
-declare module cc {
+declare namespace cc {
   class DrawNode extends Node {
     constructor();
     // cc.DrawNode = cc.Node.extend(/** @lends cc.DrawNode# */{

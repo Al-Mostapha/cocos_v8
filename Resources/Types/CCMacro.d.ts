@@ -1,4 +1,4 @@
-declare module cc {
+declare namespace cc {
   // /**
   //  * @constant
   //  * @type Number
@@ -55,7 +55,7 @@ declare module cc {
    * cc.lerp(2,10,0.5)//returns 6<br/>
    * cc.lerp(2,10,0.2)//returns 3.6
    */
-  function lerp(a: number, b: number, r: number): number;
+  // function lerp(a: number, b: number, r: number): number;
 
   /**
    * returns a random float between -1 and 1
@@ -77,7 +77,7 @@ declare module cc {
    * @return {Number}
    * @function
    */
-  function degreesToRadians(angle: number): number;
+  // function degreesToRadians(angle: number): number;
 
   /**
    * converts radians to degrees
@@ -91,21 +91,21 @@ declare module cc {
    * @constant
    * @type Number
    */
-  var REPEAT_FOREVER: number;
+  // var REPEAT_FOREVER: number;
 
   /**
    * default gl blend src function. Compatible with premultiplied alpha images.
    * @constant
    * @type Number
    */
-  var BLEND_SRC: number;
+  // var BLEND_SRC: number;
 
   /**
    * default gl blend dst function. Compatible with premultiplied alpha images.
    * @constant
    * @type Number
    */
-  var BLEND_DST: number;
+  // var BLEND_DST: number;
 
   /**
    * Helpful macro that setups the GL server state, the correct GL program and sets the Model View Projection matrix
@@ -151,7 +151,7 @@ declare module cc {
    * @constant
    * @type Number
    */
-  var FLT_EPSILON: number;
+  // var FLT_EPSILON: number;
 
   /**
    * <p>
@@ -468,12 +468,12 @@ declare module cc {
   //         point.width * scale, point.height * scale);
   // };
 
-  //some gl constant variable
-  /**
-   * @constant
-   * @type Number
-   */
-  const ONE = 1;
+  // //some gl constant variable
+  // /**
+  //  * @constant
+  //  * @type Number
+  //  */
+  // const ONE = 1;
 
   // /**
   //  * @constant
@@ -481,25 +481,25 @@ declare module cc {
   //  */
   // cc.ZERO = 0;
 
-  /**
-   * @constant
-   * @type Number
-   */
-  const SRC_ALPHA = 0x0302;
-
   // /**
   //  * @constant
   //  * @type Number
   //  */
-  // cc.SRC_ALPHA_SATURATE = 0x308;
-  const SRC_ALPHA_SATURATE = 0x308;
+  // const SRC_ALPHA = 0x0302;
 
-  // /**
-  //  * @constant
-  //  * @type Number
-  //  */
-  // cc.SRC_COLOR = 0x300;
-  const SRC_COLOR = 0x300;
+  // // /**
+  // //  * @constant
+  // //  * @type Number
+  // //  */
+  // // cc.SRC_ALPHA_SATURATE = 0x308;
+  // const SRC_ALPHA_SATURATE = 0x308;
+
+  // // /**
+  // //  * @constant
+  // //  * @type Number
+  // //  */
+  // // cc.SRC_COLOR = 0x300;
+  // const SRC_COLOR = 0x300;
 
   // /**
   //  * @constant
@@ -507,29 +507,29 @@ declare module cc {
   //  */
   // cc.DST_ALPHA = 0x304;
 
-  /**
-   * @constant
-   * @type Number
-   */
-  const DST_COLOR = 0x306;
+  // /**
+  //  * @constant
+  //  * @type Number
+  //  */
+  // const DST_COLOR = 0x306;
 
   /**
    * @constant
    * @type Number
    */
-  const ONE_MINUS_SRC_ALPHA = 0x0303;
+  // const ONE_MINUS_SRC_ALPHA = 0x0303;
 
   /**
    * @constant
    * @type Number
    */
-  const ONE_MINUS_SRC_COLOR = 0x301;
+  // const ONE_MINUS_SRC_COLOR = 0x301;
 
   /**
    * @constant
    * @type Number
    */
-  const ONE_MINUS_DST_ALPHA = 0x305;
+  // const ONE_MINUS_DST_ALPHA = 0x305;
 
   // /**
   //  * @constant
@@ -554,14 +554,14 @@ declare module cc {
    * @constant
    * @type Number
    */
-  const LINEAR = 0x2601;
+  // const LINEAR = 0x2601;
 
   /**
    * the constant variable equals gl.REPEAT for texture
    * @constant
    * @type Number
    */
-  const REPEAT = 0x2901;
+  // const REPEAT = 0x2901;
 
   // /**
   //  * the constant variable equals gl.CLAMP_TO_EDGE for texture

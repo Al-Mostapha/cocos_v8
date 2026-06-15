@@ -1,4 +1,4 @@
-declare module cc {
+declare namespace cc {
   /**
    * The CheckBox control of Cocos UI.
    * @class
