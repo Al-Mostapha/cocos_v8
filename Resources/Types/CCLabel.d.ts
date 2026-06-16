@@ -1,4 +1,4 @@
-declare module cc {
+declare namespace cc {
       //#region cocos2d/label_nodes/CCLabelTTF.js
       // /**
       //  * <p>cc.LabelTTF is a subclass of cc.TextureNode that knows how to render text labels with system font or a ttf font file<br/>

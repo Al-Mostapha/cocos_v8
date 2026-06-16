@@ -1,4 +1,4 @@
-declare module cc {
+declare namespace cc {
 /****************************************************************************
  Copyright (c) 2013-2016 Chukong Technologies Inc.
  Copyright (c) 2012 James Chen

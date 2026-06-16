@@ -25,7 +25,7 @@
     "outDir": "./dist",
     "rootDir": "./",
     "strict": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
   },
   "include": ["Src", "Script", "Types"],
   "exclude": ["Types/CCStatic.d.ts"]

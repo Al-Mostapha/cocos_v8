@@ -1,4 +1,21 @@
 namespace cc {
+  /**
+   * Calculates dot product of two points.
+   * @param {cc.Point} v1
+   * @param {cc.Point} v2
+   * @return {Number}
+   */
+  export const pDot = (v1: cc.Point, v2: cc.Point): number => {
+    return v1.x * v2.x + v1.y * v2.y;
+  };
+
+  export const POINT_EPSILON = 1.192092896e-7;
+  /**
+   * normalizes the point (inplace)
+   */
+  export const pNormalizeIn = (v: cc.Point) => {
+    pMultIn(v, 1.0 / Math.sqrt(v.x * v.x + v.y * v.y));
+  };
   // Basic structure : Point
   //
   // cc.p = function (x, y) {
@@ -134,7 +151,7 @@ namespace cc {
     const a2 = cc.pNormalize(a);
     const b2 = cc.pNormalize(b);
     const angle = Math.atan2(a2.x * b2.y - a2.y * b2.x, cc.pDot(a2, b2));
-    if (Math.abs(angle) < cc.POINT_EPSILON) return 0.0;
+    if (Math.abs(angle) < POINT_EPSILON) return 0.0;
     return angle;
   };
 
@@ -145,7 +162,7 @@ namespace cc {
    */
   export const pAngle = (a: cc.Point, b: cc.Point) => {
     const angle = Math.acos(cc.pDot(cc.pNormalize(a), cc.pNormalize(b)));
-    if (Math.abs(angle) < cc.POINT_EPSILON) return 0.0;
+    if (Math.abs(angle) < POINT_EPSILON) return 0.0;
     return angle;
   };
 
@@ -321,12 +338,5 @@ namespace cc {
   export const pAddIn = (v1: cc.Point, v2: cc.Point) => {
     v1.x += v2.x;
     v1.y += v2.y;
-  };
-
-  /**
-   * normalizes the point (inplace)
-   */
-  export const pNormalizeIn = (v: cc.Point) => {
-    pMultIn(v, 1.0 / Math.sqrt(v.x * v.x + v.y * v.y));
   };
 }

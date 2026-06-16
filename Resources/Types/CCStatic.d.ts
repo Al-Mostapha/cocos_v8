@@ -7,9 +7,4 @@ declare namespace cc{
   var defaultFPS: 60;
 
 
-  class BlendFunc{
-    src: number;
-    dest: number;
-  }
-
 }

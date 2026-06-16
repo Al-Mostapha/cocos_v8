@@ -1,4 +1,4 @@
-declare module cc {
+declare namespace cc {
   //+++++++++++++++++++++++++something about async begin+++++++++++++++++++++++++++++++
   /**
    * Async Pool class, a helper of cc.async
@@ -9,41 +9,36 @@ declare module cc {
    * @param {object} target
    * @constructor
    */
-  class AsyncPool {
-    constructor(
-      srcObj: Object | Array<any>,
-      limit: number,
-      iterator: Function,
-      onEnd: Function,
-      target: Object,
-    );
-    size: number;
-    finishedSize: number;
-
-    //   self.onIterator = function(iterator, target){
-    //       self._iterator = iterator;
-    //       self._iteratorTarget = target;
-    //   };
-
-    //   self.onEnd = function(endCb, endCbTarget){
-    //       self._onEnd = endCb;
-    //       self._onEndTarget = endCbTarget;
-    //   };
-
-    // };
-
-    // self.flow = function(){
-    //     var self = this;
-    //     if(self._pool.length === 0) {
-    //         if(self._onEnd)
-    //             self._onEnd.call(self._onEndTarget, null, []);
-    //         return;
-    //     }
-    //     for(var i = 0; i < self._limit; i++)
-    //         self._handleItem();
-    // }
-  }
-
+  // class AsyncPool {
+  //   constructor(
+  //     srcObj: Object | Array<any>,
+  //     limit: number,
+  //     iterator: Function,
+  //     onEnd: Function,
+  //     target: Object,
+  //   );
+  //   size: number;
+  //   finishedSize: number;
+  //   //   self.onIterator = function(iterator, target){
+  //   //       self._iterator = iterator;
+  //   //       self._iteratorTarget = target;
+  //   //   };
+  //   //   self.onEnd = function(endCb, endCbTarget){
+  //   //       self._onEnd = endCb;
+  //   //       self._onEndTarget = endCbTarget;
+  //   //   };
+  //   // };
+  //   // self.flow = function(){
+  //   //     var self = this;
+  //   //     if(self._pool.length === 0) {
+  //   //         if(self._onEnd)
+  //   //             self._onEnd.call(self._onEndTarget, null, []);
+  //   //         return;
+  //   //     }
+  //   //     for(var i = 0; i < self._limit; i++)
+  //   //         self._handleItem();
+  //   // }
+  // }
   // /**
   //  * @class
   //  */
@@ -68,7 +63,6 @@ declare module cc {
   //     asyncPool.flow();
   //     return asyncPool;
   //   },
-
   //   /**
   //    * Do tasks parallel.
   //    * @param {Array|Object} tasks
@@ -89,7 +83,6 @@ declare module cc {
   //     asyncPool.flow();
   //     return asyncPool;
   //   },
-
   //   /**
   //    * Do tasks waterfall.
   //    * @param {Array|Object} tasks
@@ -121,7 +114,6 @@ declare module cc {
   //     asyncPool.flow();
   //     return asyncPool;
   //   },
-
   //   /**
   //    * Do tasks by iterator.
   //    * @param {Array|Object} tasks
@@ -141,7 +133,6 @@ declare module cc {
   //     asyncPool.flow();
   //     return asyncPool;
   //   },
-
   //   /**
   //    * Do tasks by iterator limit.
   //    * @param {Array|Object} tasks
@@ -157,14 +148,12 @@ declare module cc {
   //   },
   // };
   // //+++++++++++++++++++++++++something about async end+++++++++++++++++++++++++++++++++
-
   // //+++++++++++++++++++++++++something about path begin++++++++++++++++++++++++++++++++
   // /**
   //  * @class
   //  */
   // cc.path = /** @lends cc.path# */ {
   //   normalizeRE: /[^\.\/]+\/\.\.\//,
-
   //   /**
   //    * Join strings to be a path.
   //    * @example
@@ -186,7 +175,6 @@ declare module cc {
   //     }
   //     return result;
   //   },
-
   //   /**
   //    * Get the ext name of a path.
   //    * @example
@@ -201,7 +189,6 @@ declare module cc {
   //     var temp = /(\.[^\.\/\?\\]*)(\?.*)?$/.exec(pathStr);
   //     return temp ? temp[1] : null;
   //   },
-
   //   /**
   //    * Get the main name of a file name
   //    * @param {string} fileName
@@ -214,7 +201,6 @@ declare module cc {
   //     }
   //     return fileName;
   //   },
-
   //   /**
   //    * Get the file name of a file path.
   //    * @example
@@ -242,7 +228,6 @@ declare module cc {
   //       return baseName.substring(0, baseName.length - extname.length);
   //     return baseName;
   //   },
-
   //   /**
   //    * Get dirname of a file path.
   //    * @example
@@ -260,7 +245,6 @@ declare module cc {
   //   dirname: function (pathStr) {
   //     return pathStr.replace(/((.*)(\/|\\|\\\\))?(.*?\..*$)?/, "$2");
   //   },
-
   //   /**
   //    * Change extname of a file path.
   //    * @example
@@ -312,7 +296,6 @@ declare module cc {
   //   //todo make public after verification
   //   _normalize: function (url) {
   //     var oldUrl = (url = String(url));
-
   //     //removing all ../
   //     do {
   //       oldUrl = url;
@@ -322,240 +305,235 @@ declare module cc {
   //   },
   // };
   // //+++++++++++++++++++++++++something about path end++++++++++++++++++++++++++++++++
-
   // //+++++++++++++++++++++++++something about loader start+++++++++++++++++++++++++++
   // cc.loader = {
-  class loader {
-    /**
-     * Get XMLHttpRequest.
-     * @returns {XMLHttpRequest}
-     */
-    static getXMLHttpRequest(): XMLHttpRequest;
-    //@MODE_BEGIN DEV
-    /**
-     * Load js files.
-     * @param {?string=} baseDir   The pre path for jsList.
-     * @param {array.<string>} jsList    List of js path.
-     * @param {function} cb        Callback function
-     *
-     *      If the arguments.length == 2, then the baseDir turns to be "".
-     * @returns {*}
-     */
-    static loadJs(baseDir: string, jsList?: string[], cb?: Function): void;
-
-    /**
-     * Load js width loading image.
-     *
-     * @param {string} [baseDir]
-     * @param {array} jsList
-     * @param {function} [cb]
-     */
-    static loadJsWithImg(
-      baseDir: string,
-      jsList?: string[],
-      cb?: Function,
-    ): void;
-    //@MODE_END DEV
-    /**
-     * Load a single resource as txt.
-     * @param {!string} url
-     * @param {function} cb arguments are : err, txt
-     */
-    static loadTxt(url: string, cb: Function): void;
-
-    static loadJson(url: string, cb: Function): void;
-    /**
-     * Load a single image.
-     * @param {!string} url
-     * @param {object} [option]
-     * @param {function} cb
-     * @returns {Image}
-     */
-    static loadImg(url: string, option: any, cb: Function): void;
-    //   /**
-    //    * Load binary data by url.
-    //    * @param {String} url
-    //    * @param {Function} cb
-    //    */
-    static loadBinary(url: string, cb: Function): void;
-    static loadBinary(url: string, cb: Function): ArrayBuffer | null;
-    //   loadBinarySync: function (url) {
-    //     return jsb.fileUtils.getDataFromFile(url);
-    //   },
-    static loadBinarySync(url: string): any;
-    //   /**
-    //    * Iterator function to load res
-    //    * @param {object} item
-    //    * @param {number} index
-    //    * @param {function} [cb]
-    //    * @returns {*}
-    //    * @private
-    //    */
-    //   _loadResIterator: function (item, index, cb) {
-    //     var self = this,
-    //       url = null;
-    //     var type = item.type;
-    //     if (type) {
-    //       type = "." + type.toLowerCase();
-    //       url = item.src ? item.src : item.name + type;
-    //     } else {
-    //       url = item;
-    //       type = cc.path.extname(url);
-    //     }
-    //     var obj = self.cache[url];
-    //     if (obj) return cb(null, obj);
-    //     var loader = null;
-    //     if (type) {
-    //       loader = self._register[type.toLowerCase()];
-    //     }
-    //     if (!loader) {
-    //       cc.error("loader for [" + type + "] not exists!");
-    //       return cb();
-    //     }
-    //     var basePath = loader.getBasePath ? loader.getBasePath() : self.resPath;
-    //     var realUrl = self.getUrl(basePath, url);
-    //     loader.load(realUrl, url, item, function (err, data) {
-    //       if (err) {
-    //         cc.log(err);
-    //         self.cache[url] = null;
-    //         delete self.cache[url];
-    //         cb();
-    //       } else {
-    //         self.cache[url] = data;
-    //         cb(null, data);
-    //       }
-    //     });
-    //   },
-    //   /**
-    //    * Get url with basePath.
-    //    * @param {string} basePath
-    //    * @param {string} [url]
-    //    * @returns {*}
-    //    */
-    //   getUrl: function (basePath, url) {
-    //     var self = this,
-    //       langPathCache = self._langPathCache,
-    //       path = cc.path;
-    //     if (basePath !== undefined && url === undefined) {
-    //       url = basePath;
-    //       var type = path.extname(url);
-    //       type = type ? type.toLowerCase() : "";
-    //       var loader = self._register[type];
-    //       if (!loader) basePath = self.resPath;
-    //       else
-    //         basePath = loader.getBasePath ? loader.getBasePath() : self.resPath;
-    //     }
-    //     url = cc.path.join(basePath || "", url);
-    //     if (url.match(/[\/(\\\\)]lang[\/(\\\\)]/i)) {
-    //       if (langPathCache[url]) return langPathCache[url];
-    //       var extname = path.extname(url) || "";
-    //       url = langPathCache[url] =
-    //         url.substring(0, url.length - extname.length) +
-    //         "_" +
-    //         cc.sys.language +
-    //         extname;
-    //     }
-    //     return url;
-    //   },
-    /**
-     * Load resources then call the callback.
-     * @param {string} resources
-     * @param {function} [option] callback or trigger
-     * @param {function|Object} [loadCallback]
-     * @return {cc.AsyncPool}
-     */
-    static load(
-      resources: string | string[],
-      option: Function,
-      loadCallback?: Function | object,
-    ): cc.AsyncPool;
-    //   /**
-    //    * <p>
-    //    *     Loads alias map from the contents of a filename.                                        <br/>
-    //    *                                                                                                                 <br/>
-    //    *     @note The plist file name should follow the format below:                                                   <br/>
-    //    *     <?xml version="1.0" encoding="UTF-8"?>                                                                      <br/>
-    //    *         <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">  <br/>
-    //    *             <plist version="1.0">                                                                               <br/>
-    //    *                 <dict>                                                                                          <br/>
-    //    *                     <key>filenames</key>                                                                        <br/>
-    //    *                     <dict>                                                                                      <br/>
-    //    *                         <key>sounds/click.wav</key>                                                             <br/>
-    //    *                         <string>sounds/click.caf</string>                                                       <br/>
-    //    *                         <key>sounds/endgame.wav</key>                                                           <br/>
-    //    *                         <string>sounds/endgame.caf</string>                                                     <br/>
-    //    *                         <key>sounds/gem-0.wav</key>                                                             <br/>
-    //    *                         <string>sounds/gem-0.caf</string>                                                       <br/>
-    //    *                     </dict>                                                                                     <br/>
-    //    *                     <key>metadata</key>                                                                         <br/>
-    //    *                     <dict>                                                                                      <br/>
-    //    *                         <key>version</key>                                                                      <br/>
-    //    *                         <integer>1</integer>                                                                    <br/>
-    //    *                     </dict>                                                                                     <br/>
-    //    *                 </dict>                                                                                         <br/>
-    //    *              </plist>                                                                                           <br/>
-    //    * </p>
-    //    * @param {String} filename  The plist file name.
-    //    * @param {Function} cb     callback
-    //    */
-    //   loadAliases: function (url, cb) {
-    //     jsb.fileUtils.loadFilenameLookup(url);
-    //     if (cb) cb();
-    //   },
-    /**
-     * Register a resource loader into loader.
-     * @param {string} extNames
-     * @param {function} loader
-     */
-    static register(extNames: string | string[], loader: Function): void;
-    /**
-     * Get resource data by url.
-     * @param url
-     * @returns {*}
-     */
-    static getRes(url: string): any;
-    //   /**
-    //    * Release the cache of resource by url.
-    //    * @param url
-    //    */
-    //   release: function (url) {
-    //     var cache = this.cache;
-    //     delete cache[url];
-    //   },
-    //   /**
-    //    * Resource cache of all resources.
-    //    */
-    //   releaseAll: function () {
-    //     var locCache = this.cache;
-    //     for (var key in locCache) delete locCache[key];
-    //   },
-    // };
-    // cc.defineGetterSetter(
-    //   cc.loader,
-    //   "resPath",
-    //   function () {
-    //     return this._resPath;
-    //   },
-    //   function (resPath) {
-    //     this._resPath = resPath || "";
-    //     jsb.fileUtils.addSearchPath(this._resPath);
-    //   }
-    // );
-    // cc.defineGetterSetter(
-    //   cc.loader,
-    //   "audioPath",
-    //   function () {
-    //     return this._audioPath;
-    //   },
-    //   function (audioPath) {
-    //     this._audioPath = audioPath || "";
-    //     jsb.fileUtils.addSearchPath(this._audioPath);
-    //   }
-    // );
-  }
-
+  // class loader {
+  //   /**
+  //    * Get XMLHttpRequest.
+  //    * @returns {XMLHttpRequest}
+  //    */
+  //   static getXMLHttpRequest(): XMLHttpRequest;
+  //   //@MODE_BEGIN DEV
+  //   /**
+  //    * Load js files.
+  //    * @param {?string=} baseDir   The pre path for jsList.
+  //    * @param {array.<string>} jsList    List of js path.
+  //    * @param {function} cb        Callback function
+  //    *
+  //    *      If the arguments.length == 2, then the baseDir turns to be "".
+  //    * @returns {*}
+  //    */
+  //   static loadJs(baseDir: string, jsList?: string[], cb?: Function): void;
+  //   /**
+  //    * Load js width loading image.
+  //    *
+  //    * @param {string} [baseDir]
+  //    * @param {array} jsList
+  //    * @param {function} [cb]
+  //    */
+  //   static loadJsWithImg(
+  //     baseDir: string,
+  //     jsList?: string[],
+  //     cb?: Function,
+  //   ): void;
+  //   //@MODE_END DEV
+  //   /**
+  //    * Load a single resource as txt.
+  //    * @param {!string} url
+  //    * @param {function} cb arguments are : err, txt
+  //    */
+  //   static loadTxt(url: string, cb: Function): void;
+  //   static loadJson(url: string, cb: Function): void;
+  //   /**
+  //    * Load a single image.
+  //    * @param {!string} url
+  //    * @param {object} [option]
+  //    * @param {function} cb
+  //    * @returns {Image}
+  //    */
+  //   static loadImg(url: string, option: any, cb: Function): void;
+  //   //   /**
+  //   //    * Load binary data by url.
+  //   //    * @param {String} url
+  //   //    * @param {Function} cb
+  //   //    */
+  //   static loadBinary(url: string, cb: Function): void;
+  //   static loadBinary(url: string, cb: Function): ArrayBuffer | null;
+  //   //   loadBinarySync: function (url) {
+  //   //     return jsb.fileUtils.getDataFromFile(url);
+  //   //   },
+  //   static loadBinarySync(url: string): any;
+  //   //   /**
+  //   //    * Iterator function to load res
+  //   //    * @param {object} item
+  //   //    * @param {number} index
+  //   //    * @param {function} [cb]
+  //   //    * @returns {*}
+  //   //    * @private
+  //   //    */
+  //   //   _loadResIterator: function (item, index, cb) {
+  //   //     var self = this,
+  //   //       url = null;
+  //   //     var type = item.type;
+  //   //     if (type) {
+  //   //       type = "." + type.toLowerCase();
+  //   //       url = item.src ? item.src : item.name + type;
+  //   //     } else {
+  //   //       url = item;
+  //   //       type = cc.path.extname(url);
+  //   //     }
+  //   //     var obj = self.cache[url];
+  //   //     if (obj) return cb(null, obj);
+  //   //     var loader = null;
+  //   //     if (type) {
+  //   //       loader = self._register[type.toLowerCase()];
+  //   //     }
+  //   //     if (!loader) {
+  //   //       cc.error("loader for [" + type + "] not exists!");
+  //   //       return cb();
+  //   //     }
+  //   //     var basePath = loader.getBasePath ? loader.getBasePath() : self.resPath;
+  //   //     var realUrl = self.getUrl(basePath, url);
+  //   //     loader.load(realUrl, url, item, function (err, data) {
+  //   //       if (err) {
+  //   //         cc.log(err);
+  //   //         self.cache[url] = null;
+  //   //         delete self.cache[url];
+  //   //         cb();
+  //   //       } else {
+  //   //         self.cache[url] = data;
+  //   //         cb(null, data);
+  //   //       }
+  //   //     });
+  //   //   },
+  //   //   /**
+  //   //    * Get url with basePath.
+  //   //    * @param {string} basePath
+  //   //    * @param {string} [url]
+  //   //    * @returns {*}
+  //   //    */
+  //   //   getUrl: function (basePath, url) {
+  //   //     var self = this,
+  //   //       langPathCache = self._langPathCache,
+  //   //       path = cc.path;
+  //   //     if (basePath !== undefined && url === undefined) {
+  //   //       url = basePath;
+  //   //       var type = path.extname(url);
+  //   //       type = type ? type.toLowerCase() : "";
+  //   //       var loader = self._register[type];
+  //   //       if (!loader) basePath = self.resPath;
+  //   //       else
+  //   //         basePath = loader.getBasePath ? loader.getBasePath() : self.resPath;
+  //   //     }
+  //   //     url = cc.path.join(basePath || "", url);
+  //   //     if (url.match(/[\/(\\\\)]lang[\/(\\\\)]/i)) {
+  //   //       if (langPathCache[url]) return langPathCache[url];
+  //   //       var extname = path.extname(url) || "";
+  //   //       url = langPathCache[url] =
+  //   //         url.substring(0, url.length - extname.length) +
+  //   //         "_" +
+  //   //         cc.sys.language +
+  //   //         extname;
+  //   //     }
+  //   //     return url;
+  //   //   },
+  //   /**
+  //    * Load resources then call the callback.
+  //    * @param {string} resources
+  //    * @param {function} [option] callback or trigger
+  //    * @param {function|Object} [loadCallback]
+  //    * @return {cc.AsyncPool}
+  //    */
+  //   static load(
+  //     resources: string | string[],
+  //     option: Function,
+  //     loadCallback?: Function | object,
+  //   ): cc.AsyncPool;
+  //   //   /**
+  //   //    * <p>
+  //   //    *     Loads alias map from the contents of a filename.                                        <br/>
+  //   //    *                                                                                                                 <br/>
+  //   //    *     @note The plist file name should follow the format below:                                                   <br/>
+  //   //    *     <?xml version="1.0" encoding="UTF-8"?>                                                                      <br/>
+  //   //    *         <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">  <br/>
+  //   //    *             <plist version="1.0">                                                                               <br/>
+  //   //    *                 <dict>                                                                                          <br/>
+  //   //    *                     <key>filenames</key>                                                                        <br/>
+  //   //    *                     <dict>                                                                                      <br/>
+  //   //    *                         <key>sounds/click.wav</key>                                                             <br/>
+  //   //    *                         <string>sounds/click.caf</string>                                                       <br/>
+  //   //    *                         <key>sounds/endgame.wav</key>                                                           <br/>
+  //   //    *                         <string>sounds/endgame.caf</string>                                                     <br/>
+  //   //    *                         <key>sounds/gem-0.wav</key>                                                             <br/>
+  //   //    *                         <string>sounds/gem-0.caf</string>                                                       <br/>
+  //   //    *                     </dict>                                                                                     <br/>
+  //   //    *                     <key>metadata</key>                                                                         <br/>
+  //   //    *                     <dict>                                                                                      <br/>
+  //   //    *                         <key>version</key>                                                                      <br/>
+  //   //    *                         <integer>1</integer>                                                                    <br/>
+  //   //    *                     </dict>                                                                                     <br/>
+  //   //    *                 </dict>                                                                                         <br/>
+  //   //    *              </plist>                                                                                           <br/>
+  //   //    * </p>
+  //   //    * @param {String} filename  The plist file name.
+  //   //    * @param {Function} cb     callback
+  //   //    */
+  //   //   loadAliases: function (url, cb) {
+  //   //     jsb.fileUtils.loadFilenameLookup(url);
+  //   //     if (cb) cb();
+  //   //   },
+  //   /**
+  //    * Register a resource loader into loader.
+  //    * @param {string} extNames
+  //    * @param {function} loader
+  //    */
+  //   static register(extNames: string | string[], loader: Function): void;
+  //   /**
+  //    * Get resource data by url.
+  //    * @param url
+  //    * @returns {*}
+  //    */
+  //   static getRes(url: string): any;
+  //   //   /**
+  //   //    * Release the cache of resource by url.
+  //   //    * @param url
+  //   //    */
+  //   //   release: function (url) {
+  //   //     var cache = this.cache;
+  //   //     delete cache[url];
+  //   //   },
+  //   //   /**
+  //   //    * Resource cache of all resources.
+  //   //    */
+  //   //   releaseAll: function () {
+  //   //     var locCache = this.cache;
+  //   //     for (var key in locCache) delete locCache[key];
+  //   //   },
+  //   // };
+  //   // cc.defineGetterSetter(
+  //   //   cc.loader,
+  //   //   "resPath",
+  //   //   function () {
+  //   //     return this._resPath;
+  //   //   },
+  //   //   function (resPath) {
+  //   //     this._resPath = resPath || "";
+  //   //     jsb.fileUtils.addSearchPath(this._resPath);
+  //   //   }
+  //   // );
+  //   // cc.defineGetterSetter(
+  //   //   cc.loader,
+  //   //   "audioPath",
+  //   //   function () {
+  //   //     return this._audioPath;
+  //   //   },
+  //   //   function (audioPath) {
+  //   //     this._audioPath = audioPath || "";
+  //   //     jsb.fileUtils.addSearchPath(this._audioPath);
+  //   //   }
+  //   // );
+  // }
   // //+++++++++++++++++++++++++something about loader end+++++++++++++++++++++++++++++
-
   // /**
   //  * A string tool to construct a string with format string.
   //  * for example:
@@ -568,7 +546,6 @@ declare module cc {
   //   var l = args.length;
   //   if (l < 1) return "";
   //   var REGEXP_NUM_OR_STR = /(%d)|(%s)/;
-
   //   var i = 1;
   //   var str = args[0];
   //   var hasSubstitution =
@@ -593,15 +570,12 @@ declare module cc {
   //   }
   //   return str;
   // };
-
   // //+++++++++++++++++++++++++Engine initialization function begin+++++++++++++++++++++++++++
-
   // // Define singleton objects
   // cc.director = cc.Director.getInstance();
   // cc.director._actionManager = cc.director.getActionManager();
   // cc.director._scheduler = cc.director.getScheduler();
   // cc.winSize = cc.director.getWinSize();
-
   // cc.view = cc.director.getOpenGLView();
   // cc.view.getDevicePixelRatio = cc.view.getRetinaFactor;
   // cc.view.convertToLocationInView = function (tx, ty, relatedPos) {
@@ -661,9 +635,7 @@ declare module cc {
   // cc.view.getTargetDensityDPI = function () {
   //   return cc.DENSITYDPI_DEVICE;
   // };
-
   // cc.eventManager = cc.director.getEventDispatcher();
-
   // cc.audioEngine = cc.AudioEngine.getInstance();
   // cc.audioEngine.end = function () {
   //   this.stopMusic();
@@ -673,9 +645,7 @@ declare module cc {
   //   MULTI_CHANNEL: true,
   //   AUTOPLAY: true,
   // };
-
   // cc.configuration = cc.Configuration.getInstance();
-
   // cc.textureCache = cc.director.getTextureCache();
   // cc.TextureCache.prototype._addImageAsync =
   //   cc.TextureCache.prototype.addImageAsync;
@@ -703,38 +673,33 @@ declare module cc {
   //     }
   //   }
   // };
-
   // cc.shaderCache = cc.ShaderCache.getInstance();
   // cc.animationCache = cc.AnimationCache.getInstance();
   // cc.spriteFrameCache = cc.SpriteFrameCache.getInstance();
-
   // cc.plistParser = cc.PlistParser.getInstance();
-
   // // File utils (Temporary, won't be accessible)
   // cc.fileUtils = cc.FileUtils.getInstance();
   // cc.fileUtils.setPopupNotify(false);
-
-  class screen {
-    //   init: function () {},
-    //   fullScreen: function () {
-    //     return true;
-    //   },
-    static isFullScreen(): boolean;
-    //   requestFullScreen: function (element, onFullScreenChange) {
-    //     onFullScreenChange.call();
-    //   },
-    static requestFullScreen(
-      element: HTMLElement,
-      onFullScreenChange?: Function,
-    ): void;
-    //   exitFullScreen: function () {
-    //     return false;
-    //   },
-    //   autoFullScreen: function (element, onFullScreenChange) {
-    //     onFullScreenChange.call();
-    //   },
-  }
-
+  // class screen {
+  //   //   init: function () {},
+  //   //   fullScreen: function () {
+  //   //     return true;
+  //   //   },
+  //   static isFullScreen(): boolean;
+  //   //   requestFullScreen: function (element, onFullScreenChange) {
+  //   //     onFullScreenChange.call();
+  //   //   },
+  //   static requestFullScreen(
+  //     element: HTMLElement,
+  //     onFullScreenChange?: Function,
+  //   ): void;
+  //   //   exitFullScreen: function () {
+  //   //     return false;
+  //   //   },
+  //   //   autoFullScreen: function (element, onFullScreenChange) {
+  //   //     onFullScreenChange.call();
+  //   //   },
+  // }
   // /**
   //  * @type {Object}
   //  * @name jsb.fileUtils
@@ -745,7 +710,6 @@ declare module cc {
   // jsb.fileUtils = cc.fileUtils;
   // delete cc.FileUtils;
   // delete cc.fileUtils;
-
   // /**
   //  * @type {Object}
   //  * @name jsb.reflection
@@ -758,7 +722,6 @@ declare module cc {
   //     cc.log("not supported on current platform");
   //   },
   // };
-
   // var _initSys = function () {
   //   /**
   //    * System variables
@@ -767,7 +730,6 @@ declare module cc {
   //    */
   //   cc.sys = window.sys || {};
   //   var sys = cc.sys;
-
   //   /**
   //    * English language code
   //    * @memberof cc.sys
@@ -776,7 +738,6 @@ declare module cc {
   //    * @type {Number}
   //    */
   //   sys.LANGUAGE_ENGLISH = "en";
-
   //   /**
   //    * Chinese language code
   //    * @memberof cc.sys
@@ -785,7 +746,6 @@ declare module cc {
   //    * @type {Number}
   //    */
   //   sys.LANGUAGE_CHINESE = "zh";
-
   //   /**
   //    * French language code
   //    * @memberof cc.sys
@@ -794,7 +754,6 @@ declare module cc {
   //    * @type {Number}
   //    */
   //   sys.LANGUAGE_FRENCH = "fr";
-
   //   /**
   //    * Italian language code
   //    * @memberof cc.sys
@@ -803,7 +762,6 @@ declare module cc {
   //    * @type {Number}
   //    */
   //   sys.LANGUAGE_ITALIAN = "it";
-
   //   /**
   //    * German language code
   //    * @memberof cc.sys
@@ -812,7 +770,6 @@ declare module cc {
   //    * @type {Number}
   //    */
   //   sys.LANGUAGE_GERMAN = "de";
-
   //   /**
   //    * Spanish language code
   //    * @memberof cc.sys
@@ -821,7 +778,6 @@ declare module cc {
   //    * @type {Number}
   //    */
   //   sys.LANGUAGE_SPANISH = "es";
-
   //   /**
   //    * Spanish language code
   //    * @memberof cc.sys
@@ -830,7 +786,6 @@ declare module cc {
   //    * @type {Number}
   //    */
   //   sys.LANGUAGE_DUTCH = "du";
-
   //   /**
   //    * Russian language code
   //    * @memberof cc.sys
@@ -839,7 +794,6 @@ declare module cc {
   //    * @type {Number}
   //    */
   //   sys.LANGUAGE_RUSSIAN = "ru";
-
   //   /**
   //    * Korean language code
   //    * @memberof cc.sys
@@ -848,7 +802,6 @@ declare module cc {
   //    * @type {Number}
   //    */
   //   sys.LANGUAGE_KOREAN = "ko";
-
   //   /**
   //    * Japanese language code
   //    * @memberof cc.sys
@@ -857,7 +810,6 @@ declare module cc {
   //    * @type {Number}
   //    */
   //   sys.LANGUAGE_JAPANESE = "ja";
-
   //   /**
   //    * Hungarian language code
   //    * @memberof cc.sys
@@ -866,7 +818,6 @@ declare module cc {
   //    * @type {Number}
   //    */
   //   sys.LANGUAGE_HUNGARIAN = "hu";
-
   //   /**
   //    * Portuguese language code
   //    * @memberof cc.sys
@@ -875,7 +826,6 @@ declare module cc {
   //    * @type {Number}
   //    */
   //   sys.LANGUAGE_PORTUGUESE = "pt";
-
   //   /**
   //    * Arabic language code
   //    * @memberof cc.sys
@@ -884,7 +834,6 @@ declare module cc {
   //    * @type {Number}
   //    */
   //   sys.LANGUAGE_ARABIC = "ar";
-
   //   /**
   //    * Norwegian language code
   //    * @memberof cc.sys
@@ -893,7 +842,6 @@ declare module cc {
   //    * @type {Number}
   //    */
   //   sys.LANGUAGE_NORWEGIAN = "no";
-
   //   /**
   //    * Polish language code
   //    * @memberof cc.sys
@@ -902,7 +850,6 @@ declare module cc {
   //    * @type {Number}
   //    */
   //   sys.LANGUAGE_POLISH = "pl";
-
   //   /**
   //    * Turkish language code
   //    * @constant
@@ -910,7 +857,6 @@ declare module cc {
   //    * @type {Number}
   //    */
   //   sys.LANGUAGE_TURKISH = "tr";
-
   //   /**
   //    * Ukrainian language code
   //    * @constant
@@ -918,7 +864,6 @@ declare module cc {
   //    * @type {Number}
   //    */
   //   sys.LANGUAGE_UKRAINIAN = "uk";
-
   //   /**
   //    * Romanian language code
   //    * @constant
@@ -926,7 +871,6 @@ declare module cc {
   //    * @type {Number}
   //    */
   //   sys.LANGUAGE_ROMANIAN = "ro";
-
   //   /**
   //    * Bulgarian language code
   //    * @constant
@@ -934,7 +878,6 @@ declare module cc {
   //    * @type {Number}
   //    */
   //   sys.LANGUAGE_BULGARIAN = "bg";
-
   //   /**
   //    * Belarusian language code
   //    * @constant
@@ -942,7 +885,6 @@ declare module cc {
   //    * @type {Number}
   //    */
   //   sys.LANGUAGE_BELARUSIAN = "be";
-
   //   /**
   //    * Unknown language code
   //    * @memberof cc.sys
@@ -951,7 +893,6 @@ declare module cc {
   //    * @type {Number}
   //    */
   //   sys.LANGUAGE_UNKNOWN = "unknown";
-
   //   /**
   //    * @memberof cc.sys
   //    * @name OS_IOS
@@ -1029,7 +970,6 @@ declare module cc {
   //    * @type {string}
   //    */
   //   sys.OS_UNKNOWN = "Unknown";
-
   //   /**
   //    * @memberof cc.sys
   //    * @name UNKNOWN
@@ -1150,7 +1090,6 @@ declare module cc {
   //    * @type {Number}
   //    */
   //   sys.DESKTOP_BROWSER = 101;
-
   //   sys.BROWSER_TYPE_WECHAT = "wechat";
   //   sys.BROWSER_TYPE_ANDROID = "androidbrowser";
   //   sys.BROWSER_TYPE_IE = "ie";
@@ -1171,7 +1110,6 @@ declare module cc {
   //   sys.BROWSER_TYPE_QZONE = "qzone";
   //   sys.BROWSER_TYPE_SOUGOU = "sogou";
   //   sys.BROWSER_TYPE_UNKNOWN = "unknown";
-
   //   /**
   //    * Is native ? This is set to be true in jsb auto.
   //    * @memberof cc.sys
@@ -1179,7 +1117,6 @@ declare module cc {
   //    * @type {Boolean}
   //    */
   //   sys.isNative = true;
-
   //   /**
   //    * Indicate the running platform
   //    * @memberof cc.sys
@@ -1187,7 +1124,6 @@ declare module cc {
   //    * @type {Number}
   //    */
   //   var platform = (sys.platform = __getPlatform());
-
   //   /**
   //    * Indicate whether system is mobile system
   //    * @memberof cc.sys
@@ -1203,9 +1139,7 @@ declare module cc {
   //     platform === sys.BLACKBERRY
   //       ? true
   //       : false;
-
   //   sys._application = cc.Application.getInstance();
-
   //   /**
   //    * Indicate the current language of the running system
   //    * @memberof cc.sys
@@ -1259,7 +1193,6 @@ declare module cc {
   //         return sys.LANGUAGE_ENGLISH;
   //     }
   //   })();
-
   //   /**
   //    * Indicate the running os name
   //    * @memberof cc.sys
@@ -1267,7 +1200,6 @@ declare module cc {
   //    * @type {String}
   //    */
   //   sys.os = __getOS();
-
   //   /**
   //    * Indicate the running browser type
   //    * @memberof cc.sys
@@ -1275,7 +1207,6 @@ declare module cc {
   //    * @type {String}
   //    */
   //   sys.browserType = null; //null in jsb
-
   //   /**
   //    * Indicate the running browser version
   //    * @memberof cc.sys
@@ -1283,7 +1214,6 @@ declare module cc {
   //    * @type {Number}
   //    */
   //   sys.browserVersion = null; //null in jsb
-
   //   /**
   //    * Indicate the real pixel resolution of the whole game window
   //    * @memberof cc.sys
@@ -1291,7 +1221,6 @@ declare module cc {
   //    * @type {Number}
   //    */
   //   sys.windowPixelResolution = cc.view.getFrameSize();
-
   //   /**
   //    * The capabilities of the current platform
   //    * @memberof cc.sys
@@ -1318,7 +1247,6 @@ declare module cc {
   //       capabilities["mouse"] = false;
   //     }
   //   }
-
   //   /**
   //    * Forces the garbage collection, only available in JSB
   //    * @memberof cc.sys
@@ -1328,7 +1256,6 @@ declare module cc {
   //   sys.garbageCollect = function () {
   //     __jsc__.garbageCollect();
   //   };
-
   //   /**
   //    * Dumps rooted objects, only available in JSB
   //    * @memberof cc.sys
@@ -1338,7 +1265,6 @@ declare module cc {
   //   sys.dumpRoot = function () {
   //     __jsc__.dumpRoot();
   //   };
-
   //   /**
   //    * Restart the JS VM, only available in JSB
   //    * @memberof cc.sys
@@ -1348,7 +1274,6 @@ declare module cc {
   //   sys.restartVM = function () {
   //     __restartVM();
   //   };
-
   //   /**
   //    * Clean a script in the JS VM, only available in JSB
   //    * @memberof cc.sys
@@ -1359,7 +1284,6 @@ declare module cc {
   //   sys.cleanScript = function (jsFile) {
   //     __cleanScript(jsFile);
   //   };
-
   //   /**
   //    * Check whether an object is valid,
   //    * In web engine, it will return true if the object exist
@@ -1373,7 +1297,6 @@ declare module cc {
   //   sys.isObjectValid = function (obj) {
   //     return __isObjectValid(obj);
   //   };
-
   //   /**
   //    * Dump system informations
   //    * @memberof cc.sys
@@ -1391,7 +1314,6 @@ declare module cc {
   //     str += "platform : " + self.platform + "\r\n";
   //     cc.log(str);
   //   };
-
   //   /**
   //    * Open a url in browser
   //    * @memberof cc.sys
@@ -1401,11 +1323,9 @@ declare module cc {
   //   sys.openURL = function (url) {
   //     sys._application.openURL(url);
   //   };
-
   //   sys.now = function () {
   //     return Date.now();
   //   };
-
   //   // JS to Native bridges
   //   if (window.JavascriptJavaBridge && cc.sys.os == cc.sys.OS_ANDROID) {
   //     jsb.reflection = new JavascriptJavaBridge();
@@ -1418,7 +1338,6 @@ declare module cc {
   //   }
   // };
   // _initSys();
-
   // /**
   //  * Init Debug setting.
   //  * @function
@@ -1437,7 +1356,6 @@ declare module cc {
   //     console.warn = function () {
   //       bakLog("WARN :  " + cc.formatStr.apply(cc, arguments));
   //     };
-
   //     cc.error = console.error;
   //     cc.assert = function (cond, msg) {
   //       if (!cond && msg) {
@@ -1460,9 +1378,7 @@ declare module cc {
   //     }
   //   }
   // };
-
   // cc._engineLoaded = false;
-
   // cc.initEngine = function (config, cb) {
   //   require("script/jsb.js");
   //   cc._renderType = cc.game.RENDER_TYPE_OPENGL;
@@ -1471,9 +1387,7 @@ declare module cc {
   //   cc.log(cc.ENGINE_VERSION);
   //   if (cb) cb();
   // };
-
   // //+++++++++++++++++++++++++something about CCGame begin+++++++++++++++++++++++++++
-
   // /**
   //  * An object to boot the game.
   //  * @class
@@ -1487,18 +1401,14 @@ declare module cc {
   //   DEBUG_MODE_INFO_FOR_WEB_PAGE: 4,
   //   DEBUG_MODE_WARN_FOR_WEB_PAGE: 5,
   //   DEBUG_MODE_ERROR_FOR_WEB_PAGE: 6,
-
   //   EVENT_HIDE: "game_on_hide",
   //   EVENT_SHOW: "game_on_show",
   //   EVENT_RESIZE: "game_on_resize",
-
   //   RENDER_TYPE_CANVAS: 0,
   //   RENDER_TYPE_WEBGL: 1,
   //   RENDER_TYPE_OPENGL: 2,
-
   //   _eventHide: null,
   //   _eventShow: null,
-
   //   /**
   //    * Key of config
   //    * @constant
@@ -1516,34 +1426,27 @@ declare module cc {
   //     renderMode: "renderMode",
   //     jsList: "jsList",
   //   },
-
   //   // states
   //   _paused: false, //whether the game is paused
   //   _prepareCalled: false, //whether the prepare function has been called
   //   _prepared: false, //whether the engine has prepared
-
   //   _intervalId: null, //interval target of main
-
   //   /**
   //    * Config of game
   //    * @type {Object}
   //    */
   //   config: null,
-
   //   /**
   //    * Callback when the scripts of engine have been load.
   //    * @type {Function}
   //    */
   //   onStart: null,
-
   //   /**
   //    * Callback when game exits.
   //    * @type {Function}
   //    */
   //   onStop: null,
-
   //   //@Public Methods
-
   //   //  @Game play control
   //   /**
   //    * Set frameRate of game.
@@ -1556,14 +1459,12 @@ declare module cc {
   //     config[CONFIG_KEY.frameRate] = frameRate;
   //     cc.director.setAnimationInterval(1.0 / frameRate);
   //   },
-
   //   /**
   //    * Run the game frame by frame.
   //    */
   //   step: function () {
   //     cc.director.mainLoop();
   //   },
-
   //   /**
   //    * Pause the game.
   //    */
@@ -1571,7 +1472,6 @@ declare module cc {
   //     this._paused = true;
   //     cc.director.pause();
   //   },
-
   //   /**
   //    * Resume the game from pause.
   //    */
@@ -1579,28 +1479,24 @@ declare module cc {
   //     this._paused = false;
   //     cc.director.resume();
   //   },
-
   //   /**
   //    * Check whether the game is paused.
   //    */
   //   isPaused: function () {
   //     return this._paused;
   //   },
-
   //   /**
   //    * Restart game.
   //    */
   //   restart: function () {
   //     __restartVM();
   //   },
-
   //   /**
   //    * End game, it will close the game window
   //    */
   //   end: function () {
   //     close();
   //   },
-
   //   //  @Game loading
   //   /**
   //    * Prepare game.
@@ -1610,9 +1506,7 @@ declare module cc {
   //     var self = this,
   //       config = self.config,
   //       CONFIG_KEY = self.CONFIG_KEY;
-
   //     this._loadConfig();
-
   //     // Already prepared
   //     if (this._prepared) {
   //       if (cb) cb();
@@ -1625,7 +1519,6 @@ declare module cc {
   //     // Prepare never called and engine ready
   //     if (cc._engineLoaded) {
   //       this._prepareCalled = true;
-
   //       // Load game scripts
   //       var jsList = config[CONFIG_KEY.jsList];
   //       if (jsList) {
@@ -1637,16 +1530,13 @@ declare module cc {
   //       } else {
   //         if (cb) cb();
   //       }
-
   //       return;
   //     }
-
   //     // Engine not loaded yet
   //     cc.initEngine(this.config, function () {
   //       self.prepare(cb);
   //     });
   //   },
-
   //   /**
   //    * Run game with configuration object and onStart function.
   //    * @param {Object|Function} [config] Pass configuration object or onStart function
@@ -1663,12 +1553,9 @@ declare module cc {
   //         cc.game.onStart = onStart;
   //       }
   //     }
-
   //     this.prepare(cc.game.onStart && cc.game.onStart.bind(cc.game));
   //   },
-
   //   //@Private Methods
-
   //   _loadConfig: function () {
   //     // Load config
   //     // Already loaded
@@ -1687,10 +1574,8 @@ declare module cc {
   //       }
   //     }
   //   },
-
   //   _initConfig: function (config) {
   //     var CONFIG_KEY = this.CONFIG_KEY;
-
   //     // Configs adjustment
   //     config[CONFIG_KEY.showFPS] =
   //       typeof config[CONFIG_KEY.showFPS] === "undefined"
@@ -1703,16 +1588,12 @@ declare module cc {
   //     config[CONFIG_KEY.frameRate] = config[CONFIG_KEY.frameRate] || 60;
   //     if (config[CONFIG_KEY.renderMode] == null)
   //       config[CONFIG_KEY.renderMode] = 0;
-
   //     this.config = config;
-
   //     cc.director.setDisplayStats(this.config[CONFIG_KEY.showFPS]);
   //     cc.director.setAnimationInterval(1.0 / this.config[CONFIG_KEY.frameRate]);
   //   },
   // };
-
   // //+++++++++++++++++++++++++something about CCGame end+++++++++++++++++++++++++++++
-
   // // Original bind in Spidermonkey v33 will trigger object life cycle track issue in our memory model and cause crash
   // Function.prototype.bind = function (oThis) {
   //   if (!cc.isFunction(this)) {
@@ -1722,7 +1603,6 @@ declare module cc {
   //       "Function.prototype.bind - what is trying to be bound is not callable"
   //     );
   //   }
-
   //   var aArgs = Array.prototype.slice.call(arguments, 1),
   //     fToBind = this,
   //     fNOP = function () {},
@@ -1732,13 +1612,10 @@ declare module cc {
   //         aArgs.concat(Array.prototype.slice.call(arguments))
   //       );
   //     };
-
   //   fNOP.prototype = this.prototype;
   //   fBound.prototype = new fNOP();
-
   //   return fBound;
   // };
-
   // jsb.urlRegExp = new RegExp(
   //   "^" +
   //     // protocol identifier

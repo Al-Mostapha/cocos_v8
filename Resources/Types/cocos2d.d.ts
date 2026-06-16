@@ -60,15 +60,18 @@ declare namespace ccs {
      */
     gotoFrameAndPause(startIndex: number): void;
   }
+
+
+
   function load(
-    file: import("fs").PathLike,
+    file: string,
     path?: string,
   ): { node: cc.Node; action: ActionTimeline };
 }
 
 declare namespace cc {
   var War: any;
-  var path: any;
+  // var path: any;
   var math: any;
 
   var Codec: any;
@@ -812,7 +815,7 @@ declare namespace cc {
    * @warning These functions draws the Line, Point, Polygon, immediately. They aren't batched. <br/>
    *   If you are going to make a game that depends on these primitives, I suggest creating a batch.
    */
-  export class DrawingPrimitive extends Class {
+   class DrawingPrimitive extends Class {
     /**
      * set render context of drawing primitive
      * @param context
@@ -973,14 +976,14 @@ declare namespace cc {
    * @class
    * @extends cc.DrawingPrimitive
    */
-  export class DrawingPrimitiveCanvas extends DrawingPrimitive {}
+   class DrawingPrimitiveCanvas extends DrawingPrimitive {}
 
   /**
    * Canvas of DrawingPrimitive implement version
    * @class
    * @extends cc.DrawingPrimitive
    */
-  export class DrawingPrimitiveWebGL extends DrawingPrimitive {}
+  class DrawingPrimitiveWebGL extends DrawingPrimitive {}
   //#endregion cocos2d/CCDrawingPrimitives.js
 
   //#region cocos2d/CCLoader.js
@@ -989,7 +992,7 @@ declare namespace cc {
    * @class
    * @extends cc.Scene
    */
-  // export class Loader extends Class {
+  // class Loader extends Class {
   //   /**
   //    * Preload resources in the background
   //    * @param {Array} resources
@@ -1032,7 +1035,7 @@ declare namespace cc {
    * @class
    * @extends cc.Scene
    */
-  // export class LoaderScene extends Scene {
+  // class LoaderScene extends Scene {
   //   /**
   //    * Preload multi scene resources.
   //    * @param {Array} resources
@@ -1099,7 +1102,7 @@ declare namespace cc {
    * @class
    * @extends cc.Class
    */
-  export class Action extends Class {
+  class Action extends Class {
     release(): void;
     retain(): void;
     getReferenceCount(): number;
@@ -1115,7 +1118,7 @@ declare namespace cc {
      * @class
      * @extends cc.Action
      */
-  export class FiniteTimeAction extends Action {}
+  class FiniteTimeAction extends Action {}
   //#endregion cocos2d/actions/CCAction.js
 
   //#region cocos2d/actions/CCActionInterval.js
@@ -1138,7 +1141,7 @@ declare namespace cc {
    * // example
    * var pingPongAction = cc.Sequence.create(action, action.reverse());
    */
-  export class ActionInterval extends FiniteTimeAction {
+  class ActionInterval extends FiniteTimeAction {
     setTag(tag: number): void;
     easing(action: any): ActionInterval;
   }
@@ -1147,7 +1150,7 @@ declare namespace cc {
    * @class
    * @extends cc.ActionInterval
    */
-  export class Sequence extends ActionInterval {
+  class Sequence extends ActionInterval {
     /** helper constructor to create an array of sequenceable actions
      * @param {Array|cc.FiniteTimeAction} tempArray
      * @return {cc.FiniteTimeAction}
@@ -1167,7 +1170,7 @@ declare namespace cc {
    * @class
    * @extends cc.ActionInterval
    */
-  export class Repeat extends ActionInterval {
+  class Repeat extends ActionInterval {
     /** creates a CCRepeat action. Times is an unsigned integer between 1 and pow(2,30)
      * @param {cc.FiniteTimeAction} action
      * @param {Number} times
@@ -1185,7 +1188,7 @@ declare namespace cc {
    * @class
    * @extends cc.ActionInterval
    */
-  export class RepeatForever extends ActionInterval {
+  class RepeatForever extends ActionInterval {
     /**
      * Repeat the acton forever
      * @param action
@@ -1201,7 +1204,7 @@ declare namespace cc {
    * @class
    * @extends cc.ActionInterval
    */
-  export class Spawn extends ActionInterval {
+  class Spawn extends ActionInterval {
     /**
      * @param {Array|cc.FiniteTimeAction}tempArray
      * @return {cc.FiniteTimeAction}
@@ -1218,7 +1221,7 @@ declare namespace cc {
    * @class
    * @extends cc.ActionInterval
    */
-  export class RotateTo extends ActionInterval {
+  class RotateTo extends ActionInterval {
     /**
      * creates the action with separate rotation angles
      * @param {Number} duration duration in seconds
@@ -1240,7 +1243,7 @@ declare namespace cc {
    * @class
    * @extends  cc.ActionInterval
    */
-  export class RotateBy extends ActionInterval {
+  class RotateBy extends ActionInterval {
     /**
      * @param {Number} duration druation in seconds
      * @param {Number} deltaAngleX deltaAngleX in degrees
@@ -1261,7 +1264,7 @@ declare namespace cc {
    * @class
    * @extends cc.ActionInterval
    */
-  export class MoveTo extends ActionInterval {
+  class MoveTo extends ActionInterval {
     /**
      * @param {Number} duration duration in seconds
      * @param {cc.Point} position
@@ -1278,7 +1281,7 @@ declare namespace cc {
    * @class
    * @extends cc.MoveTo
    */
-  export class MoveBy extends MoveTo {
+  class MoveBy extends MoveTo {
     /**
      * @param {Number} duration duration in seconds
      * @param {cc.Point} position
@@ -1294,7 +1297,7 @@ declare namespace cc {
    * @class
    * @extends cc.ActionInterval
    */
-  export class SkewTo extends ActionInterval {
+  class SkewTo extends ActionInterval {
     /**
      * @param {Number} t time in seconds
      * @param {Number} sx
@@ -1311,7 +1314,7 @@ declare namespace cc {
    * @class
    * @extends cc.SkewTo
    */
-  export class SkewBy extends SkewTo {
+  class SkewBy extends SkewTo {
     /**
      * @param {Number} t time in seconds
      * @param {Number} sx sx skew in degrees for X axis
@@ -1328,7 +1331,7 @@ declare namespace cc {
    * @class
    * @extends cc.ActionInterval
    */
-  export class JumpBy extends ActionInterval {
+  class JumpBy extends ActionInterval {
     /**
      * @param {Number} duration
      * @param {cc.Point} position
@@ -1351,7 +1354,7 @@ declare namespace cc {
    * @class
    * @extends cc.JumpBy
    */
-  export class JumpTo extends JumpBy {
+  class JumpTo extends JumpBy {
     /**
      * @param {Number} duration
      * @param {cc.Point} position
@@ -1374,7 +1377,7 @@ declare namespace cc {
    * @class
    * @extends cc.ActionInterval
    */
-  export class BezierBy extends ActionInterval {
+  class BezierBy extends ActionInterval {
     /**
      * @param {Number} t time in seconds
      * @param {Array} c Array of points
@@ -1392,7 +1395,7 @@ declare namespace cc {
    * @class
    * @extends cc.BezierBy
    */
-  export class BezierTo extends BezierBy {
+  class BezierTo extends BezierBy {
     /**
      * @param {Number} t
      * @param {Array} c array of points
@@ -1410,7 +1413,7 @@ declare namespace cc {
    * @class
    * @extends cc.ActionInterval
    */
-  export class ScaleTo extends ActionInterval {
+  class ScaleTo extends ActionInterval {
     /**
      * @param {Number} duration
      * @param {Number} sx  scale parameter in X
@@ -1431,7 +1434,7 @@ declare namespace cc {
    * @class
    * @extends cc.ScaleTo
    */
-  export class ScaleBy extends ScaleTo {
+  class ScaleBy extends ScaleTo {
     /**
      * @param {Number} duration duration in seconds
      * @param {Number} sx sx  scale parameter in X
@@ -1451,7 +1454,7 @@ declare namespace cc {
    * @class
    * @extends cc.ActionInterval
    */
-  export class Blink extends ActionInterval {
+  class Blink extends ActionInterval {
     /**
      * @param {Number} duration  duration in seconds
      * @param blinks blinks in times
@@ -1468,7 +1471,7 @@ declare namespace cc {
    * @class
    * @extends cc.ActionInterval
    */
-  export class FadeIn extends ActionInterval {
+  class FadeIn extends ActionInterval {
     /**
      * @param {Number} duration duration in seconds
      * @return {cc.FadeIn}
@@ -1484,7 +1487,7 @@ declare namespace cc {
    * @class
    * @extends cc.ActionInterval
    */
-  export class FadeOut extends ActionInterval {
+  class FadeOut extends ActionInterval {
     /**
      * @param {Number} d  duration in seconds
      * @return {cc.FadeOut}
@@ -1500,7 +1503,7 @@ declare namespace cc {
    * @class
    * @extends cc.ActionInterval
    */
-  export class FadeTo extends ActionInterval {
+  class FadeTo extends ActionInterval {
     /**
      * @param {Number} duration
      * @param {Number} opacity 0-255, 0 is transparent
@@ -1517,7 +1520,7 @@ declare namespace cc {
    * @class
    * @extends cc.ActionInterval
    */
-  export class TintTo extends ActionInterval {
+  class TintTo extends ActionInterval {
     /**
      * @param {Number} duration
      * @param {Number} red 0-255
@@ -1540,7 +1543,7 @@ declare namespace cc {
    * @class
    * @extends cc.ActionInterval
    */
-  export class TintBy extends ActionInterval {
+  class TintBy extends ActionInterval {
     /**
      * @param {Number} duration  duration in seconds
      * @param {Number} deltaRed
@@ -1563,7 +1566,7 @@ declare namespace cc {
    * @class
    * @extends cc.ActionInterval
    */
-  export class DelayTime extends ActionInterval {
+  class DelayTime extends ActionInterval {
     /**
      * @param {Number} d duration in seconds
      * @return {cc.DelayTime}
@@ -1583,7 +1586,7 @@ declare namespace cc {
    * @class
    * @extends cc.ActionInterval
    */
-  export class ReverseTime extends ActionInterval {
+  class ReverseTime extends ActionInterval {
     /**
      * @param {cc.FiniteTimeAction} action
      * @return {cc.ReverseTime}
@@ -1598,7 +1601,7 @@ declare namespace cc {
    * @class
    * @extends cc.ActionInterval
    */
-  export class Animate extends ActionInterval {
+  class Animate extends ActionInterval {
     /**
      * create the animate with animation
      * @param {cc.Animation} animation
@@ -1628,7 +1631,7 @@ declare namespace cc {
    * @class
    * @extends cc.ActionInterval
    */
-  export class TargetedAction extends ActionInterval {}
+  class TargetedAction extends ActionInterval {}
   //#endregion cocos2d/actions/CCActionManager.js
 
   //#region cocos2d/base_nodes/CCNode.js
@@ -1707,22 +1710,22 @@ declare namespace cc {
    * @param {Number} tx
    * @param {Number} ty
    */
-  export class AffineTransform {
-    a: number;
-    b: number;
-    c: number;
-    d: number;
-    tx: number;
-    ty: number;
-    constructor(
-      a: number,
-      b: number,
-      c: number,
-      d: number,
-      tx: number,
-      ty: number,
-    );
-  }
+  // class AffineTransform {
+  //   a: number;
+  //   b: number;
+  //   c: number;
+  //   d: number;
+  //   tx: number;
+  //   ty: number;
+  //   constructor(
+  //     a: number,
+  //     b: number,
+  //     c: number,
+  //     d: number,
+  //     tx: number,
+  //     ty: number,
+  //   );
+  // }
   //#endregion cocos2d/cocoa/CCAffineTranform.js
 
   //#region cocos2d/cocoa/CCGeometry.js
@@ -1732,7 +1735,7 @@ declare namespace cc {
    * @param {Number} _y
    * Constructor
    */
-  export class Point {
+  class Point {
     x: number;
     y: number;
 
@@ -1744,14 +1747,14 @@ declare namespace cc {
    * @param {Number} x
    * @param {Number} y
    */
-  function p(x: number | Point, y?: number): Point;
+  // function p(x: number | Point, y?: number): Point;
 
   /**
    * The "left bottom" point -- equivalent to cc.p(0, 0).
    * @function
    * @return {cc.Point}
    */
-  function PointZero(): Point;
+  // function PointZero(): Point;
 
   /**
    * @class
@@ -1759,7 +1762,7 @@ declare namespace cc {
    * @param {Number} _height
    * Constructor
    */
-  export class Size {
+  class Size {
     width: number;
     height: number;
 
@@ -1772,7 +1775,7 @@ declare namespace cc {
    * @param {Number} h height
    * @return {cc.Size}
    */
-  function size(w: number, h: number): Size;
+  // function size(w: number, h: number): Size;
 
   /**
    * @class
@@ -1782,7 +1785,7 @@ declare namespace cc {
    * @param {Number} height1
    * Constructor
    */
-  export class Rect {
+  class Rect {
     x: number;
     y: number;
     width: number;
@@ -1791,7 +1794,7 @@ declare namespace cc {
     constructor(x1: number, y1: number, width1: number, height1: number);
   }
 
-  function rect(x1: number, y1: number, width1: number, height1: number): Rect;
+  // function rect(x1: number, y1: number, width1: number, height1: number): Rect;
 
   /**
    * @function
@@ -1804,7 +1807,7 @@ declare namespace cc {
   function RectMake(x: number, y: number, width: number, height: number): Rect;
 
   // backward compatible
-  function rect(x: number, y: number, w: number, h: number): Rect;
+  // function rect(x: number, y: number, w: number, h: number): Rect;
 
   /**
    * The "zero" rectangle -- equivalent to cc.rect(0, 0, 0, 0).
@@ -1935,7 +1938,7 @@ declare namespace cc {
    * @class
    * @extends cc.Node
    */
-  export class Scene extends Node {
+  class Scene extends Node {
     /**
      * Constructor
      */
@@ -1962,7 +1965,7 @@ declare namespace cc {
    * @class
    * @extends cc.Node
    */
-  export class Layer extends Node {
+  class Layer extends Node {
     /**
      *
      * @return {Boolean}
@@ -2275,7 +2278,7 @@ declare namespace cc {
    * //create a yellow box, 200 by 200 in size
    * var yellowBox = cc.LayerColorCanvas.create(cc.c3b(255,255,0,255), 200, 200);
    */
-  export class LayerColor extends Layer {
+  class LayerColor extends Layer {
     /**
      * @param {cc.Color4B} color
      * @param {Number} width
@@ -2311,7 +2314,7 @@ declare namespace cc {
    * @class
    * @extends cc.LayerColor
    */
-  export class LayerGradient extends LayerColor {
+  class LayerGradient extends LayerColor {
     /**
      * get the starting color
      * @return {cc.Color3B}
@@ -2412,7 +2415,7 @@ declare namespace cc {
    * @class
    * @extends cc.Class
    */
-  export class TransitionEaseScene extends Class {
+  class TransitionEaseScene extends Class {
     /**
      * returns the Ease action that will be performed on a linear action.
      */
@@ -2448,7 +2451,7 @@ declare namespace cc {
    * @class
    * @extends cc.Scene
    */
-  export class TransitionScene extends Scene {
+  class TransitionScene extends Scene {
     /**
      * custom onEnter
      */
@@ -2497,7 +2500,7 @@ declare namespace cc {
    * @class
    * @extends cc.TransitionScene
    */
-  export class TransitionProgress extends TransitionScene {
+  class TransitionProgress extends TransitionScene {
     /**
      * @override
      */
@@ -2524,7 +2527,7 @@ declare namespace cc {
    * @class
    * @extends cc.TransitionProgress
    */
-  export class TransitionProgressRadialCCW extends TransitionProgress {
+  class TransitionProgressRadialCCW extends TransitionProgress {
     /**
      * create a cc.TransitionProgressRadialCCW object
      * @function
@@ -2541,7 +2544,7 @@ declare namespace cc {
    * @class
    * @extends cc.TransitionProgress
    */
-  export class TransitionProgressRadialCW extends TransitionProgress {
+  class TransitionProgressRadialCW extends TransitionProgress {
     /**
      * create a cc.TransitionProgressRadialCW object
      * @function
@@ -2558,7 +2561,7 @@ declare namespace cc {
    * @class
    * @extends cc.TransitionProgress
    */
-  export class TransitionProgressHorizontal extends TransitionProgress {
+  class TransitionProgressHorizontal extends TransitionProgress {
     /**
      * create a cc.TransitionProgressHorizontal object
      * @function
@@ -2574,7 +2577,7 @@ declare namespace cc {
    * @class
    * @extends cc.TransitionProgress
    */
-  export class TransitionProgressVertical extends TransitionProgress {
+  class TransitionProgressVertical extends TransitionProgress {
     /**
      * create a cc.TransitionProgressVertical object
      * @function
@@ -2590,7 +2593,7 @@ declare namespace cc {
    * @class
    * @extends cc.TransitionProgress
    */
-  export class TransitionProgressInOut extends TransitionProgress {
+  class TransitionProgressInOut extends TransitionProgress {
     /**
      * create a cc.TransitionProgressInOut object
      * @function
@@ -2606,7 +2609,7 @@ declare namespace cc {
    * @class
    * @extends cc.TransitionProgress
    */
-  export class TransitionProgressOutIn extends TransitionProgress {
+  class TransitionProgressOutIn extends TransitionProgress {
     /**
      * create a cc.TransitionProgressOutIn object
      * @function
@@ -2626,7 +2629,7 @@ declare namespace cc {
    * @class
    * @extends cc.Layer
    */
-  export class Menu extends Layer {
+  class Menu extends Layer {
     /**
      * create a new menu
      * @return {cc.Menu}
@@ -2645,7 +2648,7 @@ declare namespace cc {
    * @class
    * @extends cc.Node
    */
-  export class MenuItem extends Node {
+  class MenuItem extends Node {
     /**
      * MenuItem is selected
      * @return {Boolean}
@@ -2715,7 +2718,7 @@ declare namespace cc {
    * @class
    * @extends cc.MenuItem
    */
-  export class MenuItemLabel extends MenuItem {
+  class MenuItemLabel extends MenuItem {
     /**
      * @param {cc.Node} label
      * @param {function|String|Null} selector
@@ -2730,7 +2733,7 @@ declare namespace cc {
    * @class
    * @extends cc.MenuItemLabel
    */
-  export class MenuItemAtlasFont extends cc.MenuItemLabel {
+  class MenuItemAtlasFont extends cc.MenuItemLabel {
     /**
      * create menu item from string with font
      * @param {String} value the text to display
@@ -2758,7 +2761,7 @@ declare namespace cc {
    * @class
    * @extends cc.MenuItemLabel
    */
-  export class MenuItemFont extends MenuItemLabel {
+  class MenuItemFont extends MenuItemLabel {
     /**
      * @param {Number} s
      */
@@ -2811,7 +2814,7 @@ declare namespace cc {
      * @class
      * @extends cc.MenuItem
      */
-  export class MenuItemSprite extends MenuItem {
+  class MenuItemSprite extends MenuItem {
     /**
      * create a menu item from sprite
      * @param {Image} normal normal state image
@@ -2849,7 +2852,7 @@ declare namespace cc {
    * @class
    * @extends cc.MenuItemSprite
    */
-  export class MenuItemImage extends MenuItemSprite {
+  class MenuItemImage extends MenuItemSprite {
     /**
      * creates a new menu item image
      * @param {String} normalImage file name for normal state
@@ -2893,7 +2896,7 @@ declare namespace cc {
    * @class
    * @extends cc.MenuItem
    */
-  export class MenuItemToggle extends MenuItem {
+  class MenuItemToggle extends MenuItem {
     /**
      * @return {Number}
      */
@@ -2907,7 +2910,7 @@ declare namespace cc {
     /**
      * @return {cc.Color3B}
      */
-    getColor(): Color3B;
+    getColor(): cc.Color;
 
     /**
      * @param {cc.Color3B} Color
@@ -3006,7 +3009,7 @@ declare namespace cc {
    * @class
    * @extends cc.Class
    */
-  export class AppController extends Class {
+  class AppController extends Class {
     /**
      * did something when Finish Launching
      * @return {Boolean}
@@ -3151,7 +3154,7 @@ declare namespace cc {
    * @class
    * @extends cc.Class
    */
-  export class Application extends Class {
+  class Application extends Class {
     static getInstance(): Application;
     getCurrentLanguage(): number;
     openURL(url: string): boolean;
@@ -3159,7 +3162,7 @@ declare namespace cc {
   //#endregion cocos2d/platform/CCApplication.js
 
   //#region cocos2d/platform/CCClass.js
-  // export class Class {
+  // class Class {
   //   static extend(props: any): any;
   //   constructor();
   //   _className: string;
@@ -3167,7 +3170,7 @@ declare namespace cc {
   //#endregion cocos2d/platform/CCClass.js
 
   //#region cocos2d/platform/CCTypes.js
-  export class Color3B {
+  class Color3B {
     r: number;
     g: number;
     b: number;
@@ -3204,7 +3207,7 @@ declare namespace cc {
    * //create a red color
    * var redColor = new cc.Color4B(255,0,0,255);
    */
-  export class Color4B {
+  class Color4B {
     r: number;
     g: number;
     b: number;
@@ -3236,7 +3239,7 @@ declare namespace cc {
    * //create a red color
    * var redColor = new cc.Color4F(1,0,0,1);
    */
-  export class Color4F {
+  class Color4F {
     r: number;
     g: number;
     b: number;
@@ -3297,7 +3300,7 @@ declare namespace cc {
    * @param {Number} x1
    * @param {Number} y1
    */
-  export class Vertex2F {
+  class Vertex2F {
     x: number;
     y: number;
 
@@ -3321,7 +3324,7 @@ declare namespace cc {
    * @param {Number} y1
    * @param {Number} z1
    */
-  export class Vertex3F {
+  class Vertex3F {
     x: number;
     y: number;
     z: number;
@@ -3346,7 +3349,7 @@ declare namespace cc {
    * @param {Number} u1
    * @param {Number} v1
    */
-  export class Tex2F {
+  class Tex2F {
     u: number;
     v: number;
 
@@ -3370,7 +3373,7 @@ declare namespace cc {
    * @param {cc.Color4B} color1
    * @param {Number} size1
    */
-  export class PointSprite {
+  class PointSprite {
     pos: Vertex2F;
     color: Color4B;
     size: number;
@@ -3387,7 +3390,7 @@ declare namespace cc {
    * @param {cc.Vertex2F} bl1
    * @param {cc.Vertex2F} br1
    */
-  export class Quad2 {
+  class Quad2 {
     tl: Vertex2F;
     tr: Vertex2F;
     bl: Vertex2F;
@@ -3405,7 +3408,7 @@ declare namespace cc {
    * @param {cc.Vertex3F} tl1
    * @param {cc.Vertex3F} tr1
    */
-  export class Quad3 {
+  class Quad3 {
     bl: Vertex3F;
     br: Vertex3F;
     tl: Vertex3F;
@@ -3470,7 +3473,7 @@ declare namespace cc {
    * @class
    * @extends cc.Class
    */
-  export class AnimationFrame extends Class {}
+  class AnimationFrame extends Class {}
 
   /**
    * <p>
@@ -3495,7 +3498,7 @@ declare namespace cc {
    * //run animate
    * this._grossini.runAction(action);
    */
-  export class Animation extends Class {
+  class Animation extends Class {
     constructor(frames: SpriteFrame[], delay: number, userInfo?: any);
     /**
      * Creates an animation.
@@ -3570,7 +3573,7 @@ declare namespace cc {
    * aSprite.initWithFile("HelloHTML5World.png",cc.rect(0,0,480,320));
    */
 
-  export class SpriteFrame {
+  class SpriteFrame {
     getOriginalSize(): Size;
   }
   //#endregion cocos2d/sprite_nodes/CCSprite.js

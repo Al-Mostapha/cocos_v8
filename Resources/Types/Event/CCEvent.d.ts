@@ -318,4 +318,84 @@ declare namespace cc {
      */
     static readonly BUTTON_8 = 7;
   }
+
+  /**
+   * The Custom event
+   * @class
+   * @extends cc.Event
+   */
+  class EventCustom extends cc.Event {
+    _eventName: string | null;
+    _userData: any | null; // User data
+
+    constructor(eventName: string | null);
+    /**
+     * Sets user data
+     * @param {*} data
+     */
+    setUserData(data: Record<string, any> | null): void;
+
+    /**
+     * Gets user data
+     * @returns {*}
+     */
+    getUserData(): Record<string, any> | null;
+    /**
+     * Gets event name
+     * @returns {String}
+     */
+    getEventName(): string | null;
+  }
+
+  /**
+   * The touch event
+   * @class
+   * @extends cc.Event
+   */
+  class EventTouch extends cc.Event {
+    _eventCode: number;
+    _touches: Touch[];
+
+    constructor(arr: Touch[]);
+
+    /**
+     * Returns event code
+     * @returns {number}
+     */
+    getEventCode(): number;
+
+    /**
+     * Returns touches of event
+     * @returns {Array}
+     */
+    getTouches(): Touch[];
+
+    /**
+     * The maximum touch numbers
+     * @constant
+     * @type {Number}
+     */
+    static readonly MAX_TOUCHES = 5;
+
+    static readonly EventCode: { BEGAN: 0; MOVED: 1; ENDED: 2; CANCELLED: 3 };
+  }
+
+  /**
+   * Focus change event for UI widget
+   * @class
+   * @extends cc.Event
+   */
+  class EventFocus extends cc.Event {
+    _widgetGetFocus: ccui.Widget | null;
+    _widgetLoseFocus: ccui.Widget | null;
+    /**
+     * Constructor function.
+     * @param {ccui.Widget} widgetLoseFocus
+     * @param {ccui.Widget} widgetGetFocus
+     */
+    constructor(
+      widgetLoseFocus: ccui.Widget | null,
+      widgetGetFocus: ccui.Widget | null,
+    );
+  }
 }

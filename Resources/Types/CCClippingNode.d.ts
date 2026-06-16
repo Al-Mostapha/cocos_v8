@@ -1,4 +1,4 @@
-declare module cc {
+declare namespace cc {
   // /**
   //  * the value of stencil bits.
   //  * @type Number

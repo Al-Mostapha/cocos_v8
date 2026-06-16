@@ -28,8 +28,9 @@
 namespace cc {
   // Define singleton objects
   export const director = cc.Director.getInstance();
-  director._actionManager = cc.director.getActionManager();
-  director._scheduler = cc.director.getScheduler();
+  // TODO
+  // director._actionManager = cc.director.getActionManager();
+  // director._scheduler = cc.director.getScheduler();
   export const winSize = cc.director.getWinSize();
   //+++++++++++++++++++++++++Engine initialization function begin+++++++++++++++++++++++++++
 
@@ -69,6 +70,7 @@ namespace cc {
   cc.view.isAutoFullScreenEnabled = function () {
     return true;
   };
+  // TODO
   (<any>cc).view._setDesignResolutionSize = cc.view.setDesignResolutionSize;
   cc.view.setDesignResolutionSize = function (
     width: number,
@@ -100,18 +102,88 @@ namespace cc {
   };
 
   cc.view.setOrientation = function () {};
+
+  export class screen {
+    static init() {}
+    static fullScreen() {
+      return true;
+    }
+    static requestFullScreen(element: any, onFullScreenChange: Function) {
+      onFullScreenChange?.();
+    }
+    static exitFullScreen() {
+      return false;
+    }
+    static autoFullScreen(element: any, onFullScreenChange: Function) {
+      onFullScreenChange?.();
+    }
+  }
+
+  export const DENSITYDPI_DEVICE = "device-dpi";
+  export const DENSITYDPI_HIGH = "high-dpi";
+  export const DENSITYDPI_MEDIUM = "medium-dpi";
+  export const DENSITYDPI_LOW = "low-dpi";
+
+  /**
+   * Init Debug setting.
+   * @function
+   */
+  export const _initDebugSetting = (mode: number) => {
+    // TODO
+    const bakLog = /*cc._cocosplayerLog ||*/ console.log || log;
+    cc.log = cc.warn = cc.error = cc.assert = (() => {}) as any;
+    if (mode > cc.game.DEBUG_MODE_NONE) {
+      console.log = (...args: any[]) => {
+        bakLog(cc.formatStr.apply(null, args));
+      };
+      console.error = (...args: any[]) => {
+        bakLog("ERROR :  " + cc.formatStr.apply(cc, args));
+      };
+      console.warn = (...args: any[]) => {
+        bakLog("WARN :  " + cc.formatStr.apply(cc, args));
+      };
+
+      cc.error = console.error;
+      cc.assert = (cond, msg, ...args) => {
+        if (!cond && msg) {
+          console.log("Assert: " + cc.formatStr.apply(cc, [msg, ...args]));
+        }
+      };
+      if (
+        mode != cc.game.DEBUG_MODE_ERROR &&
+        mode != cc.game.DEBUG_MODE_ERROR_FOR_WEB_PAGE
+      ) {
+        cc.warn = console.warn;
+      }
+      if (
+        mode == cc.game.DEBUG_MODE_INFO ||
+        mode == cc.game.DEBUG_MODE_INFO_FOR_WEB_PAGE
+      ) {
+        cc.log = console.log;
+      }
+    }
+  };
+
+  cc._engineLoaded = false;
+
+  export const initEngine = (config: GameConfig, cb: Function) => {
+    // TODO
+    require("script/jsb.js");
+    cc._renderType = cc.game.RENDER_TYPE_OPENGL;
+    cc._initDebugSetting(config.debugMode ?? 0);
+    cc._engineLoaded = true;
+    cc.log(cc.ENGINE_VERSION);
+    if (cb) cb();
+  };
 }
 
-cc.DENSITYDPI_DEVICE = "device-dpi";
-cc.DENSITYDPI_HIGH = "high-dpi";
-cc.DENSITYDPI_MEDIUM = "medium-dpi";
-cc.DENSITYDPI_LOW = "low-dpi";
 cc.view.setTargetDensityDPI = function () {};
 cc.view.getTargetDensityDPI = function () {
   return cc.DENSITYDPI_DEVICE;
 };
 
-cc.eventManager = cc.director.getEventDispatcher();
+// TODO
+cc.eventManager = cc.director.getEventDispatcher() as any;
 
 cc.audioEngine = cc.AudioEngine.getInstance();
 cc.audioEngine.end = function () {
@@ -127,11 +199,13 @@ cc.audioEngine.features = {
 cc.configuration = cc.Configuration.getInstance();
 
 cc.textureCache = cc.director.getTextureCache();
+
 cc.TextureCache.prototype._addImageAsync =
   cc.TextureCache.prototype.addImageAsync;
 cc.TextureCache.prototype.addImageAsync = function (url, cb, target) {
-  var localTex = null;
-  cc.loader.loadImg(url, function (err, tex) {
+  let localTex = null;
+  // TODO
+  cc.loader.loadImg(url, function (err: any, tex: any) {
     if (err) tex = null;
     if (cb) {
       cb.call(target, tex);
@@ -164,158 +238,90 @@ cc.plistParser = cc.PlistParser.getInstance();
 cc.fileUtils = cc.FileUtils.getInstance();
 cc.fileUtils.setPopupNotify(false);
 
-cc.screen = {
-  init: function () {},
-  fullScreen: function () {
-    return true;
-  },
-  requestFullScreen: function (element, onFullScreenChange) {
-    onFullScreenChange.call();
-  },
-  exitFullScreen: function () {
-    return false;
-  },
-  autoFullScreen: function (element, onFullScreenChange) {
-    onFullScreenChange.call();
-  },
-};
+namespace jsb {
+  /**
+   * @type {Object}
+   * @name jsb.fileUtils
+   * jsb.fileUtils is the native file utils singleton object,
+   * please refer to Cocos2d-x API to know how to use it.
+   * Only available in JSB
+   */
+  export const fileUtils = cc.fileUtils;
+  // TODO
+  // delete cc.FileUtils;
+  // delete cc.fileUtils;
 
-/**
- * @type {Object}
- * @name jsb.fileUtils
- * jsb.fileUtils is the native file utils singleton object,
- * please refer to Cocos2d-x API to know how to use it.
- * Only available in JSB
- */
-jsb.fileUtils = cc.fileUtils;
-delete cc.FileUtils;
-delete cc.fileUtils;
-
-/**
- * @type {Object}
- * @name jsb.reflection
- * jsb.reflection is a bridge to let you invoke Java static functions.
- * please refer to this document to know how to use it: http://www.cocos2d-x.org/docs/manual/framework/html5/v3/reflection/en
- * Only available on Android platform
- */
-jsb.reflection = {
-  callStaticMethod: function () {
-    cc.log("not supported on current platform");
-  },
-};
-
-
-
-/**
- * Init Debug setting.
- * @function
- */
-cc._initDebugSetting = function (mode) {
-  var ccGame = cc.game;
-  var bakLog = cc._cocosplayerLog || console.log || log;
-  cc.log = cc.warn = cc.error = cc.assert = function () {};
-  if (mode > ccGame.DEBUG_MODE_NONE) {
-    console.log = function () {
-      bakLog(cc.formatStr.apply(null, arguments));
-    };
-    console.error = function () {
-      bakLog("ERROR :  " + cc.formatStr.apply(cc, arguments));
-    };
-    console.warn = function () {
-      bakLog("WARN :  " + cc.formatStr.apply(cc, arguments));
-    };
-
-    cc.error = console.error;
-    cc.assert = function (cond, msg) {
-      if (!cond && msg) {
-        var args = [];
-        for (var i = 1; i < arguments.length; i++) args.push(arguments[i]);
-        console.log("Assert: " + cc.formatStr.apply(cc, args));
-      }
-    };
-    if (
-      mode != ccGame.DEBUG_MODE_ERROR &&
-      mode != ccGame.DEBUG_MODE_ERROR_FOR_WEB_PAGE
-    ) {
-      cc.warn = console.warn;
-    }
-    if (
-      mode == ccGame.DEBUG_MODE_INFO ||
-      mode == ccGame.DEBUG_MODE_INFO_FOR_WEB_PAGE
-    ) {
-      cc.log = console.log;
+  /**
+   * @type {Object}
+   * @name jsb.reflection
+   * jsb.reflection is a bridge to let you invoke Java static functions.
+   * please refer to this document to know how to use it: http://www.cocos2d-x.org/docs/manual/framework/html5/v3/reflection/en
+   * Only available on Android platform
+   */
+  export class reflection {
+    static callStaticMethod() {
+      cc.log("not supported on current platform");
     }
   }
-};
 
-cc._engineLoaded = false;
-
-cc.initEngine = function (config, cb) {
-  require("script/jsb.js");
-  cc._renderType = cc.game.RENDER_TYPE_OPENGL;
-  cc._initDebugSetting(config[cc.game.CONFIG_KEY.debugMode]);
-  cc._engineLoaded = true;
-  cc.log(cc.ENGINE_VERSION);
-  if (cb) cb();
-};
+  export const urlRegExp = new RegExp(
+    "^" +
+      // protocol identifier
+      "(?:(?:https?|ftp)://)" +
+      // user:pass authentication
+      "(?:\\S+(?::\\S*)?@)?" +
+      "(?:" +
+      // IP address dotted notation octets
+      // excludes loopback network 0.0.0.0
+      // excludes reserved space >= 224.0.0.0
+      // excludes network & broacast addresses
+      // (first & last IP address of each class)
+      "(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])" +
+      "(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}" +
+      "(?:\\.(?:[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))" +
+      "|" +
+      // host name
+      "(?:(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)" +
+      // domain name
+      "(?:\\.(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)*" +
+      // TLD identifier
+      "(?:\\.(?:[a-z\\u00a1-\\uffff]{2,}))" +
+      "|" +
+      "(?:localhost)" +
+      ")" +
+      // port number
+      "(?::\\d{2,5})?" +
+      // resource path
+      "(?:/\\S*)?" +
+      "$",
+    "i",
+  );
+}
 
 //+++++++++++++++++++++++++something about CCGame end+++++++++++++++++++++++++++++
 
 // Original bind in Spidermonkey v33 will trigger object life cycle track issue in our memory model and cause crash
-Function.prototype.bind = function (oThis) {
-  if (!cc.isFunction(this)) {
-    // closest thing possible to the ECMAScript 5
-    // internal IsCallable function
-    throw new TypeError(
-      "Function.prototype.bind - what is trying to be bound is not callable",
-    );
-  }
+// Function.prototype.bind = function (oThis) {
+//   if (!cc.isFunction(this)) {
+//     // closest thing possible to the ECMAScript 5
+//     // internal IsCallable function
+//     throw new TypeError(
+//       "Function.prototype.bind - what is trying to be bound is not callable",
+//     );
+//   }
 
-  var aArgs = Array.prototype.slice.call(arguments, 1),
-    fToBind = this,
-    fNOP = function () {},
-    fBound = function () {
-      return fToBind.apply(
-        this instanceof fNOP && oThis ? this : oThis,
-        aArgs.concat(Array.prototype.slice.call(arguments)),
-      );
-    };
+//   var aArgs = Array.prototype.slice.call(arguments, 1),
+//     fToBind = this,
+//     fNOP = function () {},
+//     fBound = function () {
+//       return fToBind.apply(
+//         this instanceof fNOP && oThis ? this : oThis,
+//         aArgs.concat(Array.prototype.slice.call(arguments)),
+//       );
+//     };
 
-  fNOP.prototype = this.prototype;
-  fBound.prototype = new fNOP();
+//   fNOP.prototype = this.prototype;
+//   fBound.prototype = new fNOP();
 
-  return fBound;
-};
-
-jsb.urlRegExp = new RegExp(
-  "^" +
-    // protocol identifier
-    "(?:(?:https?|ftp)://)" +
-    // user:pass authentication
-    "(?:\\S+(?::\\S*)?@)?" +
-    "(?:" +
-    // IP address dotted notation octets
-    // excludes loopback network 0.0.0.0
-    // excludes reserved space >= 224.0.0.0
-    // excludes network & broacast addresses
-    // (first & last IP address of each class)
-    "(?:[1-9]\\d?|1\\d\\d|2[01]\\d|22[0-3])" +
-    "(?:\\.(?:1?\\d{1,2}|2[0-4]\\d|25[0-5])){2}" +
-    "(?:\\.(?:[1-9]\\d?|1\\d\\d|2[0-4]\\d|25[0-4]))" +
-    "|" +
-    // host name
-    "(?:(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)" +
-    // domain name
-    "(?:\\.(?:[a-z\\u00a1-\\uffff0-9]-*)*[a-z\\u00a1-\\uffff0-9]+)*" +
-    // TLD identifier
-    "(?:\\.(?:[a-z\\u00a1-\\uffff]{2,}))" +
-    "|" +
-    "(?:localhost)" +
-    ")" +
-    // port number
-    "(?::\\d{2,5})?" +
-    // resource path
-    "(?:/\\S*)?" +
-    "$",
-  "i",
-);
+//   return fBound;
+// };

@@ -643,7 +643,7 @@ declare namespace cc {
       listener: cc.EventListener | Object,
       node: cc.Node | number,
     ): cc.EventListener;
-    dispatchCustomEvent(eventName: string, optionalUserData?: any): void;
+
     //     /**
     //      * Adds a Custom event listener. It will use a fixed priority of 1.
     //      * @param {string} eventName
@@ -843,45 +843,21 @@ declare namespace cc {
     //     isEnabled: function () {
     //         return this._isEnabled;
     //     },
-    //     /**
-    //      * Dispatches the event, also removes all EventListeners marked for deletion from the event dispatcher list.
-    //      * @param {cc.Event} event
-    //      */
-    //     dispatchEvent: function (event) {
-    //         if (!this._isEnabled)
-    //             return;
-    //         this._updateDirtyFlagForSceneGraph();
-    //         this._inDispatch++;
-    //         if (!event || !event.getType)
-    //             throw new Error("event is undefined");
-    //         if (event._type === cc.Event.TOUCH) {
-    //             this._dispatchTouchEvent(event);
-    //             this._inDispatch--;
-    //             return;
-    //         }
-    //         var listenerID = __getListenerID(event);
-    //         this._sortEventListeners(listenerID);
-    //         var selListeners = this._listenersMap[listenerID];
-    //         if (selListeners) {
-    //             this._dispatchEventToListeners(selListeners, this._onListenerCallback, event);
-    //             this._onUpdateListeners(selListeners);
-    //         }
-    //         this._inDispatch--;
-    //     },
+    /**
+     * Dispatches the event, also removes all EventListeners marked for deletion from the event dispatcher list.
+     * @param {cc.Event} event
+     */
+    static dispatchEvent(event: cc.Event): void;
     //     _onListenerCallback: function (listener, event) {
     //         event._setCurrentTarget(listener._getSceneGraphPriority());
     //         listener._onEvent(event);
     //         return event.isStopped();
     //     },
-    //     /**
-    //      * Dispatches a Custom Event with a event name an optional user data
-    //      * @param {string} eventName
-    //      * @param {*} optionalUserData
-    //      */
-    //     dispatchCustomEvent: function (eventName, optionalUserData) {
-    //         var ev = new cc.EventCustom(eventName);
-    //         ev.setUserData(optionalUserData);
-    //         this.dispatchEvent(ev);
-    //     }
+    /**
+     * Dispatches a Custom Event with a event name an optional user data
+     * @param {string} eventName
+     * @param {*} optionalUserData
+     */
+    static dispatchCustomEvent(eventName: string, optionalUserData?: any): void;
   }
 }

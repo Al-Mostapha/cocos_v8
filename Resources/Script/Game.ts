@@ -1,5 +1,6 @@
 //+++++++++++++++++++++++++something about CCGame begin+++++++++++++++++++++++++++
 namespace cc {
+  export let renderMode: string;
   export enum EDebugMode {
     DEBUG_MODE_NONE = 0,
     DEBUG_MODE_INFO,
@@ -188,7 +189,7 @@ namespace cc {
      * @param {Object|Function} [config] Pass configuration object or onStart function
      * @param {onStart} [onStart] onStart function to be executed after game initialized
      */
-    static run(config: GameConfig, onStart: () => void) {
+    static run(config?: GameConfig, onStart?: () => void) {
       if (typeof config === "function") {
         cc.game.onStart = config;
       } else {
@@ -234,8 +235,8 @@ namespace cc {
 
       this.config = config;
 
-      cc.director.setDisplayStats(this.config.showFPS);
-      cc.director.setAnimationInterval(1.0 / this.config.frameRate);
+      cc.director.setDisplayStats(this.config.showFPS!);
+      cc.director.setAnimationInterval(1.0 / this.config.frameRate!);
     }
   }
 }

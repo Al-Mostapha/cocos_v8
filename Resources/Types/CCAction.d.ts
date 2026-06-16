@@ -1,4 +1,4 @@
-declare module cc {
+declare namespace cc {
 
   // /**
   //  * <p> An interval action is an action that takes place within a certain period of time. <br/>

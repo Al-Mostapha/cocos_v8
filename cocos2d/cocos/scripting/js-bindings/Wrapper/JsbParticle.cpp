@@ -3,6 +3,7 @@
 #include "ScriptEngine.hpp"
 #include "2d/CCParticleBatchNode.h"
 #include "2d/CCParticleSystem.h"
+#include "renderer/CCTextureAtlas.h"
 
 // JSClass *jsb_cocos2d_ParticleBatchNode_class;
 // JSObject *jsb_cocos2d_ParticleBatchNode_prototype;
@@ -1687,10 +1688,17 @@ void js_cocos2dx_ParticleSystem_setEndSize(const v8::FunctionCallbackInfo<v8::Va
   SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_setEndSize : Invalid Native Object");
   //     if (argc == 1)
   //     {
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setEndSize : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
   //         double arg0 = 0;
   //         ok &= JS::ToNumber(cx, args.get(0), &arg0) && !std::isnan(arg0);
+  double endSize = args[0]->NumberValue(isolate->GetCurrentContext()).FromJust();
   //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setEndSize : Error processing arguments");
   //         cobj->setEndSize(arg0);
+  cParticleSystem->setEndSize(endSize);
   //         args.rval().setUndefined();
   //         return true;
   //     }
@@ -1701,1718 +1709,2553 @@ void js_cocos2dx_ParticleSystem_setEndSize(const v8::FunctionCallbackInfo<v8::Va
 
 // bool js_cocos2dx_ParticleSystem_getGravity(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getGravity : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         const cocos2d::Vec2 &ret = cobj->getGravity();
-//         JS::RootedValue jsret(cx);
-//         jsret = vector2_to_jsval(cx, ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_getGravity(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getGravity : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_getGravity : Invalid Native Object");
+  //     if (argc == 0)
+  //     {
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_getGravity : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  //         const cocos2d::Vec2 &ret = cobj->getGravity();
+  const cocos2d::Vec2 &ret = cParticleSystem->getGravity();
+  //         JS::RootedValue jsret(cx);
+  //         jsret = vector2_to_jsval(cx, ret);
+  auto jsret = JsbUtils::vector2_to_jsval(isolate, ret);
+  args.GetReturnValue().Set(jsret);
+  //         args.rval().set(jsret);
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getGravity : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getGravity : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_resumeEmissions(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_resumeEmissions : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         cobj->resumeEmissions();
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_resumeEmissions(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_resumeEmissions : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_resumeEmissions : Invalid Native Object");
+  //     if (argc == 0)
+  //     {
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_resumeEmissions : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  cParticleSystem->resumeEmissions();
+  args.GetReturnValue().SetUndefined();
+}
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_resumeEmissions : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
 // bool js_cocos2dx_ParticleSystem_getTangentialAccel(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getTangentialAccel : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         double ret = cobj->getTangentialAccel();
-//         JS::RootedValue jsret(cx);
-//         jsret = DOUBLE_TO_JSVAL(ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_getTangentialAccel(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getTangentialAccel : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_getTangentialAccel : Invalid Native Object");
+  //     if (argc == 0)
+  //     {
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_getTangentialAccel : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  //         double ret = cobj->getTangentialAccel();
+  double ret = cParticleSystem->getTangentialAccel();
+  //         JS::RootedValue jsret(cx);
+  //         jsret = DOUBLE_TO_JSVAL(ret);
+  args.GetReturnValue().Set(v8::Number::New(isolate, ret));
+  //         args.rval().set(jsret);
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getTangentialAccel : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getTangentialAccel : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_setEndRadius(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setEndRadius : Invalid Native Object");
-//     if (argc == 1)
-//     {
-//         double arg0 = 0;
-//         ok &= JS::ToNumber(cx, args.get(0), &arg0) && !std::isnan(arg0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setEndRadius : Error processing arguments");
-//         cobj->setEndRadius(arg0);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_setEndRadius(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setEndRadius : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_setEndRadius : Invalid Native Object");
+  //     if (argc == 1)
+  //     {
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setEndRadius : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  //         double arg0 = 0;
+  //         ok &= JS::ToNumber(cx, args.get(0), &arg0) && !std::isnan(arg0);
+  double endRadius = args[0]->NumberValue(isolate->GetCurrentContext()).FromJust();
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setEndRadius : Error processing arguments");
+  //         cobj->setEndRadius(arg0);
+  cParticleSystem->setEndRadius(endRadius);
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setEndRadius : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setEndRadius : wrong number of arguments: %d, was expecting %d", argc, 1);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_getSpeed(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getSpeed : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         double ret = cobj->getSpeed();
-//         JS::RootedValue jsret(cx);
-//         jsret = DOUBLE_TO_JSVAL(ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_getSpeed(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getSpeed : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_getSpeed : Invalid Native Object");
+  //     if (argc == 0)
+  //     {
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_getSpeed : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  //         double ret = cobj->getSpeed();
+  double ret = cParticleSystem->getSpeed();
+  args.GetReturnValue().Set(v8::Number::New(isolate, ret));
+  //         JS::RootedValue jsret(cx);
+  //         jsret = DOUBLE_TO_JSVAL(ret);
+  //         args.rval().set(jsret);
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getSpeed : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getSpeed : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_pauseEmissions(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_pauseEmissions : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         cobj->pauseEmissions();
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_pauseEmissions(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_pauseEmissions : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_pauseEmissions : Invalid Native Object");
+  //     if (argc == 0)
+  //     {
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_pauseEmissions : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  cParticleSystem->pauseEmissions();
+  args.GetReturnValue().Set(v8::Undefined(isolate));
+}
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_pauseEmissions : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
 // bool js_cocos2dx_ParticleSystem_getAngle(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getAngle : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         double ret = cobj->getAngle();
-//         JS::RootedValue jsret(cx);
-//         jsret = DOUBLE_TO_JSVAL(ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_getAngle(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getAngle : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_getAngle : Invalid Native Object");
+  //     if (argc == 0)
+  //     {
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_getAngle : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  //         double ret = cobj->getAngle();
+  double ret = cParticleSystem->getAngle();
+  //         JS::RootedValue jsret(cx);
+  //         jsret = DOUBLE_TO_JSVAL(ret);
+  args.GetReturnValue().Set(v8::Number::New(isolate, ret));
+  //         args.rval().set(jsret);
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getAngle : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getAngle : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_setEndColor(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setEndColor : Invalid Native Object");
-//     if (argc == 1)
-//     {
-//         cocos2d::Color4F arg0;
-//         ok &= jsval_to_cccolor4f(cx, args.get(0), &arg0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setEndColor : Error processing arguments");
-//         cobj->setEndColor(arg0);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_setEndColor(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setEndColor : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_setEndColor : Invalid Native Object");
+  //     if (argc == 1)
+  //     {
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setEndColor : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  //         cocos2d::Color4F arg0;
+  //         ok &= jsval_to_cccolor4f(cx, args.get(0), &arg0);
+  cocos2d::Color4F endColor;
+  bool ok = JsbUtils::jsval_to_cccolor4f(isolate, args[0], &endColor);
+  if (!ok)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setEndColor : Error processing arguments");
+    return;
+  }
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setEndColor : Error processing arguments");
+  //         cobj->setEndColor(arg0);
+  cParticleSystem->setEndColor(endColor);
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setEndColor : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setEndColor : wrong number of arguments: %d, was expecting %d", argc, 1);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_setStartSpin(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setStartSpin : Invalid Native Object");
-//     if (argc == 1)
-//     {
-//         double arg0 = 0;
-//         ok &= JS::ToNumber(cx, args.get(0), &arg0) && !std::isnan(arg0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setStartSpin : Error processing arguments");
-//         cobj->setStartSpin(arg0);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_setStartSpin(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setStartSpin : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_setStartSpin : Invalid Native Object");
+  //     if (argc == 1)
+  //     {
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setStartSpin : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  //         double arg0 = 0;
+  //         ok &= JS::ToNumber(cx, args.get(0), &arg0) && !std::isnan(arg0);
+  double startSpin = args[0]->NumberValue(isolate->GetCurrentContext()).FromJust();
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setStartSpin : Error processing arguments");
+  //         cobj->setStartSpin(arg0);
+  cParticleSystem->setStartSpin(startSpin);
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setStartSpin : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setStartSpin : wrong number of arguments: %d, was expecting %d", argc, 1);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_setDuration(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setDuration : Invalid Native Object");
-//     if (argc == 1)
-//     {
-//         double arg0 = 0;
-//         ok &= JS::ToNumber(cx, args.get(0), &arg0) && !std::isnan(arg0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setDuration : Error processing arguments");
-//         cobj->setDuration(arg0);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_setDuration(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setDuration : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_setDuration : Invalid Native Object");
+  //     if (argc == 1)
+  //     {
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setDuration : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  //         double arg0 = 0;
+  //         ok &= JS::ToNumber(cx, args.get(0), &arg0) && !std::isnan(arg0);
+  double duration = args[0]->NumberValue(isolate->GetCurrentContext()).FromJust();
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setDuration : Error processing arguments");
+  //         cobj->setDuration(arg0);
+  cParticleSystem->setDuration(duration);
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setDuration : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setDuration : wrong number of arguments: %d, was expecting %d", argc, 1);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_initWithTotalParticles(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_initWithTotalParticles : Invalid Native Object");
-//     if (argc == 1)
-//     {
-//         int arg0 = 0;
-//         ok &= jsval_to_int32(cx, args.get(0), (int32_t *)&arg0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_initWithTotalParticles : Error processing arguments");
-//         bool ret = cobj->initWithTotalParticles(arg0);
-//         JS::RootedValue jsret(cx);
-//         jsret = BOOLEAN_TO_JSVAL(ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_initWithTotalParticles(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_initWithTotalParticles : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_initWithTotalParticles : Invalid Native Object");
+  //     if (argc == 1)
+  //     {
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_initWithTotalParticles : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  //         int arg0 = 0;
+  //         ok &= jsval_to_int32(cx, args.get(0), (int32_t *)&arg0);
+  int totalParticles = args[0]->Int32Value(isolate->GetCurrentContext()).FromJust();
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_initWithTotalParticles : Error processing arguments");
+  //         bool ret = cobj->initWithTotalParticles(arg0);
+  bool ret = cParticleSystem->initWithTotalParticles(totalParticles);
+  args.GetReturnValue().Set(v8::Boolean::New(isolate, ret));
+  //         JS::RootedValue jsret(cx);
+  //         jsret = BOOLEAN_TO_JSVAL(ret);
+  //         args.rval().set(jsret);
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_initWithTotalParticles : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_initWithTotalParticles : wrong number of arguments: %d, was expecting %d", argc, 1);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_addParticles(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_addParticles : Invalid Native Object");
-//     if (argc == 1)
-//     {
-//         int arg0 = 0;
-//         ok &= jsval_to_int32(cx, args.get(0), (int32_t *)&arg0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_addParticles : Error processing arguments");
-//         cobj->addParticles(arg0);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_addParticles(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_addParticles : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_addParticles : Invalid Native Object");
+  //     if (argc == 1)
+  //     {
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_addParticles : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  //         int arg0 = 0;
+  //         ok &= jsval_to_int32(cx, args.get(0), (int32_t *)&arg0);
+  int particles = args[0]->Int32Value(isolate->GetCurrentContext()).FromJust();
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_addParticles : Error processing arguments");
+  //         cobj->addParticles(arg0);
+  cParticleSystem->addParticles(particles);
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_addParticles : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_addParticles : wrong number of arguments: %d, was expecting %d", argc, 1);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_setTexture(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setTexture : Invalid Native Object");
-//     if (argc == 1)
-//     {
-//         cocos2d::Texture2D *arg0 = nullptr;
-//         do
-//         {
-//             if (args.get(0).isNull())
-//             {
-//                 arg0 = nullptr;
-//                 break;
-//             }
-//             if (!args.get(0).isObject())
-//             {
-//                 ok = false;
-//                 break;
-//             }
-//             js_proxy_t *jsProxy;
-//             JS::RootedObject tmpObj(cx, args.get(0).toObjectOrNull());
-//             jsProxy = jsb_get_js_proxy(tmpObj);
-//             arg0 = (cocos2d::Texture2D *)(jsProxy ? jsProxy->ptr : NULL);
-//             JSB_PRECONDITION2(arg0, cx, false, "Invalid Native Object");
-//         } while (0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setTexture : Error processing arguments");
-//         cobj->setTexture(arg0);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_setTexture(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setTexture : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_setTexture : Invalid Native Object");
+  //     if (argc == 1)
+  //     {
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setTexture : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  //         cocos2d::Texture2D *arg0 = nullptr;
+  cocos2d::Texture2D *texture = nullptr;
+  //         do
+  //         {
+  //             if (args.get(0).isNull())
+  //             {
+  //                 arg0 = nullptr;
+  //                 break;
+  //             }
+  if (args[0]->IsNull())
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setTexture : Error processing arguments, texture is null");
+    return;
+  }
+  //             if (!args.get(0).isObject())
+  //             {
+  //                 ok = false;
+  //                 break;
+  //             }
+  if (!args[0]->IsObject())
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setTexture : Error processing arguments, texture is not an object");
+    return;
+  }
+  //             js_proxy_t *jsProxy;
+  //             JS::RootedObject tmpObj(cx, args.get(0).toObjectOrNull());
+  //             jsProxy = jsb_get_js_proxy(tmpObj);
+  //             arg0 = (cocos2d::Texture2D *)(jsProxy ? jsProxy->ptr : NULL);
+  v8::Local<v8::Object> textureObj = args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
+  cocos2d::Texture2D *texturePtr = (cocos2d::Texture2D *)textureObj->GetAlignedPointerFromInternalField(0);
+  //             JSB_PRECONDITION2(arg0, cx, false, "Invalid Native Object");
+  SE_PRECONDITION2(texturePtr, "js_cocos2dx_ParticleSystem_setTexture : Invalid Native Object");
+  cParticleSystem->setTexture(texturePtr);
+  //         } while (0);
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setTexture : Error processing arguments");
+  //         cobj->setTexture(arg0);
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setTexture : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setTexture : wrong number of arguments: %d, was expecting %d", argc, 1);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_getPosVar(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getPosVar : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         const cocos2d::Vec2 &ret = cobj->getPosVar();
-//         JS::RootedValue jsret(cx);
-//         jsret = vector2_to_jsval(cx, ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_getPosVar(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getPosVar : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_getPosVar : Invalid Native Object");
+  //     if (argc == 0)
+  //     {
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_getPosVar : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  //         const cocos2d::Vec2 &ret = cobj->getPosVar();
+  const cocos2d::Vec2 &ret = cParticleSystem->getPosVar();
+  //         JS::RootedValue jsret(cx);
+  //         jsret = vector2_to_jsval(cx, ret);
+  auto jsret = JsbUtils::vector2_to_jsval(isolate, ret);
+  //         args.rval().set(jsret);
+  args.GetReturnValue().Set(jsret);
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getPosVar : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getPosVar : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_updateWithNoTime(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_updateWithNoTime : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         cobj->updateWithNoTime();
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_updateWithNoTime(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_updateWithNoTime : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_updateWithNoTime : Invalid Native Object");
+  //     if (argc == 0)
+  //     {
+  //         cobj->updateWithNoTime();
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_updateWithNoTime : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  cParticleSystem->updateWithNoTime();
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_updateWithNoTime : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_updateWithNoTime : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_isBlendAdditive(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_isBlendAdditive : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         bool ret = cobj->isBlendAdditive();
-//         JS::RootedValue jsret(cx);
-//         jsret = BOOLEAN_TO_JSVAL(ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_isBlendAdditive(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_isBlendAdditive : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_isBlendAdditive : Invalid Native Object");
+  //     if (argc == 0)
+  //     {
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_isBlendAdditive : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  //         bool ret = cobj->isBlendAdditive();
+  bool ret = cParticleSystem->isBlendAdditive();
+  //         JS::RootedValue jsret(cx);
+  //         jsret = BOOLEAN_TO_JSVAL(ret);
+  //         args.rval().set(jsret);
+  args.GetReturnValue().Set(v8::Boolean::New(isolate, ret));
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_isBlendAdditive : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_isBlendAdditive : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_getSpeedVar(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getSpeedVar : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         double ret = cobj->getSpeedVar();
-//         JS::RootedValue jsret(cx);
-//         jsret = DOUBLE_TO_JSVAL(ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_getSpeedVar(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getSpeedVar : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_getSpeedVar : Invalid Native Object");
+  //     if (argc == 0)
+  //     {
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_getSpeedVar : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  //         double ret = cobj->getSpeedVar();
+  double ret = cParticleSystem->getSpeedVar();
+  //         JS::RootedValue jsret(cx);
+  //         jsret = DOUBLE_TO_JSVAL(ret);
+  //         args.rval().set(jsret);
+  args.GetReturnValue().Set(v8::Number::New(isolate, ret));
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getSpeedVar : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getSpeedVar : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_setPositionType(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setPositionType : Invalid Native Object");
-//     if (argc == 1)
-//     {
-//         cocos2d::ParticleSystem::PositionType arg0;
-//         ok &= jsval_to_int32(cx, args.get(0), (int32_t *)&arg0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setPositionType : Error processing arguments");
-//         cobj->setPositionType(arg0);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_setPositionType(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setPositionType : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_setPositionType : Invalid Native Object");
+  //     if (argc == 1)
+  //     {
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setPositionType : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  //         cocos2d::ParticleSystem::PositionType arg0;
+  cocos2d::ParticleSystem::PositionType positionType = (cocos2d::ParticleSystem::PositionType)args[0]->Int32Value(isolate->GetCurrentContext()).FromJust();
+  //         ok &= jsval_to_int32(cx, args.get(0), (int32_t *)&arg0);
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setPositionType : Error processing arguments");
+  //         cobj->setPositionType(arg0);
+  cParticleSystem->setPositionType(positionType);
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setPositionType : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setPositionType : wrong number of arguments: %d, was expecting %d", argc, 1);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_stopSystem(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_stopSystem : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         cobj->stopSystem();
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_stopSystem(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_stopSystem : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_stopSystem : Invalid Native Object");
+  //     if (argc == 0)
+  //     {
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_stopSystem : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  cParticleSystem->stopSystem();
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_stopSystem : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_stopSystem : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_getSourcePosition(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getSourcePosition : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         const cocos2d::Vec2 &ret = cobj->getSourcePosition();
-//         JS::RootedValue jsret(cx);
-//         jsret = vector2_to_jsval(cx, ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_getSourcePosition(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getSourcePosition : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_getSourcePosition : Invalid Native Object");
+  //     if (argc == 0)
+  //     {
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_getSourcePosition : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  //         const cocos2d::Vec2 &ret = cobj->getSourcePosition();
+  const cocos2d::Vec2 &ret = cParticleSystem->getSourcePosition();
+  auto jsret = JsbUtils::vector2_to_jsval(isolate, ret);
+  //         JS::RootedValue jsret(cx);
+  //         jsret = vector2_to_jsval(cx, ret);
+  //         args.rval().set(jsret);
+  args.GetReturnValue().Set(jsret);
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getSourcePosition : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getSourcePosition : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_setLifeVar(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setLifeVar : Invalid Native Object");
-//     if (argc == 1)
-//     {
-//         double arg0 = 0;
-//         ok &= JS::ToNumber(cx, args.get(0), &arg0) && !std::isnan(arg0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setLifeVar : Error processing arguments");
-//         cobj->setLifeVar(arg0);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_setLifeVar(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setLifeVar : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_setLifeVar : Invalid Native Object");
+  //     if (argc == 1)
+  //     {
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setLifeVar : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  //         double arg0 = 0;
+  //         ok &= JS::ToNumber(cx, args.get(0), &arg0) && !std::isnan(arg0);
+  float lifeVar = args[0]->NumberValue(isolate->GetCurrentContext()).FromJust();
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setLifeVar : Error processing arguments");
+  //         cobj->setLifeVar(arg0);
+  cParticleSystem->setLifeVar(lifeVar);
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setLifeVar : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setLifeVar : wrong number of arguments: %d, was expecting %d", argc, 1);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_setTotalParticles(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setTotalParticles : Invalid Native Object");
-//     if (argc == 1)
-//     {
-//         int arg0 = 0;
-//         ok &= jsval_to_int32(cx, args.get(0), (int32_t *)&arg0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setTotalParticles : Error processing arguments");
-//         cobj->setTotalParticles(arg0);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_setTotalParticles(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setTotalParticles : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_setTotalParticles : Invalid Native Object");
+  //     if (argc == 1)
+  //     {
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setTotalParticles : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  //         int arg0 = 0;
+  //         ok &= jsval_to_int32(cx, args.get(0), (int32_t *)&arg0);
+  int totalParticles = args[0]->Int32Value(isolate->GetCurrentContext()).FromJust();
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setTotalParticles : Error processing arguments");
+  //         cobj->setTotalParticles(arg0);
+  cParticleSystem->setTotalParticles(totalParticles);
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setTotalParticles : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setTotalParticles : wrong number of arguments: %d, was expecting %d", argc, 1);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_setEndColorVar(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setEndColorVar : Invalid Native Object");
-//     if (argc == 1)
-//     {
-//         cocos2d::Color4F arg0;
-//         ok &= jsval_to_cccolor4f(cx, args.get(0), &arg0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setEndColorVar : Error processing arguments");
-//         cobj->setEndColorVar(arg0);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_setEndColorVar(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setEndColorVar : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_setEndColorVar : Invalid Native Object");
+  //     if (argc == 1)
+  //     {
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setEndColorVar : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  //         cocos2d::Color4F arg0;
+  //         ok &= jsval_to_cccolor4f(cx, args.get(0), &arg0);
+  cocos2d::Color4F color;
+  if (!JsbUtils::jsval_to_cccolor4f(isolate, args[0], &color))
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setEndColorVar : Error processing arguments, expected Color4F");
+    return;
+  }
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setEndColorVar : Error processing arguments");
+  //         cobj->setEndColorVar(arg0);
+  cParticleSystem->setEndColorVar(color);
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setEndColorVar : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setEndColorVar : wrong number of arguments: %d, was expecting %d", argc, 1);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_getAtlasIndex(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getAtlasIndex : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         int ret = cobj->getAtlasIndex();
-//         JS::RootedValue jsret(cx);
-//         jsret = int32_to_jsval(cx, ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_getAtlasIndex(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_getAtlasIndex : Invalid Native Object");
+  //     if (argc == 0)
+  //     {
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_getAtlasIndex : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  //         int ret = cobj->getAtlasIndex();
+  int ret = cParticleSystem->getAtlasIndex();
+  //         JS::RootedValue jsret(cx);
+  //         jsret = int32_to_jsval(cx, ret);
+  //         args.rval().set(jsret);
+  args.GetReturnValue().Set(v8::Integer::New(isolate, ret));
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getAtlasIndex : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getAtlasIndex : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_getStartSize(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getStartSize : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         double ret = cobj->getStartSize();
-//         JS::RootedValue jsret(cx);
-//         jsret = DOUBLE_TO_JSVAL(ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_getStartSize(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_getStartSize : Invalid Native Object");
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_getStartSize : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  double ret = cParticleSystem->getStartSize();
+  args.GetReturnValue().Set(v8::Number::New(isolate, ret));
+}
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getStartSize : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
 // bool js_cocos2dx_ParticleSystem_setStartSpinVar(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setStartSpinVar : Invalid Native Object");
-//     if (argc == 1)
-//     {
-//         double arg0 = 0;
-//         ok &= JS::ToNumber(cx, args.get(0), &arg0) && !std::isnan(arg0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setStartSpinVar : Error processing arguments");
-//         cobj->setStartSpinVar(arg0);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_setStartSpinVar(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_setStartSpinVar : Invalid Native Object");
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setStartSpinVar : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  double spinVar = args[0]->NumberValue(isolate->GetCurrentContext()).FromJust();
+  cParticleSystem->setStartSpinVar(spinVar);
+}
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setStartSpinVar : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
 // bool js_cocos2dx_ParticleSystem_resetSystem(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_resetSystem : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         cobj->resetSystem();
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_resetSystem(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_resetSystem : Invalid Native Object");
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_resetSystem : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  cParticleSystem->resetSystem();
+}
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_resetSystem : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
 // bool js_cocos2dx_ParticleSystem_setAtlasIndex(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setAtlasIndex : Invalid Native Object");
-//     if (argc == 1)
-//     {
-//         int arg0 = 0;
-//         ok &= jsval_to_int32(cx, args.get(0), (int32_t *)&arg0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setAtlasIndex : Error processing arguments");
-//         cobj->setAtlasIndex(arg0);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_setAtlasIndex(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_setAtlasIndex : Invalid Native Object");
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setAtlasIndex : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  int atlasIndex = args[0]->Int32Value(isolate->GetCurrentContext()).FromJust();
+  cParticleSystem->setAtlasIndex(atlasIndex);
+}
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setAtlasIndex : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
 // bool js_cocos2dx_ParticleSystem_setTangentialAccelVar(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setTangentialAccelVar : Invalid Native Object");
-//     if (argc == 1)
-//     {
-//         double arg0 = 0;
-//         ok &= JS::ToNumber(cx, args.get(0), &arg0) && !std::isnan(arg0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setTangentialAccelVar : Error processing arguments");
-//         cobj->setTangentialAccelVar(arg0);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_setTangentialAccelVar(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_setTangentialAccelVar : Invalid Native Object");
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setTangentialAccelVar : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  double tangentialAccelVar = args[0]->NumberValue(isolate->GetCurrentContext()).FromJust();
+  cParticleSystem->setTangentialAccelVar(tangentialAccelVar);
+}
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setTangentialAccelVar : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
 // bool js_cocos2dx_ParticleSystem_setEndRadiusVar(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setEndRadiusVar : Invalid Native Object");
-//     if (argc == 1)
-//     {
-//         double arg0 = 0;
-//         ok &= JS::ToNumber(cx, args.get(0), &arg0) && !std::isnan(arg0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setEndRadiusVar : Error processing arguments");
-//         cobj->setEndRadiusVar(arg0);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_setEndRadiusVar(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_setEndRadiusVar : Invalid Native Object");
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setEndRadiusVar : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  double endRadiusVar = args[0]->NumberValue(isolate->GetCurrentContext()).FromJust();
+  cParticleSystem->setEndRadiusVar(endRadiusVar);
+}
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setEndRadiusVar : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
 // bool js_cocos2dx_ParticleSystem_getEndRadius(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getEndRadius : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         double ret = cobj->getEndRadius();
-//         JS::RootedValue jsret(cx);
-//         jsret = DOUBLE_TO_JSVAL(ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_getEndRadius(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getEndRadius : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_getEndRadius : Invalid Native Object");
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_getEndRadius : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  //     if (argc == 0)
+  //     {
+  //         double ret = cobj->getEndRadius();
+  double ret = cParticleSystem->getEndRadius();
+  //         JS::RootedValue jsret(cx);
+  //         jsret = DOUBLE_TO_JSVAL(ret);
+  //         args.rval().set(jsret);
+  args.GetReturnValue().Set(v8::Number::New(isolate, ret));
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getEndRadius : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getEndRadius : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
 // bool js_cocos2dx_ParticleSystem_isActive(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_isActive : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         bool ret = cobj->isActive();
-//         JS::RootedValue jsret(cx);
-//         jsret = BOOLEAN_TO_JSVAL(ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_isActive(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_isActive : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_isActive : Invalid Native Object");
+  //     if (argc == 0)
+  //     {
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_isActive : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  //         bool ret = cobj->isActive();
+  bool ret = cParticleSystem->isActive();
+  args.GetReturnValue().Set(v8::Boolean::New(isolate, ret));
+  //         JS::RootedValue jsret(cx);
+  //         jsret = BOOLEAN_TO_JSVAL(ret);
+  //         args.rval().set(jsret);
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_isActive : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_isActive : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_setRadialAccelVar(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setRadialAccelVar : Invalid Native Object");
-//     if (argc == 1)
-//     {
-//         double arg0 = 0;
-//         ok &= JS::ToNumber(cx, args.get(0), &arg0) && !std::isnan(arg0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setRadialAccelVar : Error processing arguments");
-//         cobj->setRadialAccelVar(arg0);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_setRadialAccelVar(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setRadialAccelVar : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_setRadialAccelVar : Invalid Native Object");
+  //     if (argc == 1)
+  //     {
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setRadialAccelVar : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  //         double arg0 = 0;
+  //         ok &= JS::ToNumber(cx, args.get(0), &arg0) && !std::isnan(arg0);
+  double radialAccelVar = args[0]->NumberValue(isolate->GetCurrentContext()).FromJust();
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setRadialAccelVar : Error processing arguments");
+  //         cobj->setRadialAccelVar(arg0);
+  cParticleSystem->setRadialAccelVar(radialAccelVar);
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setRadialAccelVar : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setRadialAccelVar : wrong number of arguments: %d, was expecting %d", argc, 1);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_setStartSize(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setStartSize : Invalid Native Object");
-//     if (argc == 1)
-//     {
-//         double arg0 = 0;
-//         ok &= JS::ToNumber(cx, args.get(0), &arg0) && !std::isnan(arg0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setStartSize : Error processing arguments");
-//         cobj->setStartSize(arg0);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_setStartSize(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_setStartSize : Invalid Native Object");
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setStartSize : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  double startSize = args[0]->NumberValue(isolate->GetCurrentContext()).FromJust();
+  cParticleSystem->setStartSize(startSize);
+}
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setStartSize : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
 // bool js_cocos2dx_ParticleSystem_setSpeed(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setSpeed : Invalid Native Object");
-//     if (argc == 1)
-//     {
-//         double arg0 = 0;
-//         ok &= JS::ToNumber(cx, args.get(0), &arg0) && !std::isnan(arg0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setSpeed : Error processing arguments");
-//         cobj->setSpeed(arg0);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_setSpeed(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_setSpeed : Invalid Native Object");
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setSpeed : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  double speed = args[0]->NumberValue(isolate->GetCurrentContext()).FromJust();
+  cParticleSystem->setSpeed(speed);
+}
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setSpeed : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
 // bool js_cocos2dx_ParticleSystem_getStartSpin(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getStartSpin : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         double ret = cobj->getStartSpin();
-//         JS::RootedValue jsret(cx);
-//         jsret = DOUBLE_TO_JSVAL(ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_getStartSpin(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_getStartSpin : Invalid Native Object");
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_getStartSpin : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  double ret = cParticleSystem->getStartSpin();
+  args.GetReturnValue().Set(v8::Number::New(isolate, ret));
+}
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getStartSpin : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
 // bool js_cocos2dx_ParticleSystem_getResourceFile(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getResourceFile : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         const std::string &ret = cobj->getResourceFile();
-//         JS::RootedValue jsret(cx);
-//         jsret = std_string_to_jsval(cx, ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_getResourceFile(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_getResourceFile : Invalid Native Object");
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_getResourceFile : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  const std::string &ret = cParticleSystem->getResourceFile();
+  auto jsret = JsbUtils::ToV8String(isolate, ret);
+  args.GetReturnValue().Set(jsret);
+}
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getResourceFile : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
 // bool js_cocos2dx_ParticleSystem_getRotatePerSecond(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getRotatePerSecond : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         double ret = cobj->getRotatePerSecond();
-//         JS::RootedValue jsret(cx);
-//         jsret = DOUBLE_TO_JSVAL(ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_getRotatePerSecond(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_getRotatePerSecond : Invalid Native Object");
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_getRotatePerSecond : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  double ret = cParticleSystem->getRotatePerSecond();
+  args.GetReturnValue().Set(v8::Number::New(isolate, ret));
+}
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getRotatePerSecond : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
 // bool js_cocos2dx_ParticleSystem_setEmitterMode(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setEmitterMode : Invalid Native Object");
-//     if (argc == 1)
-//     {
-//         cocos2d::ParticleSystem::Mode arg0;
-//         ok &= jsval_to_int32(cx, args.get(0), (int32_t *)&arg0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setEmitterMode : Error processing arguments");
-//         cobj->setEmitterMode(arg0);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_setEmitterMode(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setEmitterMode : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_setEmitterMode : Invalid Native Object");
+  //     if (argc == 1)
+  //     {
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setEmitterMode : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  //         cocos2d::ParticleSystem::Mode arg0;
+  //         ok &= jsval_to_int32(cx, args.get(0), (int32_t *)&arg0);
+  cocos2d::ParticleSystem::Mode mode = static_cast<cocos2d::ParticleSystem::Mode>(args[0]->Int32Value(isolate->GetCurrentContext()).FromJust());
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setEmitterMode : Error processing arguments");
+  //         cobj->setEmitterMode(arg0);
+  cParticleSystem->setEmitterMode(mode);
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setEmitterMode : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setEmitterMode : wrong number of arguments: %d, was expecting %d", argc, 1);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_getDuration(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getDuration : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         double ret = cobj->getDuration();
-//         JS::RootedValue jsret(cx);
-//         jsret = DOUBLE_TO_JSVAL(ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_getDuration(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getDuration : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_getDuration : Invalid Native Object");
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_getDuration : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  //     if (argc == 0)
+  //     {
+  //         double ret = cobj->getDuration();
+  double ret = cParticleSystem->getDuration();
+  //         JS::RootedValue jsret(cx);
+  //         jsret = DOUBLE_TO_JSVAL(ret);
+  args.GetReturnValue().Set(ret);
+  //         args.rval().set(jsret);
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getDuration : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getDuration : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_setSourcePosition(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setSourcePosition : Invalid Native Object");
-//     if (argc == 1)
-//     {
-//         cocos2d::Vec2 arg0;
-//         ok &= jsval_to_vector2(cx, args.get(0), &arg0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setSourcePosition : Error processing arguments");
-//         cobj->setSourcePosition(arg0);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_setSourcePosition(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_setSourcePosition : Invalid Native Object");
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setSourcePosition : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  cocos2d::Vec2 sourcePosition;
+  if (!JsbUtils::jsval_to_vector2(isolate, args[0], &sourcePosition))
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setSourcePosition : Error processing arguments, expected Vec2");
+    return;
+  }
+  cParticleSystem->setSourcePosition(sourcePosition);
+}
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setSourcePosition : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
 // bool js_cocos2dx_ParticleSystem_stop(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_stop : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         cobj->stop();
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_stop(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_stop : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_stop : Invalid Native Object");
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_stop : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  cParticleSystem->stop();
+}
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_stop : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
 // bool js_cocos2dx_ParticleSystem_updateParticleQuads(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_updateParticleQuads : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         cobj->updateParticleQuads();
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_updateParticleQuads(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_updateParticleQuads : Invalid Native Object");
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_updateParticleQuads : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  cParticleSystem->updateParticleQuads();
+}
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_updateParticleQuads : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
 // bool js_cocos2dx_ParticleSystem_getEndSpinVar(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getEndSpinVar : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         double ret = cobj->getEndSpinVar();
-//         JS::RootedValue jsret(cx);
-//         jsret = DOUBLE_TO_JSVAL(ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_getEndSpinVar(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getEndSpinVar : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getEndSpinVar : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_getEndSpinVar : Invalid Native Object");
+  //     if (argc == 0)
+  //     {
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_getEndSpinVar : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  //         double ret = cobj->getEndSpinVar();
+  double ret = cParticleSystem->getEndSpinVar();
+  args.GetReturnValue().Set(v8::Number::New(isolate, ret));
+  //         JS::RootedValue jsret(cx);
+  //         jsret = DOUBLE_TO_JSVAL(ret);
+  //         args.rval().set(jsret);
+  //         return true;
+  //     }
+
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getEndSpinVar : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_setBlendAdditive(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setBlendAdditive : Invalid Native Object");
-//     if (argc == 1)
-//     {
-//         bool arg0;
-//         arg0 = JS::ToBoolean(args.get(0));
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setBlendAdditive : Error processing arguments");
-//         cobj->setBlendAdditive(arg0);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_setBlendAdditive(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_setBlendAdditive : Invalid Native Object");
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setBlendAdditive : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  bool blendAdditive = args[0]->BooleanValue(isolate);
+  cParticleSystem->setBlendAdditive(blendAdditive);
+}
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setBlendAdditive : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
 // bool js_cocos2dx_ParticleSystem_setLife(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setLife : Invalid Native Object");
-//     if (argc == 1)
-//     {
-//         double arg0 = 0;
-//         ok &= JS::ToNumber(cx, args.get(0), &arg0) && !std::isnan(arg0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setLife : Error processing arguments");
-//         cobj->setLife(arg0);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_setLife(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_setLife : Invalid Native Object");
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setLife : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  double life = args[0]->NumberValue(isolate->GetCurrentContext()).FromJust();
+  cParticleSystem->setLife(life);
+}
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setLife : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
 // bool js_cocos2dx_ParticleSystem_setAngleVar(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setAngleVar : Invalid Native Object");
-//     if (argc == 1)
-//     {
-//         double arg0 = 0;
-//         ok &= JS::ToNumber(cx, args.get(0), &arg0) && !std::isnan(arg0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setAngleVar : Error processing arguments");
-//         cobj->setAngleVar(arg0);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_setAngleVar(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setAngleVar : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_setAngleVar : Invalid Native Object");
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setAngleVar : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  //     if (argc == 1)
+  //     {
+  //         double arg0 = 0;
+  //         ok &= JS::ToNumber(cx, args.get(0), &arg0) && !std::isnan(arg0);
+  double angleVar = args[0]->NumberValue(isolate->GetCurrentContext()).FromJust();
+  cParticleSystem->setAngleVar(angleVar);
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setAngleVar : Error processing arguments");
+  //         cobj->setAngleVar(arg0);
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setAngleVar : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setAngleVar : wrong number of arguments: %d, was expecting %d", argc, 1);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_setRotationIsDir(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setRotationIsDir : Invalid Native Object");
-//     if (argc == 1)
-//     {
-//         bool arg0;
-//         arg0 = JS::ToBoolean(args.get(0));
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setRotationIsDir : Error processing arguments");
-//         cobj->setRotationIsDir(arg0);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_setRotationIsDir(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setRotationIsDir : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_setRotationIsDir : Invalid Native Object");
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setRotationIsDir : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  bool rotationIsDir = args[0]->BooleanValue(isolate);
+  cParticleSystem->setRotationIsDir(rotationIsDir);
+  //     if (argc == 1)
+  //     {
+  //         bool arg0;
+  //         arg0 = JS::ToBoolean(args.get(0));
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setRotationIsDir : Error processing arguments");
+  //         cobj->setRotationIsDir(arg0);
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setRotationIsDir : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setRotationIsDir : wrong number of arguments: %d, was expecting %d", argc, 1);
+  //     return false;
+}
 
 // bool js_cocos2dx_ParticleSystem_start(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_start : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         cobj->start();
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_start(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_start : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_start : Invalid Native Object");
+  //     if (argc == 0)
+  //     {
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_start : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  //         cobj->start();
+  cParticleSystem->start();
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_start : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_start : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_setEndSizeVar(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setEndSizeVar : Invalid Native Object");
-//     if (argc == 1)
-//     {
-//         double arg0 = 0;
-//         ok &= JS::ToNumber(cx, args.get(0), &arg0) && !std::isnan(arg0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setEndSizeVar : Error processing arguments");
-//         cobj->setEndSizeVar(arg0);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_setEndSizeVar(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_setEndSizeVar : Invalid Native Object");
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setEndSizeVar : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  double endSizeVar = args[0]->NumberValue(isolate->GetCurrentContext()).FromJust();
+  cParticleSystem->setEndSizeVar(endSizeVar);
+}
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setEndSizeVar : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
 // bool js_cocos2dx_ParticleSystem_setAngle(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setAngle : Invalid Native Object");
-//     if (argc == 1)
-//     {
-//         double arg0 = 0;
-//         ok &= JS::ToNumber(cx, args.get(0), &arg0) && !std::isnan(arg0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setAngle : Error processing arguments");
-//         cobj->setAngle(arg0);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_setAngle(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setAngle : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_setAngle : Invalid Native Object");
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setAngle : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  //     if (argc == 1)
+  //     {
+  //         double arg0 = 0;
+  //         ok &= JS::ToNumber(cx, args.get(0), &arg0) && !std::isnan(arg0);
+  double angle = args[0]->NumberValue(isolate->GetCurrentContext()).FromJust();
+  cParticleSystem->setAngle(angle);
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setAngle : Error processing arguments");
+  //         cobj->setAngle(arg0);
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setAngle : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setAngle : wrong number of arguments: %d, was expecting %d", argc, 1);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_setBatchNode(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setBatchNode : Invalid Native Object");
-//     if (argc == 1)
-//     {
-//         cocos2d::ParticleBatchNode *arg0 = nullptr;
-//         do
-//         {
-//             if (args.get(0).isNull())
-//             {
-//                 arg0 = nullptr;
-//                 break;
-//             }
-//             if (!args.get(0).isObject())
-//             {
-//                 ok = false;
-//                 break;
-//             }
-//             js_proxy_t *jsProxy;
-//             JS::RootedObject tmpObj(cx, args.get(0).toObjectOrNull());
-//             jsProxy = jsb_get_js_proxy(tmpObj);
-//             arg0 = (cocos2d::ParticleBatchNode *)(jsProxy ? jsProxy->ptr : NULL);
-//             JSB_PRECONDITION2(arg0, cx, false, "Invalid Native Object");
-//         } while (0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setBatchNode : Error processing arguments");
-//         cobj->setBatchNode(arg0);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_setBatchNode(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setBatchNode : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_setBatchNode : Invalid Native Object");
+  //     if (argc == 1)
+  //     {
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setBatchNode : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  //         cocos2d::ParticleBatchNode *arg0 = nullptr;
+  cocos2d::ParticleBatchNode *batchNode = nullptr;
+  //         do
+  //         {
+  //             if (args.get(0).isNull())
+  //             {
+  //                 arg0 = nullptr;
+  //                 break;
+  //             }
+  if (args[0]->IsNull())
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setBatchNode : argument is null, expected ParticleBatchNode");
+    return;
+  }
+  //             if (!args.get(0).isObject())
+  //             {
+  //                 ok = false;
+  //                 break;
+  //             }
+  if (!args[0]->IsObject())
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setBatchNode : argument is not an object, expected ParticleBatchNode");
+    return;
+  }
+  //             js_proxy_t *jsProxy;
+  //             JS::RootedObject tmpObj(cx, args.get(0).toObjectOrNull());
+  //             jsProxy = jsb_get_js_proxy(tmpObj);
+  //             arg0 = (cocos2d::ParticleBatchNode *)(jsProxy ? jsProxy->ptr : NULL);
+  v8::Local<v8::Object> obj = args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
+  cocos2d::ParticleBatchNode *batchNode = (cocos2d::ParticleBatchNode *)obj->GetAlignedPointerFromInternalField(0);
+  //             JSB_PRECONDITION2(arg0, cx, false, "Invalid Native Object");
+  SE_PRECONDITION2(batchNode, "js_cocos2dx_ParticleSystem_setBatchNode : Invalid Native Object");
+  //         } while (0);
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setBatchNode : Error processing arguments");
+  //         cobj->setBatchNode(arg0);
+  cParticleSystem->setBatchNode(batchNode);
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setBatchNode : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setBatchNode : wrong number of arguments: %d, was expecting %d", argc, 1);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_getTangentialAccelVar(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getTangentialAccelVar : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         double ret = cobj->getTangentialAccelVar();
-//         JS::RootedValue jsret(cx);
-//         jsret = DOUBLE_TO_JSVAL(ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_getTangentialAccelVar(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getTangentialAccelVar : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_getTangentialAccelVar : Invalid Native Object");
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_getTangentialAccelVar : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  //     if (argc == 0)
+  //     {
+  //         double ret = cobj->getTangentialAccelVar();
+  double ret = cParticleSystem->getTangentialAccelVar();
+  args.GetReturnValue().Set(v8::Number::New(isolate, ret));
+  //         JS::RootedValue jsret(cx);
+  //         jsret = DOUBLE_TO_JSVAL(ret);
+  //         args.rval().set(jsret);
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getTangentialAccelVar : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getTangentialAccelVar : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_getEmitterMode(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getEmitterMode : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         int ret = (int)cobj->getEmitterMode();
-//         JS::RootedValue jsret(cx);
-//         jsret = int32_to_jsval(cx, ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_getEmitterMode(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getEmitterMode : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_getEmitterMode : Invalid Native Object");
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_getEmitterMode : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  //     if (argc == 0)
+  //     {
+  //         int ret = (int)cobj->getEmitterMode();
+  int ret = (int)cParticleSystem->getEmitterMode();
+  args.GetReturnValue().Set(v8::Integer::New(isolate, ret));
+  //         JS::RootedValue jsret(cx);
+  //         jsret = int32_to_jsval(cx, ret);
+  //         args.rval().set(jsret);
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getEmitterMode : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getEmitterMode : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_setEndSpinVar(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setEndSpinVar : Invalid Native Object");
-//     if (argc == 1)
-//     {
-//         double arg0 = 0;
-//         ok &= JS::ToNumber(cx, args.get(0), &arg0) && !std::isnan(arg0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setEndSpinVar : Error processing arguments");
-//         cobj->setEndSpinVar(arg0);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_setEndSpinVar(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setEndSpinVar : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_setEndSpinVar : Invalid Native Object");
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setEndSpinVar : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  //     if (argc == 1)
+  //     {
+  //         double arg0 = 0;
+  //         ok &= JS::ToNumber(cx, args.get(0), &arg0) && !std::isnan(arg0);
+  double endSpinVar = args[0]->NumberValue(isolate->GetCurrentContext()).FromJust();
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setEndSpinVar : Error processing arguments");
+  //         cobj->setEndSpinVar(arg0);
+  cParticleSystem->setEndSpinVar(endSpinVar);
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setEndSpinVar : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setEndSpinVar : wrong number of arguments: %d, was expecting %d", argc, 1);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_initWithFile(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_initWithFile : Invalid Native Object");
-//     if (argc == 1)
-//     {
-//         std::string arg0;
-//         ok &= jsval_to_std_string(cx, args.get(0), &arg0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_initWithFile : Error processing arguments");
-//         bool ret = cobj->initWithFile(arg0);
-//         JS::RootedValue jsret(cx);
-//         jsret = BOOLEAN_TO_JSVAL(ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_initWithFile(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_initWithFile : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_initWithFile : Invalid Native Object");
+  //     if (argc == 1)
+  //     {
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_initWithFile : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  //         std::string arg0;
+  //         ok &= jsval_to_std_string(cx, args.get(0), &arg0);
+  std::string filename = JsbUtils::FromV8String(isolate, args[0]);
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_initWithFile : Error processing arguments");
+  //         bool ret = cobj->initWithFile(arg0);
+  bool ret = cParticleSystem->initWithFile(filename);
+  //         JS::RootedValue jsret(cx);
+  //         jsret = BOOLEAN_TO_JSVAL(ret);
+  //         args.rval().set(jsret);
+  args.GetReturnValue().Set(v8::Boolean::New(isolate, ret));
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_initWithFile : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_initWithFile : wrong number of arguments: %d, was expecting %d", argc, 1);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_getAngleVar(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getAngleVar : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         double ret = cobj->getAngleVar();
-//         JS::RootedValue jsret(cx);
-//         jsret = DOUBLE_TO_JSVAL(ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_getAngleVar(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getAngleVar : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_getAngleVar : Invalid Native Object");
+  //     if (argc == 0)
+  //     {
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_getAngleVar : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  //         double ret = cobj->getAngleVar();
+  double ret = cParticleSystem->getAngleVar();
+  args.GetReturnValue().Set(v8::Number::New(isolate, ret));
+  //         JS::RootedValue jsret(cx);
+  //         jsret = DOUBLE_TO_JSVAL(ret);
+  //         args.rval().set(jsret);
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getAngleVar : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getAngleVar : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_setStartColor(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setStartColor : Invalid Native Object");
-//     if (argc == 1)
-//     {
-//         cocos2d::Color4F arg0;
-//         ok &= jsval_to_cccolor4f(cx, args.get(0), &arg0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setStartColor : Error processing arguments");
-//         cobj->setStartColor(arg0);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_setStartColor(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setStartColor : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_setStartColor : Invalid Native Object");
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setStartColor : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  //     if (argc == 1)
+  //     {
+  //         cocos2d::Color4F arg0;
+  cocos2d::Color4F startColor;
+  if (!JsbUtils::jsval_to_cccolor4f(isolate, args[0], &startColor))
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setStartColor : Error processing arguments");
+    return;
+  }
+  //         ok &= jsval_to_cccolor4f(cx, args.get(0), &arg0);
+  JsbUtils::jsval_to_cccolor4f(isolate, args[0], &startColor);
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setStartColor : Error processing arguments");
+  SE_PRECONDITION2(true, "js_cocos2dx_ParticleSystem_setStartColor : Error processing arguments");
+  //         cobj->setStartColor(arg0);
+  cParticleSystem->setStartColor(startColor);
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setStartColor : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setStartColor : wrong number of arguments: %d, was expecting %d", argc, 1);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_getRotatePerSecondVar(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getRotatePerSecondVar : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         double ret = cobj->getRotatePerSecondVar();
-//         JS::RootedValue jsret(cx);
-//         jsret = DOUBLE_TO_JSVAL(ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_getRotatePerSecondVar(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getRotatePerSecondVar : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_getRotatePerSecondVar : Invalid Native Object");
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_getRotatePerSecondVar : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  //     if (argc == 0)
+  //     {
+  //         double ret = cobj->getRotatePerSecondVar();
+  double ret = cParticleSystem->getRotatePerSecondVar();
+  args.GetReturnValue().Set(v8::Number::New(isolate, ret));
+  //         JS::RootedValue jsret(cx);
+  //         jsret = DOUBLE_TO_JSVAL(ret);
+  //         args.rval().set(jsret);
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getRotatePerSecondVar : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getRotatePerSecondVar : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_getEndSize(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getEndSize : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         double ret = cobj->getEndSize();
-//         JS::RootedValue jsret(cx);
-//         jsret = DOUBLE_TO_JSVAL(ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_getEndSize(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getEndSize : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_getEndSize : Invalid Native Object");
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_getEndSize : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  //     if (argc == 0)
+  //     {
+  //         double ret = cobj->getEndSize();
+  double ret = cParticleSystem->getEndSize();
+  //         JS::RootedValue jsret(cx);
+  //         jsret = DOUBLE_TO_JSVAL(ret);
+  //         args.rval().set(jsret);
+  args.GetReturnValue().Set(v8::Number::New(isolate, ret));
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getEndSize : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getEndSize : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_getLife(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getLife : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         double ret = cobj->getLife();
-//         JS::RootedValue jsret(cx);
-//         jsret = DOUBLE_TO_JSVAL(ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_getLife(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getLife : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_getLife : Invalid Native Object");
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_getLife : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  //         double ret = cobj->getLife();
+  double ret = cParticleSystem->getLife();
+  args.GetReturnValue().Set(v8::Number::New(isolate, ret));
+}
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getLife : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
 // bool js_cocos2dx_ParticleSystem_isPaused(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_isPaused : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         bool ret = cobj->isPaused();
-//         JS::RootedValue jsret(cx);
-//         jsret = BOOLEAN_TO_JSVAL(ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_isPaused(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_isPaused : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_isPaused : Invalid Native Object");
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_isPaused : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  //     if (argc == 0)
+  //     {
+  //         bool ret = cobj->isPaused();
+  bool ret = cParticleSystem->isPaused();
+  args.GetReturnValue().Set(v8::Boolean::New(isolate, ret));
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_isPaused : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_isPaused : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_setSpeedVar(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setSpeedVar : Invalid Native Object");
-//     if (argc == 1)
-//     {
-//         double arg0 = 0;
-//         ok &= JS::ToNumber(cx, args.get(0), &arg0) && !std::isnan(arg0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setSpeedVar : Error processing arguments");
-//         cobj->setSpeedVar(arg0);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_setSpeedVar(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setSpeedVar : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_setSpeedVar : Invalid Native Object");
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setSpeedVar : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  //     if (argc == 1)
+  //     {
+  //         double arg0 = 0;
+  //         ok &= JS::ToNumber(cx, args.get(0), &arg0) && !std::isnan(arg0);
+  double speedVar = args[0]->NumberValue(isolate->GetCurrentContext()).FromJust();
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setSpeedVar : Error processing arguments");
+  //         cobj->setSpeedVar(arg0);
+  cParticleSystem->setSpeedVar(speedVar);
+}
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setSpeedVar : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
 // bool js_cocos2dx_ParticleSystem_setAutoRemoveOnFinish(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setAutoRemoveOnFinish : Invalid Native Object");
-//     if (argc == 1)
-//     {
-//         bool arg0;
-//         arg0 = JS::ToBoolean(args.get(0));
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setAutoRemoveOnFinish : Error processing arguments");
-//         cobj->setAutoRemoveOnFinish(arg0);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_setAutoRemoveOnFinish(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setAutoRemoveOnFinish : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_setAutoRemoveOnFinish : Invalid Native Object");
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setAutoRemoveOnFinish : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  //     if (argc == 1)
+  //     {
+  //         bool arg0;
+  //         arg0 = JS::ToBoolean(args.get(0));
+  bool autoRemove = args[0]->BooleanValue(isolate);
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setAutoRemoveOnFinish : Error processing arguments");
+  SE_PRECONDITION2(true, "js_cocos2dx_ParticleSystem_setAutoRemoveOnFinish : Error processing arguments");
+  //         cobj->setAutoRemoveOnFinish(arg0);
+  cParticleSystem->setAutoRemoveOnFinish(autoRemove);
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setAutoRemoveOnFinish : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setAutoRemoveOnFinish : wrong number of arguments: %d, was expecting %d", argc, 1);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_setGravity(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setGravity : Invalid Native Object");
-//     if (argc == 1)
-//     {
-//         cocos2d::Vec2 arg0;
-//         ok &= jsval_to_vector2(cx, args.get(0), &arg0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setGravity : Error processing arguments");
-//         cobj->setGravity(arg0);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_setGravity(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setGravity : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_setGravity : Invalid Native Object");
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setGravity : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  //     if (argc == 1)
+  //     {
+  //         cocos2d::Vec2 arg0;
+  //         ok &= jsval_to_vector2(cx, args.get(0), &arg0);
+  cocos2d::Vec2 gravity;
+  if (!JsbUtils::jsval_to_vector2(isolate, args[0], &gravity))
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setGravity : Error processing arguments");
+    return;
+  }
+  cParticleSystem->setGravity(gravity);
+}
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setGravity : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
 // bool js_cocos2dx_ParticleSystem_postStep(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_postStep : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         cobj->postStep();
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_postStep(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_postStep : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_postStep : Invalid Native Object");
+  //     if (argc == 0)
+  //     {
+  //         cobj->postStep();
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_postStep : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  cParticleSystem->postStep();
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_postStep : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_postStep : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_setEmissionRate(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setEmissionRate : Invalid Native Object");
-//     if (argc == 1)
-//     {
-//         double arg0 = 0;
-//         ok &= JS::ToNumber(cx, args.get(0), &arg0) && !std::isnan(arg0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setEmissionRate : Error processing arguments");
-//         cobj->setEmissionRate(arg0);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_setEmissionRate(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setEmissionRate : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_setEmissionRate : Invalid Native Object");
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setEmissionRate : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  //     if (argc == 1)
+  //     {
+  //         double arg0 = 0;
+  //         ok &= JS::ToNumber(cx, args.get(0), &arg0) && !std::isnan(arg0);
+  double emissionRate = args[0]->NumberValue(isolate->GetCurrentContext()).FromJust();
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setEmissionRate : Error processing arguments");
+  SE_PRECONDITION2(true, "js_cocos2dx_ParticleSystem_setEmissionRate : Error processing arguments");
+  //         cobj->setEmissionRate(arg0);
+  cParticleSystem->setEmissionRate(emissionRate);
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setEmissionRate : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setEmissionRate : wrong number of arguments: %d, was expecting %d", argc, 1);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_getEndColorVar(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getEndColorVar : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         const cocos2d::Color4F &ret = cobj->getEndColorVar();
-//         JS::RootedValue jsret(cx);
-//         jsret = cccolor4f_to_jsval(cx, ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_getEndColorVar(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getEndColorVar : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_getEndColorVar : Invalid Native Object");
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_getEndColorVar : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  //     if (argc == 0)
+  //     {
+  //         const cocos2d::Color4F &ret = cobj->getEndColorVar();
+  const cocos2d::Color4F &ret = cParticleSystem->getEndColorVar();
+  //         JS::RootedValue jsret(cx);
+  //         jsret = cccolor4f_to_jsval(cx, ret);
+  auto jsret = JsbUtils::cccolor4f_to_jsval(isolate, ret);
+  args.GetReturnValue().Set(jsret);
+  //         args.rval().set(jsret);
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getEndColorVar : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getEndColorVar : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_getRotationIsDir(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getRotationIsDir : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         bool ret = cobj->getRotationIsDir();
-//         JS::RootedValue jsret(cx);
-//         jsret = BOOLEAN_TO_JSVAL(ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_getRotationIsDir(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getRotationIsDir : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_getRotationIsDir : Invalid Native Object");
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_getRotationIsDir : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  //     if (argc == 0)
+  //     {
+  //         bool ret = cobj->getRotationIsDir();
+  const bool ret = cParticleSystem->getRotationIsDir();
+  //         JS::RootedValue jsret(cx);
+  //         jsret = BOOLEAN_TO_JSVAL(ret);
+  //         args.rval().set(jsret);
+  args.GetReturnValue().Set(v8::Boolean::New(isolate, ret));
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getRotationIsDir : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getRotationIsDir : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_getEmissionRate(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getEmissionRate : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         double ret = cobj->getEmissionRate();
-//         JS::RootedValue jsret(cx);
-//         jsret = DOUBLE_TO_JSVAL(ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_getEmissionRate(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getEmissionRate : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_getEmissionRate : Invalid Native Object");
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_getEmissionRate : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  //     if (argc == 0)
+  //     {
+  //         double ret = cobj->getEmissionRate();
+  double ret = cParticleSystem->getEmissionRate();
+  args.GetReturnValue().Set(v8::Number::New(isolate, ret));
+  //         JS::RootedValue jsret(cx);
+  //         jsret = DOUBLE_TO_JSVAL(ret);
+  //         args.rval().set(jsret);
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getEmissionRate : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getEmissionRate : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_getEndColor(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getEndColor : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         const cocos2d::Color4F &ret = cobj->getEndColor();
-//         JS::RootedValue jsret(cx);
-//         jsret = cccolor4f_to_jsval(cx, ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_getEndColor(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getEndColor : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_getEndColor : Invalid Native Object");
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_getEndColor : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  //     if (argc == 0)
+  //     {
+  //         const cocos2d::Color4F &ret = cobj->getEndColor();
+  const cocos2d::Color4F &ret = cParticleSystem->getEndColor();
+  //         JS::RootedValue jsret(cx);
+  //         jsret = cccolor4f_to_jsval(cx, ret);
+  auto jsret = JsbUtils::cccolor4f_to_jsval(isolate, ret);
+  args.GetReturnValue().Set(jsret);
+  //         args.rval().set(jsret);
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getEndColor : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getEndColor : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_getLifeVar(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getLifeVar : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         double ret = cobj->getLifeVar();
-//         JS::RootedValue jsret(cx);
-//         jsret = DOUBLE_TO_JSVAL(ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_getLifeVar(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_getLifeVar : Invalid Native Object");
+  //     if (argc == 0)
+  //     {
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_getLifeVar : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  //         double ret = cobj->getLifeVar();
+  double ret = cParticleSystem->getLifeVar();
+  args.GetReturnValue().Set(v8::Number::New(isolate, ret));
+  //         JS::RootedValue jsret(cx);
+  //         jsret = DOUBLE_TO_JSVAL(ret);
+  //         args.rval().set(jsret);
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getLifeVar : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getLifeVar : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_setStartSizeVar(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setStartSizeVar : Invalid Native Object");
-//     if (argc == 1)
-//     {
-//         double arg0 = 0;
-//         ok &= JS::ToNumber(cx, args.get(0), &arg0) && !std::isnan(arg0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setStartSizeVar : Error processing arguments");
-//         cobj->setStartSizeVar(arg0);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_setStartSizeVar(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_setStartSizeVar : Invalid Native Object");
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setStartSizeVar : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  double startSizeVar = args[0]->NumberValue(isolate->GetCurrentContext()).FromJust();
+  cParticleSystem->setStartSizeVar(startSizeVar);
+}
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setStartSizeVar : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
 // bool js_cocos2dx_ParticleSystem_getStartRadius(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getStartRadius : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         double ret = cobj->getStartRadius();
-//         JS::RootedValue jsret(cx);
-//         jsret = DOUBLE_TO_JSVAL(ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_getStartRadius(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getStartRadius : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_getStartRadius : Invalid Native Object");
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_getStartRadius : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  //     if (argc == 0)
+  //     {
+  //         double ret = cobj->getStartRadius();
+  double ret = cParticleSystem->getStartRadius();
+  //         JS::RootedValue jsret(cx);
+  //         jsret = DOUBLE_TO_JSVAL(ret);
+  //         args.rval().set(jsret);
+  args.GetReturnValue().Set(v8::Number::New(isolate, ret));
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getStartRadius : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getStartRadius : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_getParticleCount(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getParticleCount : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         unsigned int ret = cobj->getParticleCount();
-//         JS::RootedValue jsret(cx);
-//         jsret = uint32_to_jsval(cx, ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_getParticleCount(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getParticleCount : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_getParticleCount : Invalid Native Object");
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_getParticleCount : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  //     if (argc == 0)
+  //     {
+  //         unsigned int ret = cobj->getParticleCount();
+  unsigned int ret = cParticleSystem->getParticleCount();
+  args.GetReturnValue().Set(v8::Integer::New(isolate, ret));
+  //         JS::RootedValue jsret(cx);
+  //         jsret = uint32_to_jsval(cx, ret);
+  //         args.rval().set(jsret);
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getParticleCount : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getParticleCount : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_getStartRadiusVar(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getStartRadiusVar : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         double ret = cobj->getStartRadiusVar();
-//         JS::RootedValue jsret(cx);
-//         jsret = DOUBLE_TO_JSVAL(ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_getStartRadiusVar(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getStartRadiusVar : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_getStartRadiusVar : Invalid Native Object");
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_getStartRadiusVar : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  //     if (argc == 0)
+  //     {
+  //         double ret = cobj->getStartRadiusVar();
+  double ret = cParticleSystem->getStartRadiusVar();
+  //         JS::RootedValue jsret(cx);
+  //         jsret = DOUBLE_TO_JSVAL(ret);
+  //         args.rval().set(jsret);
+  args.GetReturnValue().Set(v8::Number::New(isolate, ret));
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getStartRadiusVar : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getStartRadiusVar : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_getBlendFunc(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getBlendFunc : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         const cocos2d::BlendFunc &ret = cobj->getBlendFunc();
-//         JS::RootedValue jsret(cx);
-//         jsret = blendfunc_to_jsval(cx, ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_getBlendFunc(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getBlendFunc : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getBlendFunc : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_getBlendFunc : Invalid Native Object");
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_getBlendFunc : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  //     if (argc == 0)
+  //     {
+  //         const cocos2d::BlendFunc &ret = cobj->getBlendFunc();
+  const cocos2d::BlendFunc &ret = cParticleSystem->getBlendFunc();
+  //         JS::RootedValue jsret(cx);
+  //         jsret = blendfunc_to_jsval(cx, ret);
+  auto jsret = JsbUtils::blendfunc_to_jsval(isolate, ret);
+  //         args.rval().set(jsret);
+  args.GetReturnValue().Set(jsret);
+  //         return true;
+  //     }
+
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getBlendFunc : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_setStartColorVar(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setStartColorVar : Invalid Native Object");
-//     if (argc == 1)
-//     {
-//         cocos2d::Color4F arg0;
-//         ok &= jsval_to_cccolor4f(cx, args.get(0), &arg0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setStartColorVar : Error processing arguments");
-//         cobj->setStartColorVar(arg0);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_setStartColorVar(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setStartColorVar : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setStartColorVar : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_setStartColorVar : Invalid Native Object");
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setStartColorVar : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  //     if (argc == 1)
+  //     {
+  //         cocos2d::Color4F arg0;
+  //         ok &= jsval_to_cccolor4f(cx, args.get(0), &arg0);
+  cocos2d::Color4F startColorVar;
+  if (!JsbUtils::jsval_to_cccolor4f(isolate, args[0], &startColorVar))
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setStartColorVar : Error processing arguments");
+    return;
+  }
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setStartColorVar : Error processing arguments");
+  //         cobj->setStartColorVar(arg0);
+  cParticleSystem->setStartColorVar(startColorVar);
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
+
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setStartColorVar : wrong number of arguments: %d, was expecting %d", argc, 1);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_setEndSpin(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setEndSpin : Invalid Native Object");
-//     if (argc == 1)
-//     {
-//         double arg0 = 0;
-//         ok &= JS::ToNumber(cx, args.get(0), &arg0) && !std::isnan(arg0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setEndSpin : Error processing arguments");
-//         cobj->setEndSpin(arg0);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_setEndSpin(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_setEndSpin : Invalid Native Object");
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setEndSpin : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  double endSpin = args[0]->NumberValue(isolate->GetCurrentContext()).FromJust();
+  cParticleSystem->setEndSpin(endSpin);
+}
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setEndSpin : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
 // bool js_cocos2dx_ParticleSystem_setRadialAccel(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setRadialAccel : Invalid Native Object");
-//     if (argc == 1)
-//     {
-//         double arg0 = 0;
-//         ok &= JS::ToNumber(cx, args.get(0), &arg0) && !std::isnan(arg0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setRadialAccel : Error processing arguments");
-//         cobj->setRadialAccel(arg0);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_setRadialAccel(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_setRadialAccel : Invalid Native Object");
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setRadialAccel : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  double radialAccel = args[0]->NumberValue(isolate->GetCurrentContext()).FromJust();
+  cParticleSystem->setRadialAccel(radialAccel);
+}
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setRadialAccel : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
 // bool js_cocos2dx_ParticleSystem_initWithDictionary(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     bool ok = true;
-//     cocos2d::ParticleSystem *cobj = nullptr;
+void js_cocos2dx_ParticleSystem_initWithDictionary(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     bool ok = true;
+  //     cocos2d::ParticleSystem *cobj = nullptr;
 
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx);
-//     obj.set(args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : nullptr);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_initWithDictionary : Invalid Native Object");
-//     do
-//     {
-//         if (argc == 2)
-//         {
-//             cocos2d::ValueMap arg0;
-//             ok &= jsval_to_ccvaluemap(cx, args.get(0), &arg0);
-//             if (!ok)
-//             {
-//                 ok = true;
-//                 break;
-//             }
-//             std::string arg1;
-//             ok &= jsval_to_std_string(cx, args.get(1), &arg1);
-//             if (!ok)
-//             {
-//                 ok = true;
-//                 break;
-//             }
-//             bool ret = cobj->initWithDictionary(arg0, arg1);
-//             jsval jsret = JSVAL_NULL;
-//             jsret = BOOLEAN_TO_JSVAL(ret);
-//             args.rval().set(jsret);
-//             return true;
-//         }
-//     } while (0);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx);
+  //     obj.set(args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : nullptr);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_initWithDictionary : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_initWithDictionary : Invalid Native Object");
+  //     do
+  //     {
+  //         if (argc == 2)
+  //         {
+  if (args.Length() == 2)
+  {
+    //             cocos2d::ValueMap arg0;
+    //             ok &= jsval_to_ccvaluemap(cx, args.get(0), &arg0);
+    cocos2d::ValueMap dict;
+    if (!JsbUtils::jsval_to_ccvaluemap(isolate, args[0], &dict))
+    {
+      SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_initWithDictionary : Error processing arguments");
+      return;
+    }
+    //             std::string arg1;
+    //             ok &= jsval_to_std_string(cx, args.get(1), &arg1);
+    std::string path = JsbUtils::FromV8String(isolate, args[1]);
+    bool ret = cParticleSystem->initWithDictionary(dict, path);
+    //             if (!ok)
+    //             {
+    //                 ok = true;
+    //                 break;
+    //             }
+    //             bool ret = cobj->initWithDictionary(arg0, arg1);
+    //             jsval jsret = JSVAL_NULL;
+    //             jsret = BOOLEAN_TO_JSVAL(ret);
+    //             args.rval().set(jsret);
+    args.GetReturnValue().Set(v8::Boolean::New(isolate, ret));
+    //             return true;
+  }
+  else if (args.Length() == 1)
+  {
+    //             cocos2d::ValueMap arg0;
+    cocos2d::ValueMap dict;
+    if (!JsbUtils::jsval_to_ccvaluemap(isolate, args[0], &dict))
+    {
+      SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_initWithDictionary : Error processing arguments");
+      return;
+    }
 
-//     do
-//     {
-//         if (argc == 1)
-//         {
-//             cocos2d::ValueMap arg0;
-//             ok &= jsval_to_ccvaluemap(cx, args.get(0), &arg0);
-//             if (!ok)
-//             {
-//                 ok = true;
-//                 break;
-//             }
-//             bool ret = cobj->initWithDictionary(arg0);
-//             jsval jsret = JSVAL_NULL;
-//             jsret = BOOLEAN_TO_JSVAL(ret);
-//             args.rval().set(jsret);
-//             return true;
-//         }
-//     } while (0);
+    //             bool ret = cobj->initWithDictionary(arg0);
+    bool ret = cParticleSystem->initWithDictionary(dict);
+    args.GetReturnValue().Set(v8::Boolean::New(isolate, ret));
+    //             jsval jsret = JSVAL_NULL;
+    //             jsret = BOOLEAN_TO_JSVAL(ret);
+    //             args.rval().set(jsret);
+    //             return true;
+  }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_initWithDictionary : wrong number of arguments");
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_initWithDictionary : wrong number of arguments");
+  SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_initWithDictionary : wrong number of arguments");
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_isAutoRemoveOnFinish(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_isAutoRemoveOnFinish : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         bool ret = cobj->isAutoRemoveOnFinish();
-//         JS::RootedValue jsret(cx);
-//         jsret = BOOLEAN_TO_JSVAL(ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_isAutoRemoveOnFinish(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_isAutoRemoveOnFinish : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_isAutoRemoveOnFinish : Invalid Native Object");
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_isAutoRemoveOnFinish : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  //     if (argc == 0)
+  //     {
+  //         bool ret = cobj->isAutoRemoveOnFinish();
+  bool ret = cParticleSystem->isAutoRemoveOnFinish();
+  //         JS::RootedValue jsret(cx);
+  //         jsret = BOOLEAN_TO_JSVAL(ret);
+  //         args.rval().set(jsret);
+  args.GetReturnValue().Set(v8::Boolean::New(isolate, ret));
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_isAutoRemoveOnFinish : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_isAutoRemoveOnFinish : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_isSourcePositionCompatible(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_isSourcePositionCompatible : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         bool ret = cobj->isSourcePositionCompatible();
-//         JS::RootedValue jsret(cx);
-//         jsret = BOOLEAN_TO_JSVAL(ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_isSourcePositionCompatible(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_isSourcePositionCompatible : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_isSourcePositionCompatible : Invalid Native Object");
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_isSourcePositionCompatible : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  //     if (argc == 0)
+  //     {
+  //         bool ret = cobj->isSourcePositionCompatible();
+  bool ret = cParticleSystem->isSourcePositionCompatible();
+  args.GetReturnValue().Set(v8::Boolean::New(isolate, ret));
+  //         JS::RootedValue jsret(cx);
+  //         jsret = BOOLEAN_TO_JSVAL(ret);
+  //         args.rval().set(jsret);
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_isSourcePositionCompatible : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_isSourcePositionCompatible : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_getTotalParticles(JSContext *cx, uint32_t argc, jsval *vp)
 // {
 //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);

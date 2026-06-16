@@ -1,4 +1,4 @@
-declare module cc {
+declare namespace cc {
   /**
    * @class
    * @extends cc.Class

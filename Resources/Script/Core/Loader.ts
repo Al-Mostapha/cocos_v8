@@ -4,7 +4,7 @@ namespace cc {
     static _resPath = "";
     static _audioPath = "";
     static _register: Record<string, any> = {}; //register of loaders
-    static cache: Map<string, any> = new Map(); //cache for data loaded
+    static cache: Record<string, any> = {}; //cache for data loaded
     static _langPathCache: Record<string, string> = {}; //cache for lang path
     //@MODE_BEGIN DEV
     static _jsCache: Record<string, any> = {}; //cache for js
@@ -119,11 +119,11 @@ namespace cc {
      * @param {!string} url
      * @param {function} cb arguments are : err, txt
      */
-    loadTxt(url: string, cb?: Function) {
+    static loadTxt(url: string, cb?: Function) {
       cb?.(null, jsb.fileUtils.getStringFromFile(url));
     }
 
-    loadJson(url: string, cb: Function) {
+    static loadJson(url: string, cb: Function) {
       this.loadTxt(url, (err: Error, txt: string) => {
         try {
           err ? cb(err) : cb(null, JSON.parse(txt));
@@ -141,7 +141,7 @@ namespace cc {
      * @param {function} cb
      * @returns {Image}
      */
-    loadImg(url: string, option: any | Function, cb?: Function) {
+    static loadImg(url: string, option: any | Function, cb?: Function) {
       var l = arguments.length;
       if (l == 2) cb = option;
 
@@ -346,9 +346,9 @@ namespace cc {
      * @param {String} filename  The plist file name.
      * @param {Function} cb     callback
      */
-    static loadAliases(url: string, cb: Function) {
+    static loadAliases(url: string, cb?: Function) {
       jsb.fileUtils.loadFilenameLookup(url);
-      if (cb) cb();
+      cb?.();
     }
 
     /**
@@ -418,7 +418,7 @@ namespace cc {
     //   },
     static _instance: Loader | null = null;
     _selector: (() => void) | null = null;
-    _target: cc.Node | null = null;
+    _target: cc.Node | undefined = undefined;
     private initWith(
       resources: string | string[],
       selector?: () => void,

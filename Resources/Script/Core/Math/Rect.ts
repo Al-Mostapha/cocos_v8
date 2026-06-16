@@ -44,7 +44,7 @@ namespace cc {
     height: number;
   }
 
-  export const rect = function (
+  export function rect(
     x?: number | Rect | Point,
     y?: number | Size,
     w?: number,
@@ -74,7 +74,7 @@ namespace cc {
         height: h as number,
       };
     throw "unknown argument type";
-  };
+  }
 
   // cc._rect = function (x, y, w, h) {
   //   cc._reuse_rect.x = x;
@@ -91,7 +91,7 @@ namespace cc {
     return _reuse_rect;
   };
 
-  export const rectEqualToRect = (rect1: Rect, rect2: Rect): boolean => {
+  export function rectEqualToRect(rect1: Rect, rect2: Rect): boolean {
     return (
       rect1.x == rect2.x &&
       rect1.y == rect2.y &&
@@ -100,7 +100,7 @@ namespace cc {
     );
   };
 
-  export const rectContainsRect = (rect1: Rect, rect2: Rect): boolean => {
+  export function rectContainsRect(rect1: Rect, rect2: Rect): boolean {
     if (
       rect1.x >= rect2.x ||
       rect1.y >= rect2.y ||
@@ -110,26 +110,26 @@ namespace cc {
       return false;
     return true;
   };
-  export const rectGetMaxX = (rect: Rect): number => {
+  export function rectGetMaxX(rect: Rect): number {
     return rect.x + rect.width;
   };
-  export const rectGetMidX = (rect: Rect): number => {
+  export function rectGetMidX(rect: Rect): number {
     return rect.x + rect.width / 2.0;
   };
-  export const rectGetMinX = (rect: Rect): number => {
+  export function rectGetMinX(rect: Rect): number {
     return rect.x;
   };
-  export const rectGetMaxY = (rect: Rect): number => {
+  export function rectGetMaxY(rect: Rect): number {
     return rect.y + rect.height;
   };
-  export const rectGetMidY = (rect: Rect): number => {
+  export function rectGetMidY(rect: Rect): number {
     return rect.y + rect.height / 2.0;
   };
-  export const rectGetMinY = (rect: Rect): number => {
+  export function rectGetMinY(rect: Rect): number {
     return rect.y;
   };
 
-  export const rectContainsPoint = (rect: Rect, point: Point): boolean => {
+  export function rectContainsPoint(rect: Rect, point: Point): boolean {
     return (
       point.x >= rect.x &&
       point.x <= rect.x + rect.width &&
@@ -137,7 +137,7 @@ namespace cc {
       point.y <= rect.y + rect.height
     );
   };
-  export const rectIntersectsRect = (rectA: Rect, rectB: Rect): boolean => {
+  export function rectIntersectsRect(rectA: Rect, rectB: Rect): boolean {
     return !(
       rectA.x > rectB.x + rectB.width ||
       rectA.x + rectA.width < rectB.x ||
@@ -145,7 +145,7 @@ namespace cc {
       rectA.y + rectA.height < rectB.y
     );
   };
-  export const rectOverlapsRect = (rectA: Rect, rectB: Rect): boolean => {
+  export function rectOverlapsRect(rectA: Rect, rectB: Rect): boolean {
     return !(
       rectA.x + rectA.width < rectB.x ||
       rectB.x + rectB.width < rectA.x ||
@@ -153,7 +153,7 @@ namespace cc {
       rectB.y + rectB.height < rectA.y
     );
   };
-  export const rectUnion = (rectA: Rect, rectB: Rect): Rect => {
+  export function rectUnion(rectA: Rect, rectB: Rect): Rect {
     const lRect = rect(0, 0, 0, 0);
     lRect.x = Math.min(rectA.x, rectB.x);
     lRect.y = Math.min(rectA.y, rectB.y);
@@ -164,7 +164,7 @@ namespace cc {
     return lRect;
   };
 
-  export const rectIntersection = (rectA: Rect, rectB: Rect): Rect => {
+  export function rectIntersection(rectA: Rect, rectB: Rect): Rect {
     const intersection = rect(
       Math.max(rectA.x, rectB.x),
       Math.max(rectA.y, rectB.y),
@@ -178,9 +178,9 @@ namespace cc {
     return intersection;
   };
 
-  export const RectZero = (): Rect => {
+  export function RectZero(): Rect {
     return rect(0, 0, 0, 0);
-  };
+  }
 
   //
   //AffineTransform API

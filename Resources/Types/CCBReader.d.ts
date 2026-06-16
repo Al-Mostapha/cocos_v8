@@ -52,7 +52,7 @@
 
 
 
-declare module cc {
+declare namespace cc {
   class NodeLoader extends Class{}
   class LayerLoader extends NodeLoader{}
   class LayerColorLoader extends NodeLoader{}

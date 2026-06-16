@@ -1,30 +1,27 @@
-declare module ccui{
-
+declare namespace ccui {
   // /**
   //  * The ImageView control of Cocos GUI
   //  * @class
   //  * @extends ccui.Widget
   //  */
-  class  ImageView extends ccui.Widget{
+  class ImageView extends ccui.Widget {
+    /**
+     * allocates and initializes a ccui.ImageView.
+     * Constructor of ccui.ImageView, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
+     * @param {String} imageFileName
+     * @param {Number} [texType==ccui.Widget.LOCAL_TEXTURE]
+     * @example
+     * // example
+     * var uiImageView = new ccui.ImageView;
+     */
+    constructor(imageFileName?: string, texType?: number);
 
-      /**
-       * allocates and initializes a ccui.ImageView.
-       * Constructor of ccui.ImageView, override it to extend the construction behavior, remember to call "this._super()" in the extended "ctor" function.
-       * @param {String} imageFileName
-       * @param {Number} [texType==ccui.Widget.LOCAL_TEXTURE]
-       * @example
-       * // example
-       * var uiImageView = new ccui.ImageView;
-       */
-      constructor(imageFileName?: string, texType?: number);
-
-
-      /**
-       * Loads textures for button.
-       * @param {String} fileName
-       * @param {ccui.Widget.LOCAL_TEXTURE|ccui.Widget.PLIST_TEXTURE} texType
-       */
-      loadTexture(fileName: import("fs").PathLike | string, texType?: number): void;
+    /**
+     * Loads textures for button.
+     * @param {String} fileName
+     * @param {ccui.Widget.LOCAL_TEXTURE|ccui.Widget.PLIST_TEXTURE} texType
+     */
+    loadTexture(fileName: string, texType?: number): void;
 
     //   /**
     //    * Sets texture rect
@@ -34,11 +31,11 @@ declare module ccui{
     //       cc.warn('ImageView.setTextureRect  is deprecated!');
     //   },
 
-      /**
-       * Sets if button is using scale9 renderer.
-       * @param {Boolean} able
-       */
-      setScale9Enabled(able: boolean): void;
+    /**
+     * Sets if button is using scale9 renderer.
+     * @param {Boolean} able
+     */
+    setScale9Enabled(able: boolean): void;
 
     //   /**
     //    * Returns ImageView is using scale9 renderer or not.
@@ -95,12 +92,12 @@ declare module ccui{
     //       return cc.size(this._imageTextureSize);
     //   },
 
-      /**
-       * Returns the renderer of ccui.ImageView
-       * @override
-       * @returns {cc.Node}
-       */
-      getVirtualRenderer() : ccui.Scale9Sprite;
+    /**
+     * Returns the renderer of ccui.ImageView
+     * @override
+     * @returns {cc.Node}
+     */
+    getVirtualRenderer(): ccui.Scale9Sprite;
 
     //   _imageTextureScaleChangedWithSize: function () {
     //       this._imageRenderer.setContentSize(this._contentSize);
@@ -164,8 +161,5 @@ declare module ccui{
     // * @type {number}
     // */
     // ccui.ImageView.RENDERER_ZORDER = -1;
-
-    
   }
-
 }

@@ -1,4 +1,4 @@
-declare module cc {
+declare namespace cc {
   /****************************************************************************
  Copyright (c) 2008-2010 Ricardo Quesada
  Copyright (c) 2011-2012 cocos2d-x.org

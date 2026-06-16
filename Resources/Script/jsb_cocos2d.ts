@@ -37,7 +37,6 @@ namespace cc {
   export const IS_RETINA_DISPLAY_SUPPORTED = 1;
   export const DEFAULT_ENGINE = cc.ENGINE_VERSION + "-native";
 
-
   export enum ResolutionPolicy {
     // The entire application is visible in the specified area without trying to preserve the original aspect ratio.
     // Distortion can occur, and the application may appear stretched or compressed.
@@ -87,12 +86,10 @@ namespace cc {
   export const DEVICE_ORIENTATION_LANDSCAPE_RIGHT = 3;
   export const DEVICE_MAX_ORIENTATIONS = 2;
 
-
   export const IMAGE_FORMAT_RAWDATA = 9;
 
   export const TOUCH_ALL_AT_ONCE = 0;
   export const TOUCH_ONE_BY_ONE = 1;
-
 
   export const RED = { r: 255, g: 0, b: 0 };
   export const GREEN = { r: 0, g: 255, b: 0 };
@@ -227,7 +224,7 @@ namespace cc {
     VERTEX_ATTRIB_FLAG_POSITION |
     VERTEX_ATTRIB_FLAG_COLOR |
     VERTEX_ATTRIB_FLAG_TEX_COORDS;
-  export const GL_ALL = 0;
+  // export const GL_ALL = 0;
 
   export const VERTEX_ATTRIB_POSITION = 0;
   export const VERTEX_ATTRIB_COLOR = 1;
@@ -256,7 +253,6 @@ namespace cc {
   export const UNIFORM_SAMPLER_S = "CC_Texture0";
   export const UNIFORM_ALPHA_TEST_VALUE_S = "CC_AlphaValue";
 
-
   export const CURRENT_ITEM = 0xc0c05001;
   export const ZOOM_ACTION_TAG = 0xc0c05002;
   export const NORMAL_TAG = 8801;
@@ -265,7 +261,7 @@ namespace cc {
 
   export const stencilBits = -1; //CCClippingNode.js
 
-  export let g_NumberOfDraws = 0; //CCDirector.js
+  let g_NumberOfDraws = 0; //CCDirector.js
 
   export const s_globalOrderOfArrival = 1;
 
@@ -474,18 +470,20 @@ namespace cc {
   // cc.REPEAT_FOREVER = 0xffffffff;
   export const REPEAT_FOREVER = 0xffffffff;
 
-
   /**
    * Helpful macro that setups the GL server state, the correct GL program and sets the Model View Projection matrix
    * @param {cc.Node} node setup node
    * @function
    */
   export const nodeDrawSetup = (node: cc.Node) => {
-    //cc.glEnable(node._glServerState);
+    // //cc.glEnable(node._glServerState);
     if (node._shaderProgram) {
-      //cc._renderContext.useProgram(node._shaderProgram._programObj);
+      // //cc._renderContext.useProgram(node._shaderProgram._programObj);
       node._shaderProgram.use();
-      node._shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4();
+      // TODO
+      (<any>(
+        node
+      ))._shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4();
     }
   };
 
@@ -539,7 +537,7 @@ namespace cc {
   //   cc.g_NumberOfDraws += addNumber;
   // };
   export const incrementGLDraws = (addNumber: number) => {
-    cc.g_NumberOfDraws += addNumber;
+    g_NumberOfDraws += addNumber;
   };
 
   /**
@@ -667,12 +665,13 @@ namespace cc {
       };
 
   export const checkGLErrorDebug = function () {
-    if (cc.renderMode == cc._RENDER_TYPE_WEBGL) {
-      var _error = cc._renderContext.getError();
-      if (_error) {
-        cc.log(CC._localZOrder.checkGLErrorDebug, _error);
-      }
-    }
+    // TODO
+    // if (cc.renderMode == cc.game.RENDER_TYPE_WEBGL) {
+    //   var _error = cc._renderContext.getError();
+    //   if (_error) {
+    //     cc.log(CC._localZOrder.checkGLErrorDebug, _error);
+    //   }
+    // }
   };
 
   //
@@ -735,185 +734,202 @@ namespace cc {
   //   }
   // };
 
-  // var _windowTimeIntervalId = 0;
-  // var _windowTimeFunHash = {};
-  // var WindowTimeFun = cc.Class.extend({
-  //   _code: null,
-  //   _intervalId: 0,
-  //   ctor: function (code) {
-  //     this._intervalId = _windowTimeIntervalId++;
-  //     this._code = code;
-  //   },
-  //   fun: function () {
-  //     if (!this._code) return;
-  //     var code = this._code;
-  //     if (typeof code == "string") {
-  //       Function(code)();
-  //     } else if (typeof code == "function") {
-  //       code.apply(null, this._args);
-  //     }
-  //   },
-  // });
+  let _windowTimeIntervalId = 0;
+  let _windowTimeFunHash: { [key: number]: WindowTimeFun } = {};
+  class WindowTimeFun extends cc.Class {
+    _code: Function | null = null;
+    _intervalId: number = 0;
+    _args: any[] | null = null;
+    constructor(code: any) {
+      super();
+      this._intervalId = _windowTimeIntervalId++;
+      this._code = code;
+    }
+    fun() {
+      if (!this._code) return;
+      const code = this._code;
+      code(this._args);
+    }
+  }
 
-  // /**
-  //  * overwrite window's setTimeout
-  //  @param {String|Function} code
-  //  @param {number} delay
-  //  @return {number}
-  //  */
-  // var setTimeout = function (code, delay) {
-  //   var target = new WindowTimeFun(code);
-  //   if (arguments.length > 2)
-  //     target._args = Array.prototype.slice.call(arguments, 2);
-  //   var original = target.fun;
-  //   target.fun = function () {
-  //     original.apply(this, arguments);
-  //     clearTimeout(target._intervalId);
-  //   };
-  //   cc.director
-  //     .getScheduler()
-  //     .schedule(
-  //       target.fun,
-  //       target,
-  //       delay / 1000,
-  //       0,
-  //       0,
-  //       false,
-  //       target._intervalId + "",
-  //     );
-  //   _windowTimeFunHash[target._intervalId] = target;
-  //   return target._intervalId;
-  // };
+  /**
+   * overwrite window's setTimeout
+   @param {Function} code
+   @param {number} delay
+   @return {number}
+   */
+  export const setTimeout = function (code: Function, delay: number) {
+    const target = new WindowTimeFun(code);
+    if (arguments.length > 2)
+      target._args = Array.prototype.slice.call(arguments, 2);
+    const original = target.fun;
+    target.fun = function () {
+      original.apply(this, arguments as any);
+      clearTimeout(target._intervalId);
+    };
 
-  // /**
-  //  * overwrite window's setInterval
-  //  @param {String|Function} code
-  //  @param {number} delay
-  //  @return {number}
-  //  */
-  // var setInterval = function (code, delay) {
-  //   var target = new WindowTimeFun(code);
-  //   if (arguments.length > 2)
-  //     target._args = Array.prototype.slice.call(arguments, 2);
-  //   cc.director
-  //     .getScheduler()
-  //     .schedule(
-  //       target.fun,
-  //       target,
-  //       delay / 1000,
-  //       cc.REPEAT_FOREVER,
-  //       0,
-  //       false,
-  //       target._intervalId + "",
-  //     );
-  //   _windowTimeFunHash[target._intervalId] = target;
-  //   return target._intervalId;
-  // };
+    cc.director
+      .getScheduler()
+      .schedule(
+        target.fun,
+        target,
+        delay / 1000,
+        0,
+        0,
+        false,
+        target._intervalId + "",
+      );
+    _windowTimeFunHash[target._intervalId] = target;
+    return target._intervalId;
+  };
 
-  // /**
-  //  * overwrite window's clearInterval
-  //  @param {number} intervalId
-  //  */
-  // var clearInterval = function (intervalId) {
-  //   var target = _windowTimeFunHash[intervalId];
-  //   if (target) {
-  //     cc.director.getScheduler().unschedule(target._intervalId + "", target);
-  //     delete _windowTimeFunHash[intervalId];
-  //   }
-  // };
-  // var clearTimeout = clearInterval;
+  /**
+   * overwrite window's setInterval
+   @param {Function} code
+   @param {number} delay
+   @return {number}
+   */
+  export const setInterval = function (code: Function, delay: number) {
+    const target = new WindowTimeFun(code);
+    if (arguments.length > 2)
+      target._args = Array.prototype.slice.call(arguments, 2);
+    cc.director
+      .getScheduler()
+      .schedule(
+        target.fun,
+        target,
+        delay / 1000,
+        cc.REPEAT_FOREVER,
+        0,
+        false,
+        target._intervalId + "",
+      );
+    _windowTimeFunHash[target._intervalId] = target;
+    return target._intervalId;
+  };
 
-  // // event listener type
-  // cc.EventListener.UNKNOWN = 0;
-  // cc.EventListener.TOUCH_ONE_BY_ONE = 1;
-  // cc.EventListener.TOUCH_ALL_AT_ONCE = 2;
-  // cc.EventListener.KEYBOARD = 3;
-  // cc.EventListener.MOUSE = 4;
-  // cc.EventListener.ACCELERATION = 5;
-  // cc.EventListener.FOCUS = 6;
-  // //game controller 7
-  // cc.EventListener.CUSTOM = 8;
+  /**
+   * overwrite window's clearInterval
+    @param {number} intervalId
+  */
+  export const clearInterval = (intervalId: number) => {
+    const target = _windowTimeFunHash[intervalId];
+    if (target) {
+      cc.director.getScheduler().unschedule(target._intervalId + "", target);
+      delete _windowTimeFunHash[intervalId];
+    }
+  };
 
-  // cc.EventListener.create = function (argObj) {
-  //   if (!argObj || !argObj.event) {
-  //     throw "Invalid parameter.";
-  //   }
-  //   var listenerType = argObj.event;
-  //   delete argObj.event;
+  export const clearTimeout = clearInterval;
 
-  //   var listener = null;
-  //   if (listenerType === cc.EventListener.TOUCH_ONE_BY_ONE) {
-  //     listener = cc.EventListenerTouchOneByOne.create();
-  //     if (argObj.swallowTouches) {
-  //       listener.setSwallowTouches(argObj.swallowTouches);
-  //     }
-  //   } else if (listenerType === cc.EventListener.TOUCH_ALL_AT_ONCE)
-  //     listener = cc.EventListenerTouchAllAtOnce.create();
-  //   else if (listenerType === cc.EventListener.MOUSE)
-  //     listener = cc.EventListenerMouse.create();
-  //   else if (listenerType === cc.EventListener.CUSTOM) {
-  //     listener = cc.EventListenerCustom.create(argObj.eventName, argObj.callback);
-  //     delete argObj.eventName;
-  //     delete argObj.callback;
-  //   } else if (listenerType === cc.EventListener.KEYBOARD)
-  //     listener = cc.EventListenerKeyboard.create();
-  //   else if (listenerType === cc.EventListener.ACCELERATION) {
-  //     listener = cc.EventListenerAcceleration.create(argObj.callback);
-  //     delete argObj.callback;
-  //   } else if (listenerType === cc.EventListener.FOCUS) {
-  //     listener = cc.EventListenerFocus.create();
-  //   } else {
-  //     cc.log("Error: Invalid listener type.");
-  //   }
+  // event listener type
+  cc.EventListener.UNKNOWN = 0;
+  cc.EventListener.TOUCH_ONE_BY_ONE = 1;
+  cc.EventListener.TOUCH_ALL_AT_ONCE = 2;
+  cc.EventListener.KEYBOARD = 3;
+  cc.EventListener.MOUSE = 4;
+  cc.EventListener.ACCELERATION = 5;
+  cc.EventListener.FOCUS = 6;
 
-  //   for (var key in argObj) {
-  //     // Temporary fix for EventMouse to support getDelta functions (doesn't exist in Cocos2d-x)
-  //     if (key == "onMouseDown" || key == "onMouseMove")
-  //       listener["_" + key] = argObj[key];
-  //     else listener[key] = argObj[key];
-  //   }
+  //game controller 7
+  cc.EventListener.CUSTOM = 8;
 
-  //   return listener;
-  // };
+  cc.EventListener.create = function (argObj: {
+    event?: number;
+    [key: string]: any;
+  }) {
+    if (!argObj || !argObj.event) {
+      throw "Invalid parameter.";
+    }
+    const listenerType = argObj.event;
+    delete argObj.event;
 
-  // // Event manager
-  // cc.eventManager.addListener = function (listener, nodeOrPriority) {
-  //   if (!(listener instanceof cc.EventListener)) {
-  //     listener = cc.EventListener.create(listener);
-  //   }
+    let listener = null;
+    if (listenerType === cc.EventListener.TOUCH_ONE_BY_ONE) {
+      // TODO
+      listener = (<any>cc).EventListenerTouchOneByOne.create();
+      if (argObj.swallowTouches) {
+        listener.setSwallowTouches(argObj.swallowTouches);
+      }
+    } else if (listenerType === cc.EventListener.TOUCH_ALL_AT_ONCE)
+      // TODO
+      listener = (<any>cc).EventListenerTouchAllAtOnce.create();
+    else if (listenerType === cc.EventListener.MOUSE)
+      // TODO
+      listener = (<any>cc).EventListenerMouse.create();
+    else if (listenerType === cc.EventListener.CUSTOM) {
+      // TODO
+      listener = (<any>cc).EventListenerCustom.create(
+        argObj.eventName,
+        argObj.callback,
+      );
+      delete argObj.eventName;
+      delete argObj.callback;
+    } else if (listenerType === cc.EventListener.KEYBOARD)
+      listener = (<any>cc).EventListenerKeyboard.create();
+    else if (listenerType === cc.EventListener.ACCELERATION) {
+      listener = (<any>cc).EventListenerAcceleration.create(argObj.callback);
+      delete argObj.callback;
+    } else if (listenerType === cc.EventListener.FOCUS) {
+      listener = (<any>cc).EventListenerFocus.create();
+    } else {
+      cc.log("Error: Invalid listener type.");
+    }
 
-  //   if (typeof nodeOrPriority == "number") {
-  //     if (nodeOrPriority == 0) {
-  //       cc.log(
-  //         "0 priority is forbidden for fixed priority since it's used for scene graph based priority.",
-  //       );
-  //       return;
-  //     }
+    for (const key in argObj) {
+      // Temporary fix for EventMouse to support getDelta functions (doesn't exist in Cocos2d-x)
+      if (key == "onMouseDown" || key == "onMouseMove")
+        listener["_" + key] = argObj[key];
+      else listener[key] = argObj[key];
+    }
 
-  //     cc.eventManager.addEventListenerWithFixedPriority(listener, nodeOrPriority);
-  //   } else {
-  //     cc.eventManager.addEventListenerWithSceneGraphPriority(
-  //       listener,
-  //       nodeOrPriority,
-  //     );
-  //   }
+    return listener;
+  };
 
-  //   return listener;
-  // };
+  // Event manager
+  cc.eventManager.addListener = function (listener, nodeOrPriority) {
+    if (!(listener instanceof cc.EventListener)) {
+      listener = cc.EventListener.create(listener as any);
+    }
 
-  // cc.eventManager.dispatchCustomEvent = function (eventName, optionalUserData) {
-  //   var ev = new cc.EventCustom(eventName);
-  //   ev.setUserData(optionalUserData);
-  //   this.dispatchEvent(ev);
-  // };
+    if (typeof nodeOrPriority == "number") {
+      if (nodeOrPriority == 0) {
+        cc.log(
+          "0 priority is forbidden for fixed priority since it's used for scene graph based priority.",
+        );
+        return;
+      }
 
-  // cc.EventCustom.prototype.setUserData = function (userData) {
-  //   this._userData = userData;
-  // };
+      cc.eventManager.addEventListenerWithFixedPriority(
+        listener,
+        nodeOrPriority,
+      );
+    } else {
+      cc.eventManager.addEventListenerWithSceneGraphPriority(
+        listener,
+        nodeOrPriority,
+      );
+    }
 
-  // cc.EventCustom.prototype.getUserData = function () {
-  //   return this._userData;
-  // };
+    return listener! as cc.EventListener;
+  };
+
+  cc.eventManager.dispatchCustomEvent = function (
+    eventName: string,
+    optionalUserData?: any,
+  ) {
+    const ev = new cc.EventCustom(eventName);
+    ev.setUserData(optionalUserData);
+    this.dispatchEvent(ev);
+  };
+
+  cc.EventCustom.prototype.setUserData = function (userData) {
+    this._userData = userData;
+  };
+
+  cc.EventCustom.prototype.getUserData = function () {
+    return this._userData;
+  };
 
   // cc.inputManager = {
   //   setAccelerometerEnabled: cc.Device.setAccelerometerEnabled,

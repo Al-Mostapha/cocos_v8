@@ -1,44 +1,16 @@
-/*
- * Copyright (c) 2013-2016 Chukong Technologies Inc.
- * Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 //
 // JavaScript Bindings helper file
 //
 
 // DO NOT ALTER THE ORDER
 // require('script/jsb_cocos2d_constants.js');
+import "./jsb_cocos2d_constants";
 // require('script/jsb_cocos2d.js');
+import "./jsb_cocos2d";
 // require('script/jsb_common.js');
 // require('script/jsb_property_impls.js');
 // require('script/jsb_property_apis.js');
 // require('script/jsb_create_apis.js');
-
-import './jsb_cocos2d_constants';
-import './jsb_cocos2d';
-import './jsb_common';
-import './jsb_property_impls';
-import './jsb_property_apis';
-import './jsb_create_apis';
 
 // if (window.ccs) {
 //     require('script/studio/jsb_studio_boot.js');
@@ -56,23 +28,6 @@ import './jsb_create_apis';
 //     require('script/studio/parsers/compatible.js');
 // }
 
-declare const window: any;
-
-if (window.ccs) {
-    import('./studio/jsb_studio_boot');
-    import('./studio/jsb_cocos2d_studio');
-    import('./studio/jsb_studio_property_apis');
-    import('./studio/jsb_studio_create_apis');
-    import('./studio/jsb_studio_load');
-    import('./studio/parsers/action-1.x');
-    import('./studio/parsers/action-2.x');
-    import('./studio/parsers/scene-1.x');
-    import('./studio/parsers/timelineParser-1.x');
-    import('./studio/parsers/timelineParser-2.x');
-    import('./studio/parsers/uiParser-1.x');
-    import('./studio/parsers/compatible');
-}
-
 // if (window.ccui) {
 //     require('script/ccui/jsb_cocos2d_ui.js');
 //     require('script/ccui/jsb_ccui_property_impls.js');
@@ -81,35 +36,15 @@ if (window.ccs) {
 //     require('script/ccui/jsb_ccui_deprecated.js');
 // }
 
-if (window.ccui) {
-    import('./ccui/jsb_cocos2d_ui');
-    import('./ccui/jsb_ccui_property_impls');
-    import('./ccui/jsb_ccui_property_apis');
-    import('./ccui/jsb_ccui_create_apis');
-    import('./ccui/jsb_ccui_deprecated');
-}
-
 // if (cc.ControlButton) {
 //     require('script/extension/jsb_cocos2d_extension.js');
 //     require('script/extension/jsb_ext_property_apis.js');
 //     require('script/extension/jsb_ext_create_apis.js');
 // }
 
-declare const cc: any;
-
-if (cc.ControlButton) {
-    import('./extension/jsb_cocos2d_extension');
-    import('./extension/jsb_ext_property_apis');
-    import('./extension/jsb_ext_create_apis');
-}
-
 // if (cc.PhysicsSprite) {
 //     require('script/physicsSprite/jsb_physicsSprite.js');
 // }
-
-if (cc.PhysicsSprite) {
-    import('./physicsSprite/jsb_physicsSprite');
-}
 
 // if (window.cp) {
 //     // chipmunk
@@ -117,25 +52,12 @@ if (cc.PhysicsSprite) {
 //     require('script/chipmunk/jsb_chipmunk.js');
 // }
 
-if (window.cp) {
-    // chipmunk
-    import('./chipmunk/jsb_chipmunk_constants');
-    import('./chipmunk/jsb_chipmunk');
-}
-
 // require('script/jsb_opengl_constants.js');
 // require('script/jsb_opengl.js');
-
-import './jsb_opengl_constants';
-import './jsb_opengl';
 
 // if (cc.BuilderAnimationManager) {
 //     require('script/jsb_cocosbuilder.js');
 // }
-
-if (cc.BuilderAnimationManager) {
-    import('./jsb_cocosbuilder');
-}
 
 // if (jsb.fileUtils.isFileExist('jsb_pluginx.js') || jsb.fileUtils.isFileExist('jsb_pluginx.jsc')) {
 //     if (cc.sys.os == cc.sys.OS_IOS || cc.sys.os == cc.sys.OS_ANDROID) {
@@ -143,34 +65,31 @@ if (cc.BuilderAnimationManager) {
 //     }
 // }
 
-declare const jsb: any;
-
-if (jsb.fileUtils.isFileExist('jsb_pluginx.js') || jsb.fileUtils.isFileExist('jsb_pluginx.jsc')) {
-    if (cc.sys.os === cc.sys.OS_IOS || cc.sys.os === cc.sys.OS_ANDROID) {
-        import('./jsb_pluginx');
-    }
-}
-
 // if (window.sp) {
 //     require('script/jsb_spine.js');
 // }
-
-if (window.sp) {
-    import('./jsb_spine');
-}
 
 // if (jsb.Sprite3D){
 //     require('script/3d/jsb_cocos2d_3d.js');
 // }
 
-if (jsb.Sprite3D) {
-    import('./3d/jsb_cocos2d_3d');
-}
-
 // if (jsb.ParticleSystem3D) {
 //     require('script/3d/jsb_cocos2d_3d_ext.js');
 // }
 
-if (jsb.ParticleSystem3D) {
-    import('./3d/jsb_cocos2d_3d_ext');
-}
+// if (jsb.Physics3DObject) {
+//     require("script/physics3d/jsb_physics3d.js");
+// }
+
+// if (jsb.NavMeshAgent) {
+//     require("script/navmesh/jsb_navmesh.js");
+// }
+
+// require("script/jsb_audioengine.js");
+import "./jsb_audioengine";
+
+// require('script/jsb_loaders.js');
+import "./jsb_loaders";
+// require('script/jsb_pool.js');
+import "./jsb_pool";
+// require('script/jsb_deprecated.js');
