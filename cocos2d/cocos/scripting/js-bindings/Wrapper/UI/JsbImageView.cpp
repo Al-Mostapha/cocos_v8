@@ -570,7 +570,10 @@ void js_register_cocos2dx_ui_ImageView(v8::Isolate *isolate, v8::Local<v8::Objec
   auto tpl = v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_ImageView_constructor);
   tpl->SetClassName(JsbUtils::ToV8String(isolate, "ImageView"));
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
   JsbUtils::RegisterV8Class(typeid(cocos2d::ui::ImageView).name(), &tpl);
+  JsbUtils::BindJsClass("ImageView", global, tpl);
+
   auto proto = tpl->PrototypeTemplate();
   auto parent = ScriptEngine::getInstance()->getClassByName(typeid(cocos2d::ui::Widget).name());
   tpl->Inherit(parent);

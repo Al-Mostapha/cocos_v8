@@ -2864,7 +2864,7 @@ void js_register_cocos2dx_ui_Widget(v8::Isolate *isolate, v8::Local<v8::Object> 
   v8::Local<v8::FunctionTemplate> tpl = v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_Widget_constructor);
   tpl->SetClassName(v8::String::NewFromUtf8(isolate, "Widget").ToLocalChecked());
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
-  JsbUtils::RegisterV8Class(typeid(cocos2d::ui::Widget).name(), &tpl);
+
   auto parent = ScriptEngine::getInstance()->getClassByName(typeid(cocos2d::ProtectedNode).name());
   tpl->Inherit(v8::Local<v8::FunctionTemplate>::New(isolate, parent));
   v8::Local<v8::ObjectTemplate> proto = tpl->PrototypeTemplate();
@@ -3048,4 +3048,6 @@ void js_register_cocos2dx_ui_Widget(v8::Isolate *isolate, v8::Local<v8::Object> 
   //     // add the proto and JSClass to the type->js info hash table
   //     jsb_register_class<cocos2d::ui::Widget>(cx, jsb_cocos2d_ui_Widget_class, proto, parent_proto);
   //     anonEvaluate(cx, global, "(function () { ccui.Widget.extend = cc.Class.extend; })()");
+  JsbUtils::RegisterV8Class(typeid(cocos2d::ui::Widget).name(), &tpl);
+  JsbUtils::BindJsClass("Widget", global, tpl);
 }

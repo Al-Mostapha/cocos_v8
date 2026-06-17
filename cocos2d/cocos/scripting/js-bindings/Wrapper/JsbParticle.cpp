@@ -1,5 +1,6 @@
 #include "JsbParticle.hpp"
 #include "JsbUtils.h"
+#include "JsbCtor.hpp"
 #include "ScriptEngine.hpp"
 #include "2d/CCParticleBatchNode.h"
 #include "2d/CCParticleSystem.h"
@@ -676,156 +677,234 @@ void js_cocos2dx_ParticleBatchNode_createWithTexture(const v8::FunctionCallbackI
   //     bool ok = true;
   //     if (argc == 1)
   //     {
-  //         cocos2d::Texture2D *arg0 = nullptr;
-  //         do
-  //         {
-  //             if (args.get(0).isNull())
-  //             {
-  //                 arg0 = nullptr;
-  //                 break;
-  //             }
-  //             if (!args.get(0).isObject())
-  //             {
-  //                 ok = false;
-  //                 break;
-  //             }
-  //             js_proxy_t *jsProxy;
-  //             JS::RootedObject tmpObj(cx, args.get(0).toObjectOrNull());
-  //             jsProxy = jsb_get_js_proxy(tmpObj);
-  //             arg0 = (cocos2d::Texture2D *)(jsProxy ? jsProxy->ptr : NULL);
-  //             JSB_PRECONDITION2(arg0, cx, false, "Invalid Native Object");
-  //         } while (0);
-  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleBatchNode_createWithTexture : Error processing arguments");
+  if (args.Length() == 1)
+  {
+    //         cocos2d::Texture2D *arg0 = nullptr;
+    cocos2d::Texture2D *texture = nullptr;
 
-  //         auto ret = cocos2d::ParticleBatchNode::createWithTexture(arg0);
-  //         js_type_class_t *typeClass = js_get_type_from_native<cocos2d::ParticleBatchNode>(ret);
-  //         JS::RootedObject jsret(cx, jsb_ref_autoreleased_create_jsobject(cx, ret, typeClass, "cocos2d::ParticleBatchNode"));
-  //         args.rval().set(OBJECT_TO_JSVAL(jsret));
-  //         return true;
-  //     }
-  //     if (argc == 2)
-  //     {
-  //         cocos2d::Texture2D *arg0 = nullptr;
-  //         int arg1 = 0;
-  //         do
-  //         {
-  //             if (args.get(0).isNull())
-  //             {
-  //                 arg0 = nullptr;
-  //                 break;
-  //             }
-  //             if (!args.get(0).isObject())
-  //             {
-  //                 ok = false;
-  //                 break;
-  //             }
-  //             js_proxy_t *jsProxy;
-  //             JS::RootedObject tmpObj(cx, args.get(0).toObjectOrNull());
-  //             jsProxy = jsb_get_js_proxy(tmpObj);
-  //             arg0 = (cocos2d::Texture2D *)(jsProxy ? jsProxy->ptr : NULL);
-  //             JSB_PRECONDITION2(arg0, cx, false, "Invalid Native Object");
-  //         } while (0);
-  //         ok &= jsval_to_int32(cx, args.get(1), (int32_t *)&arg1);
-  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleBatchNode_createWithTexture : Error processing arguments");
+    if (args[0]->IsNull())
+    {
+      texture = nullptr;
+      SE_REPORT_ERROR("js_cocos2dx_ParticleBatchNode_createWithTexture : Error processing arguments");
+      return;
+    }
+    if (!args[0]->IsObject())
+    {
+      SE_REPORT_ERROR("js_cocos2dx_ParticleBatchNode_createWithTexture : Error processing arguments");
+      return;
+    }
 
-  //         auto ret = cocos2d::ParticleBatchNode::createWithTexture(arg0, arg1);
-  //         js_type_class_t *typeClass = js_get_type_from_native<cocos2d::ParticleBatchNode>(ret);
-  //         JS::RootedObject jsret(cx, jsb_ref_autoreleased_create_jsobject(cx, ret, typeClass, "cocos2d::ParticleBatchNode"));
-  //         args.rval().set(OBJECT_TO_JSVAL(jsret));
-  //         return true;
-  //     }
+    //             js_proxy_t *jsProxy;
+    //             JS::RootedObject tmpObj(cx, args.get(0).toObjectOrNull());
+    //             jsProxy = jsb_get_js_proxy(tmpObj);
+    //             arg0 = (cocos2d::Texture2D *)(jsProxy ? jsProxy->ptr : NULL);
+    v8::Local<v8::Object> jsObj = args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
+    texture = (cocos2d::Texture2D *)jsObj->GetAlignedPointerFromInternalField(0);
+    //             JSB_PRECONDITION2(arg0, cx, false, "Invalid Native Object");
+    SE_PRECONDITION2(texture, "js_cocos2dx_ParticleBatchNode_createWithTexture : Invalid Native Object");
+
+    //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleBatchNode_createWithTexture : Error processing arguments");
+
+    //         auto ret = cocos2d::ParticleBatchNode::createWithTexture(arg0);
+    auto ret = cocos2d::ParticleBatchNode::createWithTexture(texture);
+    //         js_type_class_t *typeClass = js_get_type_from_native<cocos2d::ParticleBatchNode>(ret);
+    //         JS::RootedObject jsret(cx, jsb_ref_autoreleased_create_jsobject(cx, ret, typeClass, "cocos2d::ParticleBatchNode"));
+    auto jsObjRet = jsb_ref_autoreleased_create_jsobject(ret);
+
+    //         args.rval().set(OBJECT_TO_JSVAL(jsret));
+    args.GetReturnValue().Set(jsObjRet);
+    //         return true;
+  }
+  else if (args.Length() == 2)
+  {
+    //         cocos2d::Texture2D *arg0 = nullptr;
+    cocos2d::Texture2D *texture = nullptr;
+    //         int arg1 = 0;
+    int capacity = 0;
+
+    //             if (args.get(0).isNull())
+    //             {
+    //                 arg0 = nullptr;
+    //                 break;
+    //             }
+    if (args[0]->IsNull())
+    {
+      texture = nullptr;
+      SE_REPORT_ERROR("js_cocos2dx_ParticleBatchNode_createWithTexture : Error processing arguments");
+      return;
+    }
+    //             if (!args.get(0).isObject())
+    //             {
+    //                 ok = false;
+    //                 break;
+    //             }
+
+    if (!args[0]->IsObject())
+    {
+      SE_REPORT_ERROR("js_cocos2dx_ParticleBatchNode_createWithTexture : Error processing arguments");
+      return;
+    }
+
+    //             js_proxy_t *jsProxy;
+    //             JS::RootedObject tmpObj(cx, args.get(0).toObjectOrNull());
+    //             jsProxy = jsb_get_js_proxy(tmpObj);
+    //             arg0 = (cocos2d::Texture2D *)(jsProxy ? jsProxy->ptr : NULL);
+    v8::Local<v8::Object> jsObj = args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
+    texture = (cocos2d::Texture2D *)jsObj->GetAlignedPointerFromInternalField(0);
+    //             JSB_PRECONDITION2(arg0, cx, false, "Invalid Native Object");
+
+    //         ok &= jsval_to_int32(cx, args.get(1), (int32_t *)&arg1);
+    capacity = args[1]->Int32Value(isolate->GetCurrentContext()).FromJust();
+    //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleBatchNode_createWithTexture : Error processing arguments");
+
+    //         auto ret = cocos2d::ParticleBatchNode::createWithTexture(arg0, arg1);
+    auto ret = cocos2d::ParticleBatchNode::createWithTexture(texture, capacity);
+    //         js_type_class_t *typeClass = js_get_type_from_native<cocos2d::ParticleBatchNode>(ret);
+    //         JS::RootedObject jsret(cx, jsb_ref_autoreleased_create_jsobject(cx, ret, typeClass, "cocos2d::ParticleBatchNode"));
+    auto jsObjRet = jsb_ref_autoreleased_create_jsobject(ret);
+    //         args.rval().set(OBJECT_TO_JSVAL(jsret));
+    args.GetReturnValue().Set(jsObjRet);
+    //         return true;
+  }
   //     JS_ReportError(cx, "js_cocos2dx_ParticleBatchNode_createWithTexture : wrong number of arguments");
+  SE_REPORT_ERROR("js_cocos2dx_ParticleBatchNode_createWithTexture : wrong number of arguments");
   //     return false;
 }
 
 // bool js_cocos2dx_ParticleBatchNode_constructor(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     cocos2d::ParticleBatchNode *cobj = new (std::nothrow) cocos2d::ParticleBatchNode();
+void js_cocos2dx_ParticleBatchNode_constructor(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     cocos2d::ParticleBatchNode *cobj = new (std::nothrow) cocos2d::ParticleBatchNode();
+  cocos2d::ParticleBatchNode *cParticle = new (std::nothrow) cocos2d::ParticleBatchNode();
 
-//     js_type_class_t *typeClass = js_get_type_from_native<cocos2d::ParticleBatchNode>(cobj);
+  //     js_type_class_t *typeClass = js_get_type_from_native<cocos2d::ParticleBatchNode>(cobj);
 
-//     // link the native object with the javascript object
-//     JS::RootedObject jsobj(cx, jsb_ref_create_jsobject(cx, cobj, typeClass, "cocos2d::ParticleBatchNode"));
-//     args.rval().set(OBJECT_TO_JSVAL(jsobj));
-//     if (JS_HasProperty(cx, jsobj, "_ctor", &ok) && ok)
-//         ScriptingCore::getInstance()->executeFunctionWithOwner(OBJECT_TO_JSVAL(jsobj), "_ctor", args);
-//     return true;
-// }
+  //     // link the native object with the javascript object
+  //     JS::RootedObject jsobj(cx, jsb_ref_create_jsobject(cx, cobj, typeClass, "cocos2d::ParticleBatchNode"));
+  auto jsObj = jsb_ref_create_jsobject(cParticle);
+  //     args.rval().set(OBJECT_TO_JSVAL(jsobj));
+  //     if (JS_HasProperty(cx, jsobj, "_ctor", &ok) && ok)
+  //         ScriptingCore::getInstance()->executeFunctionWithOwner(OBJECT_TO_JSVAL(jsobj), "_ctor", args);
+  args.GetReturnValue().Set(jsObj);
+  CallCustomConstructor(args, jsObj);
+  //     return true;
+}
+
 // static bool js_cocos2dx_ParticleBatchNode_ctor(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     cocos2d::ParticleBatchNode *nobj = new (std::nothrow) cocos2d::ParticleBatchNode();
-//     js_proxy_t *p = jsb_new_proxy(nobj, obj);
-//     jsb_ref_init(cx, &p->obj, nobj, "cocos2d::ParticleBatchNode");
-//     bool isFound = false;
-//     if (JS_HasProperty(cx, obj, "_ctor", &isFound) && isFound)
-//         ScriptingCore::getInstance()->executeFunctionWithOwner(OBJECT_TO_JSVAL(obj), "_ctor", args);
-//     args.rval().setUndefined();
-//     return true;
-// }
+void js_cocos2dx_ParticleBatchNode_ctor(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     cocos2d::ParticleBatchNode *nobj = new (std::nothrow) cocos2d::ParticleBatchNode();
+  cocos2d::ParticleBatchNode *nobj = new (std::nothrow) cocos2d::ParticleBatchNode();
+  //     js_proxy_t *p = jsb_new_proxy(nobj, obj);
+  //     jsb_ref_init(cx, &p->obj, nobj, "cocos2d::ParticleBatchNode");
+  auto jsObj = jsb_ref_create_jsobject(nobj);
+  //     bool isFound = false;
+  //     if (JS_HasProperty(cx, obj, "_ctor", &isFound) && isFound)
+  //         ScriptingCore::getInstance()->executeFunctionWithOwner(OBJECT_TO_JSVAL(obj), "_ctor", args);
+  CallCustomConstructor(args, jsObj);
+  //     args.rval().setUndefined();
+  //     return true;
+}
 
 // extern JSObject *jsb_cocos2d_Node_prototype;
 
 // void js_register_cocos2dx_ParticleBatchNode(JSContext *cx, JS::HandleObject global)
 // {
-//     jsb_cocos2d_ParticleBatchNode_class = (JSClass *)calloc(1, sizeof(JSClass));
-//     jsb_cocos2d_ParticleBatchNode_class->name = "ParticleBatchNode";
-//     jsb_cocos2d_ParticleBatchNode_class->addProperty = JS_PropertyStub;
-//     jsb_cocos2d_ParticleBatchNode_class->delProperty = JS_DeletePropertyStub;
-//     jsb_cocos2d_ParticleBatchNode_class->getProperty = JS_PropertyStub;
-//     jsb_cocos2d_ParticleBatchNode_class->setProperty = JS_StrictPropertyStub;
-//     jsb_cocos2d_ParticleBatchNode_class->enumerate = JS_EnumerateStub;
-//     jsb_cocos2d_ParticleBatchNode_class->resolve = JS_ResolveStub;
-//     jsb_cocos2d_ParticleBatchNode_class->convert = JS_ConvertStub;
-//     jsb_cocos2d_ParticleBatchNode_class->flags = JSCLASS_HAS_RESERVED_SLOTS(2);
+void js_register_cocos2dx_ParticleBatchNode(v8::Isolate *isolate, v8::Local<v8::Object> global)
+{
+  //     jsb_cocos2d_ParticleBatchNode_class = (JSClass *)calloc(1, sizeof(JSClass));
+  //     jsb_cocos2d_ParticleBatchNode_class->name = "ParticleBatchNode";
+  //     jsb_cocos2d_ParticleBatchNode_class->addProperty = JS_PropertyStub;
+  //     jsb_cocos2d_ParticleBatchNode_class->delProperty = JS_DeletePropertyStub;
+  //     jsb_cocos2d_ParticleBatchNode_class->getProperty = JS_PropertyStub;
+  //     jsb_cocos2d_ParticleBatchNode_class->setProperty = JS_StrictPropertyStub;
+  //     jsb_cocos2d_ParticleBatchNode_class->enumerate = JS_EnumerateStub;
+  //     jsb_cocos2d_ParticleBatchNode_class->resolve = JS_ResolveStub;
+  //     jsb_cocos2d_ParticleBatchNode_class->convert = JS_ConvertStub;
+  //     jsb_cocos2d_ParticleBatchNode_class->flags = JSCLASS_HAS_RESERVED_SLOTS(2);
+  v8::Local<v8::FunctionTemplate> tpl = v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleBatchNode_constructor);
+  tpl->SetClassName(v8::String::NewFromUtf8(isolate, "ParticleBatchNode").ToLocalChecked());
+  tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
-//     static JSPropertySpec properties[] = {
-//         JS_PS_END};
+  auto parentProto = ScriptEngine::getInstance()->getClassByName(typeid(cocos2d::Node).name());
 
-//     static JSFunctionSpec funcs[] = {
-//         JS_FN("setTexture", js_cocos2dx_ParticleBatchNode_setTexture, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("initWithTexture", js_cocos2dx_ParticleBatchNode_initWithTexture, 2, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("disableParticle", js_cocos2dx_ParticleBatchNode_disableParticle, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getTexture", js_cocos2dx_ParticleBatchNode_getTexture, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setTextureAtlas", js_cocos2dx_ParticleBatchNode_setTextureAtlas, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("initWithFile", js_cocos2dx_ParticleBatchNode_initWithFile, 2, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setBlendFunc", js_cocos2dx_ParticleBatchNode_setBlendFunc, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("removeAllChildrenWithCleanup", js_cocos2dx_ParticleBatchNode_removeAllChildrenWithCleanup, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getTextureAtlas", js_cocos2dx_ParticleBatchNode_getTextureAtlas, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getBlendFunc", js_cocos2dx_ParticleBatchNode_getBlendFunc, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("insertChild", js_cocos2dx_ParticleBatchNode_insertChild, 2, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("removeChildAtIndex", js_cocos2dx_ParticleBatchNode_removeChildAtIndex, 2, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("ctor", js_cocos2dx_ParticleBatchNode_ctor, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FS_END};
+  tpl->Inherit(parentProto);
 
-//     static JSFunctionSpec st_funcs[] = {
-//         JS_FN("create", js_cocos2dx_ParticleBatchNode_create, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("createWithTexture", js_cocos2dx_ParticleBatchNode_createWithTexture, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FS_END};
+  auto proto = tpl->PrototypeTemplate();
+  //     static JSPropertySpec properties[] = {
+  //         JS_PS_END};
 
-//     JS::RootedObject parent_proto(cx, jsb_cocos2d_Node_prototype);
-//     jsb_cocos2d_ParticleBatchNode_prototype = JS_InitClass(
-//         cx, global,
-//         parent_proto,
-//         jsb_cocos2d_ParticleBatchNode_class,
-//         js_cocos2dx_ParticleBatchNode_constructor, 0, // constructor
-//         properties,
-//         funcs,
-//         NULL, // no static properties
-//         st_funcs);
+  //     static JSFunctionSpec funcs[] = {
+  //         JS_FN("setTexture", js_cocos2dx_ParticleBatchNode_setTexture, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "setTexture", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleBatchNode_setTexture));
+  //         JS_FN("initWithTexture", js_cocos2dx_ParticleBatchNode_initWithTexture, 2, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "initWithTexture", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleBatchNode_initWithTexture));
+  //         JS_FN("disableParticle", js_cocos2dx_ParticleBatchNode_disableParticle, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "disableParticle", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleBatchNode_disableParticle));
+  //         JS_FN("getTexture", js_cocos2dx_ParticleBatchNode_getTexture, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "getTexture", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleBatchNode_getTexture));
+  //         JS_FN("setTextureAtlas", js_cocos2dx_ParticleBatchNode_setTextureAtlas, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "setTextureAtlas", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleBatchNode_setTextureAtlas));
+  //         JS_FN("initWithFile", js_cocos2dx_ParticleBatchNode_initWithFile, 2, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "initWithFile", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleBatchNode_initWithFile));
+  //         JS_FN("setBlendFunc", js_cocos2dx_ParticleBatchNode_setBlendFunc, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "setBlendFunc", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleBatchNode_setBlendFunc));
+  //         JS_FN("removeAllChildrenWithCleanup", js_cocos2dx_ParticleBatchNode_removeAllChildrenWithCleanup, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "removeAllChildrenWithCleanup", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleBatchNode_removeAllChildrenWithCleanup));
+  //         JS_FN("getTextureAtlas", js_cocos2dx_ParticleBatchNode_getTextureAtlas, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "getTextureAtlas", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleBatchNode_getTextureAtlas));
+  //         JS_FN("getBlendFunc", js_cocos2dx_ParticleBatchNode_getBlendFunc, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "getBlendFunc", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleBatchNode_getBlendFunc));
+  //         JS_FN("insertChild", js_cocos2dx_ParticleBatchNode_insertChild, 2, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "insertChild", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleBatchNode_insertChild));
+  //         JS_FN("removeChildAtIndex", js_cocos2dx_ParticleBatchNode_removeChildAtIndex, 2, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "removeChildAtIndex", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleBatchNode_removeChildAtIndex));
+  //         JS_FN("ctor", js_cocos2dx_ParticleBatchNode_ctor, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "ctor", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleBatchNode_ctor));
+  //         JS_FS_END};
 
-//     JS::RootedObject proto(cx, jsb_cocos2d_ParticleBatchNode_prototype);
-//     JS::RootedValue className(cx, std_string_to_jsval(cx, "ParticleBatchNode"));
-//     JS_SetProperty(cx, proto, "_className", className);
-//     JS_SetProperty(cx, proto, "__nativeObj", JS::TrueHandleValue);
-//     JS_SetProperty(cx, proto, "__is_ref", JS::TrueHandleValue);
-//     // add the proto and JSClass to the type->js info hash table
-//     jsb_register_class<cocos2d::ParticleBatchNode>(cx, jsb_cocos2d_ParticleBatchNode_class, proto, parent_proto);
-//     anonEvaluate(cx, global, "(function () { cc.ParticleBatchNode.extend = cc.Class.extend; })()");
-// }
+  //     static JSFunctionSpec st_funcs[] = {
+  //         JS_FN("create", js_cocos2dx_ParticleBatchNode_create, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->Set(isolate, "create", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleBatchNode_create));
+  //         JS_FN("createWithTexture", js_cocos2dx_ParticleBatchNode_createWithTexture, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->Set(isolate, "createWithTexture", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleBatchNode_createWithTexture));
+  //         JS_FS_END};
+
+  //     JS::RootedObject parent_proto(cx, jsb_cocos2d_Node_prototype);
+  //     jsb_cocos2d_ParticleBatchNode_prototype = JS_InitClass(
+  //         cx, global,
+  //         parent_proto,
+  //         jsb_cocos2d_ParticleBatchNode_class,
+  //         js_cocos2dx_ParticleBatchNode_constructor, 0, // constructor
+  //         properties,
+  //         funcs,
+  //         NULL, // no static properties
+  //         st_funcs);
+
+  //     JS::RootedObject proto(cx, jsb_cocos2d_ParticleBatchNode_prototype);
+  //     JS::RootedValue className(cx, std_string_to_jsval(cx, "ParticleBatchNode"));
+  //     JS_SetProperty(cx, proto, "_className", className);
+  proto->Set(isolate, "_className", v8::String::NewFromUtf8(isolate, "ParticleBatchNode").ToLocalChecked());
+  //     JS_SetProperty(cx, proto, "__nativeObj", JS::TrueHandleValue);
+  proto->Set(isolate, "__nativeObj", v8::True(isolate));
+  //     JS_SetProperty(cx, proto, "__is_ref", JS::TrueHandleValue);
+  proto->Set(isolate, "__is_ref", v8::True(isolate));
+  //     // add the proto and JSClass to the type->js info hash table
+  //     jsb_register_class<cocos2d::ParticleBatchNode>(cx, jsb_cocos2d_ParticleBatchNode_class, proto, parent_proto);
+  //     anonEvaluate(cx, global, "(function () { cc.ParticleBatchNode.extend = cc.Class.extend; })()");
+  JsbUtils::RegisterV8Class(typeid(cocos2d::ParticleBatchNode).name(), &tpl);
+  JsbUtils::BindJsClass("ParticleBatchNode", global, tpl);
+}
 
 // JSClass *jsb_cocos2d_ParticleData_class;
 // JSObject *jsb_cocos2d_ParticleData_prototype;
@@ -974,93 +1053,117 @@ void js_cocos2dx_ParticleData_constructor(const v8::FunctionCallbackInfo<v8::Val
 {
   v8::Isolate *isolate = args.GetIsolate();
   v8::HandleScope handleScope(isolate);
-  // TODO
-  CCASSERT(false, "js_cocos2dx_ParticleData_constructor is not supported");
+
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     cocos2d::ParticleData *cobj = new (std::nothrow) cocos2d::ParticleData();
-
+  cocos2d::ParticleData *cParticle = new (std::nothrow) cocos2d::ParticleData();
   //     js_type_class_t *typeClass = js_get_type_from_native<cocos2d::ParticleData>(cobj);
 
   //     // link the native object with the javascript object
   //     JS::RootedObject jsobj(cx, jsb_create_weak_jsobject(cx, cobj, typeClass, "cocos2d::ParticleData"));
+  auto jsObj = jsb_create_weak_jsobject(cParticle);
   //     args.rval().set(OBJECT_TO_JSVAL(jsobj));
+  args.GetReturnValue().Set(jsObj);
   //     if (JS_HasProperty(cx, jsobj, "_ctor", &ok) && ok)
   //         ScriptingCore::getInstance()->executeFunctionWithOwner(OBJECT_TO_JSVAL(jsobj), "_ctor", args);
+  CallCustomConstructor(args, jsObj);
   //     return true;
 }
 
 // void js_cocos2d_ParticleData_finalize(JSFreeOp *fop, JSObject *obj)
 // {
-//     CCLOGINFO("jsbindings: finalizing JS object %p (ParticleData)", obj);
-//     js_proxy_t *nproxy;
-//     js_proxy_t *jsproxy;
-//     JSContext *cx = ScriptingCore::getInstance()->getGlobalContext();
-//     JS::RootedObject jsobj(cx, obj);
-//     jsproxy = jsb_get_js_proxy(jsobj);
-//     if (jsproxy)
-//     {
-//         cocos2d::ParticleData *nobj = static_cast<cocos2d::ParticleData *>(jsproxy->ptr);
-//         nproxy = jsb_get_native_proxy(jsproxy->ptr);
+void js_cocos2d_ParticleData_finalize(void *data)
+{
+  // TODO
+  CCASSERT(false, "ParticleData finalize is not implemented yet");
+  //     CCLOGINFO("jsbindings: finalizing JS object %p (ParticleData)", obj);
+  //     js_proxy_t *nproxy;
+  //     js_proxy_t *jsproxy;
+  //     JSContext *cx = ScriptingCore::getInstance()->getGlobalContext();
+  //     JS::RootedObject jsobj(cx, obj);
+  //     jsproxy = jsb_get_js_proxy(jsobj);
+  //     if (jsproxy)
+  //     {
+  //         cocos2d::ParticleData *nobj = static_cast<cocos2d::ParticleData *>(jsproxy->ptr);
+  //         nproxy = jsb_get_native_proxy(jsproxy->ptr);
 
-//         if (nobj)
-//         {
-//             jsb_remove_proxy(nproxy, jsproxy);
-//             JS::RootedValue flagValue(cx);
-//             JS_GetProperty(cx, jsobj, "__cppCreated", &flagValue);
-//             if (flagValue.isNullOrUndefined())
-//             {
-//                 delete nobj;
-//             }
-//         }
-//         else
-//             jsb_remove_proxy(nullptr, jsproxy);
-//     }
-// }
+  //         if (nobj)
+  //         {
+  //             jsb_remove_proxy(nproxy, jsproxy);
+  //             JS::RootedValue flagValue(cx);
+  //             JS_GetProperty(cx, jsobj, "__cppCreated", &flagValue);
+  //             if (flagValue.isNullOrUndefined())
+  //             {
+  //                 delete nobj;
+  //             }
+  //         }
+  //         else
+  //             jsb_remove_proxy(nullptr, jsproxy);
+  //     }
+}
+
 // void js_register_cocos2dx_ParticleData(JSContext *cx, JS::HandleObject global)
 // {
-//     jsb_cocos2d_ParticleData_class = (JSClass *)calloc(1, sizeof(JSClass));
-//     jsb_cocos2d_ParticleData_class->name = "ParticleData";
-//     jsb_cocos2d_ParticleData_class->addProperty = JS_PropertyStub;
-//     jsb_cocos2d_ParticleData_class->delProperty = JS_DeletePropertyStub;
-//     jsb_cocos2d_ParticleData_class->getProperty = JS_PropertyStub;
-//     jsb_cocos2d_ParticleData_class->setProperty = JS_StrictPropertyStub;
-//     jsb_cocos2d_ParticleData_class->enumerate = JS_EnumerateStub;
-//     jsb_cocos2d_ParticleData_class->resolve = JS_ResolveStub;
-//     jsb_cocos2d_ParticleData_class->convert = JS_ConvertStub;
-//     jsb_cocos2d_ParticleData_class->finalize = js_cocos2d_ParticleData_finalize;
-//     jsb_cocos2d_ParticleData_class->flags = JSCLASS_HAS_RESERVED_SLOTS(2);
+void js_register_cocos2dx_ParticleData(v8::Isolate *isolate, v8::Local<v8::Object> global)
+{
+  v8::HandleScope handleScope(isolate);
+  //     jsb_cocos2d_ParticleData_class = (JSClass *)calloc(1, sizeof(JSClass));
+  //     jsb_cocos2d_ParticleData_class->name = "ParticleData";
+  //     jsb_cocos2d_ParticleData_class->addProperty = JS_PropertyStub;
+  //     jsb_cocos2d_ParticleData_class->delProperty = JS_DeletePropertyStub;
+  //     jsb_cocos2d_ParticleData_class->getProperty = JS_PropertyStub;
+  //     jsb_cocos2d_ParticleData_class->setProperty = JS_StrictPropertyStub;
+  //     jsb_cocos2d_ParticleData_class->enumerate = JS_EnumerateStub;
+  //     jsb_cocos2d_ParticleData_class->resolve = JS_ResolveStub;
+  //     jsb_cocos2d_ParticleData_class->convert = JS_ConvertStub;
+  //     jsb_cocos2d_ParticleData_class->finalize = js_cocos2d_ParticleData_finalize;
+  //     jsb_cocos2d_ParticleData_class->flags = JSCLASS_HAS_RESERVED_SLOTS(2);
+  auto tpl = v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleData_constructor);
+  tpl->SetClassName(v8::String::NewFromUtf8(isolate, "ParticleData").ToLocalChecked());
+  tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
-//     static JSPropertySpec properties[] = {
-//         JS_PS_END};
+  auto proto = tpl->PrototypeTemplate();
 
-//     static JSFunctionSpec funcs[] = {
-//         JS_FN("release", js_cocos2dx_ParticleData_release, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getMaxCount", js_cocos2dx_ParticleData_getMaxCount, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("init", js_cocos2dx_ParticleData_init, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("copyParticle", js_cocos2dx_ParticleData_copyParticle, 2, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FS_END};
+  //     static JSPropertySpec properties[] = {
+  //         JS_PS_END};
 
-//     JSFunctionSpec *st_funcs = NULL;
+  //     static JSFunctionSpec funcs[] = {
+  //         JS_FN("release", js_cocos2dx_ParticleData_release, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "release", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleData_release));
+  //         JS_FN("getMaxCount", js_cocos2dx_ParticleData_getMaxCount, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "getMaxCount", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleData_getMaxCount));
+  //         JS_FN("init", js_cocos2dx_ParticleData_init, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "init", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleData_init));
+  //         JS_FN("copyParticle", js_cocos2dx_ParticleData_copyParticle, 2, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "copyParticle", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleData_copyParticle));
+  //         JS_FS_END};
 
-//     jsb_cocos2d_ParticleData_prototype = JS_InitClass(
-//         cx, global,
-//         JS::NullPtr(),
-//         jsb_cocos2d_ParticleData_class,
-//         js_cocos2dx_ParticleData_constructor, 0, // constructor
-//         properties,
-//         funcs,
-//         NULL, // no static properties
-//         st_funcs);
+  //     JSFunctionSpec *st_funcs = NULL;
 
-//     JS::RootedObject proto(cx, jsb_cocos2d_ParticleData_prototype);
-//     JS::RootedValue className(cx, std_string_to_jsval(cx, "ParticleData"));
-//     JS_SetProperty(cx, proto, "_className", className);
-//     JS_SetProperty(cx, proto, "__nativeObj", JS::TrueHandleValue);
-//     JS_SetProperty(cx, proto, "__is_ref", JS::FalseHandleValue);
-//     // add the proto and JSClass to the type->js info hash table
-//     jsb_register_class<cocos2d::ParticleData>(cx, jsb_cocos2d_ParticleData_class, proto, JS::NullPtr());
-// }
+  //     jsb_cocos2d_ParticleData_prototype = JS_InitClass(
+  //         cx, global,
+  //         JS::NullPtr(),
+  //         jsb_cocos2d_ParticleData_class,
+  //         js_cocos2dx_ParticleData_constructor, 0, // constructor
+  //         properties,
+  //         funcs,
+  //         NULL, // no static properties
+  //         st_funcs);
+
+  //     JS::RootedObject proto(cx, jsb_cocos2d_ParticleData_prototype);
+  //     JS::RootedValue className(cx, std_string_to_jsval(cx, "ParticleData"));
+  //     JS_SetProperty(cx, proto, "_className", className);
+  proto->Set(isolate, "_className", JsbUtils::ToV8String(isolate, "ParticleData"));
+  //     JS_SetProperty(cx, proto, "__nativeObj", JS::TrueHandleValue);
+  proto->Set(isolate, "__nativeObj", v8::True(isolate));
+  //     JS_SetProperty(cx, proto, "__is_ref", JS::FalseHandleValue);
+  proto->Set(isolate, "__is_ref", v8::False(isolate));
+  //     // add the proto and JSClass to the type->js info hash table
+  //     jsb_register_class<cocos2d::ParticleData>(cx, jsb_cocos2d_ParticleData_class, proto, JS::NullPtr());
+  JsbUtils::RegisterV8Class(typeid(cocos2d::ParticleData).name(), &tpl);
+  JsbUtils::BindJsClass("ParticleData", global, tpl);
+}
 
 // JSClass *jsb_cocos2d_ParticleSystem_class;
 // JSObject *jsb_cocos2d_ParticleSystem_prototype;
@@ -3222,7 +3325,7 @@ void js_cocos2dx_ParticleSystem_setBatchNode(const v8::FunctionCallbackInfo<v8::
   //             jsProxy = jsb_get_js_proxy(tmpObj);
   //             arg0 = (cocos2d::ParticleBatchNode *)(jsProxy ? jsProxy->ptr : NULL);
   v8::Local<v8::Object> obj = args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
-  cocos2d::ParticleBatchNode *batchNode = (cocos2d::ParticleBatchNode *)obj->GetAlignedPointerFromInternalField(0);
+  batchNode = (cocos2d::ParticleBatchNode *)obj->GetAlignedPointerFromInternalField(0);
   //             JSB_PRECONDITION2(arg0, cx, false, "Invalid Native Object");
   SE_PRECONDITION2(batchNode, "js_cocos2dx_ParticleSystem_setBatchNode : Invalid Native Object");
   //         } while (0);
@@ -4258,343 +4361,550 @@ void js_cocos2dx_ParticleSystem_isSourcePositionCompatible(const v8::FunctionCal
 
 // bool js_cocos2dx_ParticleSystem_getTotalParticles(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getTotalParticles : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         int ret = cobj->getTotalParticles();
-//         JS::RootedValue jsret(cx);
-//         jsret = int32_to_jsval(cx, ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_getTotalParticles(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getTotalParticles : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getTotalParticles : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_getTotalParticles : Invalid Native Object");
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_getTotalParticles : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  //     if (argc == 0)
+  //     {
+  //         int ret = cobj->getTotalParticles();
+  int ret = cParticleSystem->getTotalParticles();
+  //         JS::RootedValue jsret(cx);
+  //         jsret = int32_to_jsval(cx, ret);
+  //         args.rval().set(jsret);
+  args.GetReturnValue().Set(v8::Integer::New(isolate, ret));
+  //         return true;
+  //     }
+
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getTotalParticles : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_setStartRadiusVar(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setStartRadiusVar : Invalid Native Object");
-//     if (argc == 1)
-//     {
-//         double arg0 = 0;
-//         ok &= JS::ToNumber(cx, args.get(0), &arg0) && !std::isnan(arg0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setStartRadiusVar : Error processing arguments");
-//         cobj->setStartRadiusVar(arg0);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_setStartRadiusVar(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_setStartRadiusVar : Invalid Native Object");
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setStartRadiusVar : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  double startRadiusVar = args[0]->NumberValue(isolate->GetCurrentContext()).FromJust();
+  cParticleSystem->setStartRadiusVar(startRadiusVar);
+}
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setStartRadiusVar : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
 // bool js_cocos2dx_ParticleSystem_setBlendFunc(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_setBlendFunc : Invalid Native Object");
-//     if (argc == 1)
-//     {
-//         cocos2d::BlendFunc arg0;
-//         ok &= jsval_to_blendfunc(cx, args.get(0), &arg0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_setBlendFunc : Error processing arguments");
-//         cobj->setBlendFunc(arg0);
-//         args.rval().setUndefined();
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_setBlendFunc(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_setBlendFunc : Invalid Native Object");
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setBlendFunc : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  cocos2d::BlendFunc blendFunc;
+  if (!JsbUtils::jsval_to_blendfunc(isolate, args[0], &blendFunc))
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_setBlendFunc : Error processing arguments");
+    return;
+  }
+  cParticleSystem->setBlendFunc(blendFunc);
+}
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_setBlendFunc : wrong number of arguments: %d, was expecting %d", argc, 1);
-//     return false;
-// }
 // bool js_cocos2dx_ParticleSystem_getEndRadiusVar(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getEndRadiusVar : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         double ret = cobj->getEndRadiusVar();
-//         JS::RootedValue jsret(cx);
-//         jsret = DOUBLE_TO_JSVAL(ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_getEndRadiusVar(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getEndRadiusVar : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_getEndRadiusVar : Invalid Native Object");
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_getEndRadiusVar : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  //     if (argc == 0)
+  //     {
+  //         double ret = cobj->getEndRadiusVar();
+  double ret = cParticleSystem->getEndRadiusVar();
+  args.GetReturnValue().Set(v8::Number::New(isolate, ret));
+  //         JS::RootedValue jsret(cx);
+  //         jsret = DOUBLE_TO_JSVAL(ret);
+  //         args.rval().set(jsret);
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getEndRadiusVar : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getEndRadiusVar : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_getStartColorVar(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
-//     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
-//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getStartColorVar : Invalid Native Object");
-//     if (argc == 0)
-//     {
-//         const cocos2d::Color4F &ret = cobj->getStartColorVar();
-//         JS::RootedValue jsret(cx);
-//         jsret = cccolor4f_to_jsval(cx, ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
+void js_cocos2dx_ParticleSystem_getStartColorVar(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::ParticleSystem *cobj = (cocos2d::ParticleSystem *)(proxy ? proxy->ptr : NULL);
+  cocos2d::ParticleSystem *cParticleSystem = (cocos2d::ParticleSystem *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_ParticleSystem_getStartColorVar : Invalid Native Object");
+  SE_PRECONDITION2(cParticleSystem, "js_cocos2dx_ParticleSystem_getStartColorVar : Invalid Native Object");
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_getStartColorVar : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  //     if (argc == 0)
+  //     {
+  //         const cocos2d::Color4F &ret = cobj->getStartColorVar();
+  const cocos2d::Color4F &ret = cParticleSystem->getStartColorVar();
+  auto jsret = JsbUtils::cccolor4f_to_jsval(isolate, ret);
+  args.GetReturnValue().Set(jsret);
+  //         JS::RootedValue jsret(cx);
+  //         jsret = cccolor4f_to_jsval(cx, ret);
+  //         args.rval().set(jsret);
+  //         return true;
+  //     }
 
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getStartColorVar : wrong number of arguments: %d, was expecting %d", argc, 0);
-//     return false;
-// }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getStartColorVar : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
 // bool js_cocos2dx_ParticleSystem_create(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     if (argc == 1)
-//     {
-//         std::string arg0;
-//         ok &= jsval_to_std_string(cx, args.get(0), &arg0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_create : Error processing arguments");
+void js_cocos2dx_ParticleSystem_create(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     if (argc == 1)
+  //     {
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_create : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  //         std::string arg0;
+  //         ok &= jsval_to_std_string(cx, args.get(0), &arg0);
+  std::string path = JsbUtils::FromV8String(isolate, args[0]);
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_create : Error processing arguments");
 
-//         auto ret = cocos2d::ParticleSystem::create(arg0);
-//         js_type_class_t *typeClass = js_get_type_from_native<cocos2d::ParticleSystem>(ret);
-//         JS::RootedObject jsret(cx, jsb_ref_autoreleased_create_jsobject(cx, ret, typeClass, "cocos2d::ParticleSystem"));
-//         args.rval().set(OBJECT_TO_JSVAL(jsret));
-//         return true;
-//     }
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_create : wrong number of arguments");
-//     return false;
-// }
+  //         auto ret = cocos2d::ParticleSystem::create(arg0);
+  auto ret = cocos2d::ParticleSystem::create(path);
+  //         js_type_class_t *typeClass = js_get_type_from_native<cocos2d::ParticleSystem>(ret);
+  //         JS::RootedObject jsret(cx, jsb_ref_autoreleased_create_jsobject(cx, ret, typeClass, "cocos2d::ParticleSystem"));
+  auto jsret = jsb_ref_autoreleased_create_jsobject(ret);
+  args.GetReturnValue().Set(jsret);
+  //         return true;
+  //     }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_create : wrong number of arguments");
+  //     return false;
+}
 
 // bool js_cocos2dx_ParticleSystem_createWithTotalParticles(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     if (argc == 1)
-//     {
-//         int arg0 = 0;
-//         ok &= jsval_to_int32(cx, args.get(0), (int32_t *)&arg0);
-//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_createWithTotalParticles : Error processing arguments");
+void js_cocos2dx_ParticleSystem_createWithTotalParticles(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     if (argc == 1)
+  //     {
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_createWithTotalParticles : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  //         int arg0 = 0;
+  //         ok &= jsval_to_int32(cx, args.get(0), (int32_t *)&arg0);
+  int totalParticles = args[0]->Int32Value(isolate->GetCurrentContext()).FromJust();
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_ParticleSystem_createWithTotalParticles : Error processing arguments");
 
-//         auto ret = cocos2d::ParticleSystem::createWithTotalParticles(arg0);
-//         js_type_class_t *typeClass = js_get_type_from_native<cocos2d::ParticleSystem>(ret);
-//         JS::RootedObject jsret(cx, jsb_ref_autoreleased_create_jsobject(cx, ret, typeClass, "cocos2d::ParticleSystem"));
-//         args.rval().set(OBJECT_TO_JSVAL(jsret));
-//         return true;
-//     }
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_createWithTotalParticles : wrong number of arguments");
-//     return false;
-// }
+  //         auto ret = cocos2d::ParticleSystem::createWithTotalParticles(arg0);
+  auto ret = cocos2d::ParticleSystem::createWithTotalParticles(totalParticles);
+  //         js_type_class_t *typeClass = js_get_type_from_native<cocos2d::ParticleSystem>(ret);
+  //         JS::RootedObject jsret(cx, jsb_ref_autoreleased_create_jsobject(cx, ret, typeClass, "cocos2d::ParticleSystem"));
+  auto jsret = jsb_ref_autoreleased_create_jsobject(ret);
+  //         args.rval().set(OBJECT_TO_JSVAL(jsret));
+  //         return true;
+  args.GetReturnValue().Set(jsret);
+  //     }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_createWithTotalParticles : wrong number of arguments");
+  //     return false;
+}
 
 // bool js_cocos2dx_ParticleSystem_getAllParticleSystems(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     if (argc == 0)
-//     {
+void js_cocos2dx_ParticleSystem_getAllParticleSystems(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     if (argc == 0)
+  //     {
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_ParticleSystem_getAllParticleSystems : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
 
-//         cocos2d::Vector<cocos2d::ParticleSystem *> &ret = cocos2d::ParticleSystem::getAllParticleSystems();
-//         jsval jsret = JSVAL_NULL;
-//         jsret = ccvector_to_jsval(cx, ret);
-//         args.rval().set(jsret);
-//         return true;
-//     }
-//     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getAllParticleSystems : wrong number of arguments");
-//     return false;
-// }
+  //         cocos2d::Vector<cocos2d::ParticleSystem *> &ret = cocos2d::ParticleSystem::getAllParticleSystems();
+  cocos2d::Vector<cocos2d::ParticleSystem *> &ret = cocos2d::ParticleSystem::getAllParticleSystems();
+  //         jsval jsret = JSVAL_NULL;
+  //         jsret = ccvector_to_jsval(cx, ret);
+  auto jsret = JsbUtils::ccvector_to_jsval(isolate, ret);
+  //         args.rval().set(jsret);
+  args.GetReturnValue().Set(jsret);
+  //         return true;
+  //     }
+  //     JS_ReportError(cx, "js_cocos2dx_ParticleSystem_getAllParticleSystems : wrong number of arguments");
+  //     return false;
+}
 
 // bool js_cocos2dx_ParticleSystem_constructor(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     cocos2d::ParticleSystem *cobj = new (std::nothrow) cocos2d::ParticleSystem();
+void js_cocos2dx_ParticleSystem_constructor(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  cocos2d::ParticleSystem *cParticleSystem = new (std::nothrow) cocos2d::ParticleSystem();
+  auto jsret = jsb_ref_create_jsobject(cParticleSystem);
+  args.GetReturnValue().Set(jsret);
+  CallCustomConstructor(args, jsret);
+}
 
-//     js_type_class_t *typeClass = js_get_type_from_native<cocos2d::ParticleSystem>(cobj);
-
-//     // link the native object with the javascript object
-//     JS::RootedObject jsobj(cx, jsb_ref_create_jsobject(cx, cobj, typeClass, "cocos2d::ParticleSystem"));
-//     args.rval().set(OBJECT_TO_JSVAL(jsobj));
-//     if (JS_HasProperty(cx, jsobj, "_ctor", &ok) && ok)
-//         ScriptingCore::getInstance()->executeFunctionWithOwner(OBJECT_TO_JSVAL(jsobj), "_ctor", args);
-//     return true;
-// }
 // static bool js_cocos2dx_ParticleSystem_ctor(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
-//     cocos2d::ParticleSystem *nobj = new (std::nothrow) cocos2d::ParticleSystem();
-//     js_proxy_t *p = jsb_new_proxy(nobj, obj);
-//     jsb_ref_init(cx, &p->obj, nobj, "cocos2d::ParticleSystem");
-//     bool isFound = false;
-//     if (JS_HasProperty(cx, obj, "_ctor", &isFound) && isFound)
-//         ScriptingCore::getInstance()->executeFunctionWithOwner(OBJECT_TO_JSVAL(obj), "_ctor", args);
-//     args.rval().setUndefined();
-//     return true;
-// }
+void js_cocos2dx_ParticleSystem_ctor(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     cocos2d::ParticleSystem *nobj = new (std::nothrow) cocos2d::ParticleSystem();
+  cocos2d::ParticleSystem *nParticleSystem = new (std::nothrow) cocos2d::ParticleSystem();
+  //     js_proxy_t *p = jsb_new_proxy(nobj, obj);
+  //     jsb_ref_init(cx, &p->obj, nobj, "cocos2d::ParticleSystem");
+  auto jsret = jsb_ref_autoreleased_create_jsobject(nParticleSystem);
+  CallCustomConstructor(args, jsret);
+  args.GetReturnValue().SetUndefined();
+  //     bool isFound = false;
+  //     if (JS_HasProperty(cx, obj, "_ctor", &isFound) && isFound)
+  //         ScriptingCore::getInstance()->executeFunctionWithOwner(OBJECT_TO_JSVAL(obj), "_ctor", args);
+  //     args.rval().setUndefined();
+  //     return true;
+}
 
 // extern JSObject *jsb_cocos2d_Node_prototype;
 
 // void js_register_cocos2dx_ParticleSystem(JSContext *cx, JS::HandleObject global)
 // {
-//     jsb_cocos2d_ParticleSystem_class = (JSClass *)calloc(1, sizeof(JSClass));
-//     jsb_cocos2d_ParticleSystem_class->name = "ParticleSystem";
-//     jsb_cocos2d_ParticleSystem_class->addProperty = JS_PropertyStub;
-//     jsb_cocos2d_ParticleSystem_class->delProperty = JS_DeletePropertyStub;
-//     jsb_cocos2d_ParticleSystem_class->getProperty = JS_PropertyStub;
-//     jsb_cocos2d_ParticleSystem_class->setProperty = JS_StrictPropertyStub;
-//     jsb_cocos2d_ParticleSystem_class->enumerate = JS_EnumerateStub;
-//     jsb_cocos2d_ParticleSystem_class->resolve = JS_ResolveStub;
-//     jsb_cocos2d_ParticleSystem_class->convert = JS_ConvertStub;
-//     jsb_cocos2d_ParticleSystem_class->flags = JSCLASS_HAS_RESERVED_SLOTS(2);
+void js_register_cocos2dx_ParticleSystem(v8::Isolate *isolate, v8::Local<v8::Object> global)
+{
+  //     jsb_cocos2d_ParticleSystem_class = (JSClass *)calloc(1, sizeof(JSClass));
+  //     jsb_cocos2d_ParticleSystem_class->name = "ParticleSystem";
+  //     jsb_cocos2d_ParticleSystem_class->addProperty = JS_PropertyStub;
+  //     jsb_cocos2d_ParticleSystem_class->delProperty = JS_DeletePropertyStub;
+  //     jsb_cocos2d_ParticleSystem_class->getProperty = JS_PropertyStub;
+  //     jsb_cocos2d_ParticleSystem_class->setProperty = JS_StrictPropertyStub;
+  //     jsb_cocos2d_ParticleSystem_class->enumerate = JS_EnumerateStub;
+  //     jsb_cocos2d_ParticleSystem_class->resolve = JS_ResolveStub;
+  //     jsb_cocos2d_ParticleSystem_class->convert = JS_ConvertStub;
+  //     jsb_cocos2d_ParticleSystem_class->flags = JSCLASS_HAS_RESERVED_SLOTS(2);
+  auto tpl = v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_constructor);
+  tpl->SetClassName(v8::String::NewFromUtf8(isolate, "ParticleSystem").ToLocalChecked());
+  tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
-//     static JSPropertySpec properties[] = {
-//         JS_PS_END};
+  auto nodeProto = ScriptEngine::getInstance()->getClassByName(typeid(cocos2d::Node).name());
+  tpl->Inherit(nodeProto);
 
-//     static JSFunctionSpec funcs[] = {
-//         JS_FN("getStartSizeVar", js_cocos2dx_ParticleSystem_getStartSizeVar, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getTexture", js_cocos2dx_ParticleSystem_getTexture, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("isFull", js_cocos2dx_ParticleSystem_isFull, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getBatchNode", js_cocos2dx_ParticleSystem_getBatchNode, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getStartColor", js_cocos2dx_ParticleSystem_getStartColor, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getPositionType", js_cocos2dx_ParticleSystem_getPositionType, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setPosVar", js_cocos2dx_ParticleSystem_setPosVar, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getEndSpin", js_cocos2dx_ParticleSystem_getEndSpin, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setRotatePerSecondVar", js_cocos2dx_ParticleSystem_setRotatePerSecondVar, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setSourcePositionCompatible", js_cocos2dx_ParticleSystem_setSourcePositionCompatible, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getStartSpinVar", js_cocos2dx_ParticleSystem_getStartSpinVar, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getRadialAccelVar", js_cocos2dx_ParticleSystem_getRadialAccelVar, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getEndSizeVar", js_cocos2dx_ParticleSystem_getEndSizeVar, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setTangentialAccel", js_cocos2dx_ParticleSystem_setTangentialAccel, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getRadialAccel", js_cocos2dx_ParticleSystem_getRadialAccel, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setStartRadius", js_cocos2dx_ParticleSystem_setStartRadius, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setRotatePerSecond", js_cocos2dx_ParticleSystem_setRotatePerSecond, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setEndSize", js_cocos2dx_ParticleSystem_setEndSize, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getGravity", js_cocos2dx_ParticleSystem_getGravity, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("resumeEmissions", js_cocos2dx_ParticleSystem_resumeEmissions, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getTangentialAccel", js_cocos2dx_ParticleSystem_getTangentialAccel, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setEndRadius", js_cocos2dx_ParticleSystem_setEndRadius, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getSpeed", js_cocos2dx_ParticleSystem_getSpeed, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("pauseEmissions", js_cocos2dx_ParticleSystem_pauseEmissions, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getAngle", js_cocos2dx_ParticleSystem_getAngle, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setEndColor", js_cocos2dx_ParticleSystem_setEndColor, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setStartSpin", js_cocos2dx_ParticleSystem_setStartSpin, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setDuration", js_cocos2dx_ParticleSystem_setDuration, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("initWithTotalParticles", js_cocos2dx_ParticleSystem_initWithTotalParticles, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("addParticles", js_cocos2dx_ParticleSystem_addParticles, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setTexture", js_cocos2dx_ParticleSystem_setTexture, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getPosVar", js_cocos2dx_ParticleSystem_getPosVar, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("updateWithNoTime", js_cocos2dx_ParticleSystem_updateWithNoTime, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("isBlendAdditive", js_cocos2dx_ParticleSystem_isBlendAdditive, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getSpeedVar", js_cocos2dx_ParticleSystem_getSpeedVar, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setPositionType", js_cocos2dx_ParticleSystem_setPositionType, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("stopSystem", js_cocos2dx_ParticleSystem_stopSystem, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getSourcePosition", js_cocos2dx_ParticleSystem_getSourcePosition, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setLifeVar", js_cocos2dx_ParticleSystem_setLifeVar, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setTotalParticles", js_cocos2dx_ParticleSystem_setTotalParticles, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setEndColorVar", js_cocos2dx_ParticleSystem_setEndColorVar, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getAtlasIndex", js_cocos2dx_ParticleSystem_getAtlasIndex, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getStartSize", js_cocos2dx_ParticleSystem_getStartSize, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setStartSpinVar", js_cocos2dx_ParticleSystem_setStartSpinVar, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("resetSystem", js_cocos2dx_ParticleSystem_resetSystem, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setAtlasIndex", js_cocos2dx_ParticleSystem_setAtlasIndex, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setTangentialAccelVar", js_cocos2dx_ParticleSystem_setTangentialAccelVar, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setEndRadiusVar", js_cocos2dx_ParticleSystem_setEndRadiusVar, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getEndRadius", js_cocos2dx_ParticleSystem_getEndRadius, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("isActive", js_cocos2dx_ParticleSystem_isActive, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setRadialAccelVar", js_cocos2dx_ParticleSystem_setRadialAccelVar, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setStartSize", js_cocos2dx_ParticleSystem_setStartSize, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setSpeed", js_cocos2dx_ParticleSystem_setSpeed, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getStartSpin", js_cocos2dx_ParticleSystem_getStartSpin, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getResourceFile", js_cocos2dx_ParticleSystem_getResourceFile, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getRotatePerSecond", js_cocos2dx_ParticleSystem_getRotatePerSecond, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setEmitterMode", js_cocos2dx_ParticleSystem_setEmitterMode, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getDuration", js_cocos2dx_ParticleSystem_getDuration, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setSourcePosition", js_cocos2dx_ParticleSystem_setSourcePosition, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("stop", js_cocos2dx_ParticleSystem_stop, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("updateParticleQuads", js_cocos2dx_ParticleSystem_updateParticleQuads, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getEndSpinVar", js_cocos2dx_ParticleSystem_getEndSpinVar, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setBlendAdditive", js_cocos2dx_ParticleSystem_setBlendAdditive, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setLife", js_cocos2dx_ParticleSystem_setLife, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setAngleVar", js_cocos2dx_ParticleSystem_setAngleVar, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setRotationIsDir", js_cocos2dx_ParticleSystem_setRotationIsDir, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("start", js_cocos2dx_ParticleSystem_start, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setEndSizeVar", js_cocos2dx_ParticleSystem_setEndSizeVar, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setAngle", js_cocos2dx_ParticleSystem_setAngle, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setBatchNode", js_cocos2dx_ParticleSystem_setBatchNode, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getTangentialAccelVar", js_cocos2dx_ParticleSystem_getTangentialAccelVar, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getEmitterMode", js_cocos2dx_ParticleSystem_getEmitterMode, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setEndSpinVar", js_cocos2dx_ParticleSystem_setEndSpinVar, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("initWithFile", js_cocos2dx_ParticleSystem_initWithFile, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getAngleVar", js_cocos2dx_ParticleSystem_getAngleVar, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setStartColor", js_cocos2dx_ParticleSystem_setStartColor, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getRotatePerSecondVar", js_cocos2dx_ParticleSystem_getRotatePerSecondVar, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getEndSize", js_cocos2dx_ParticleSystem_getEndSize, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getLife", js_cocos2dx_ParticleSystem_getLife, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("isPaused", js_cocos2dx_ParticleSystem_isPaused, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setSpeedVar", js_cocos2dx_ParticleSystem_setSpeedVar, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setAutoRemoveOnFinish", js_cocos2dx_ParticleSystem_setAutoRemoveOnFinish, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setGravity", js_cocos2dx_ParticleSystem_setGravity, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("postStep", js_cocos2dx_ParticleSystem_postStep, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setEmissionRate", js_cocos2dx_ParticleSystem_setEmissionRate, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getEndColorVar", js_cocos2dx_ParticleSystem_getEndColorVar, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getRotationIsDir", js_cocos2dx_ParticleSystem_getRotationIsDir, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getEmissionRate", js_cocos2dx_ParticleSystem_getEmissionRate, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getEndColor", js_cocos2dx_ParticleSystem_getEndColor, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getLifeVar", js_cocos2dx_ParticleSystem_getLifeVar, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setStartSizeVar", js_cocos2dx_ParticleSystem_setStartSizeVar, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getStartRadius", js_cocos2dx_ParticleSystem_getStartRadius, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getParticleCount", js_cocos2dx_ParticleSystem_getParticleCount, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getStartRadiusVar", js_cocos2dx_ParticleSystem_getStartRadiusVar, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getBlendFunc", js_cocos2dx_ParticleSystem_getBlendFunc, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setStartColorVar", js_cocos2dx_ParticleSystem_setStartColorVar, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setEndSpin", js_cocos2dx_ParticleSystem_setEndSpin, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setRadialAccel", js_cocos2dx_ParticleSystem_setRadialAccel, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("initWithDictionary", js_cocos2dx_ParticleSystem_initWithDictionary, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("isAutoRemoveOnFinish", js_cocos2dx_ParticleSystem_isAutoRemoveOnFinish, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("isSourcePositionCompatible", js_cocos2dx_ParticleSystem_isSourcePositionCompatible, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getTotalParticles", js_cocos2dx_ParticleSystem_getTotalParticles, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setStartRadiusVar", js_cocos2dx_ParticleSystem_setStartRadiusVar, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("setBlendFunc", js_cocos2dx_ParticleSystem_setBlendFunc, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getEndRadiusVar", js_cocos2dx_ParticleSystem_getEndRadiusVar, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getStartColorVar", js_cocos2dx_ParticleSystem_getStartColorVar, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("ctor", js_cocos2dx_ParticleSystem_ctor, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FS_END};
+  //     static JSPropertySpec properties[] = {
+  //         JS_PS_END};
 
-//     static JSFunctionSpec st_funcs[] = {
-//         JS_FN("create", js_cocos2dx_ParticleSystem_create, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("createWithTotalParticles", js_cocos2dx_ParticleSystem_createWithTotalParticles, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FN("getAllParticleSystems", js_cocos2dx_ParticleSystem_getAllParticleSystems, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FS_END};
+  //     static JSFunctionSpec funcs[] = {
+  //         JS_FN("getStartSizeVar", js_cocos2dx_ParticleSystem_getStartSizeVar, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getStartSizeVar", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getStartSizeVar));
+  //         JS_FN("getTexture", js_cocos2dx_ParticleSystem_getTexture, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getTexture", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getTexture));
+  //         JS_FN("isFull", js_cocos2dx_ParticleSystem_isFull, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "isFull", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_isFull));
+  //         JS_FN("getBatchNode", js_cocos2dx_ParticleSystem_getBatchNode, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getBatchNode", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getBatchNode));
+  //         JS_FN("getStartColor", js_cocos2dx_ParticleSystem_getStartColor, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getStartColor", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getStartColor));
+  //         JS_FN("getPositionType", js_cocos2dx_ParticleSystem_getPositionType, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getPositionType", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getPositionType));
+  //         JS_FN("setPosVar", js_cocos2dx_ParticleSystem_setPosVar, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setPosVar", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setPosVar));
+  //         JS_FN("getEndSpin", js_cocos2dx_ParticleSystem_getEndSpin, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getEndSpin", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getEndSpin));
+  //         JS_FN("setRotatePerSecondVar", js_cocos2dx_ParticleSystem_setRotatePerSecondVar, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setRotatePerSecondVar", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setRotatePerSecondVar));
+  //         JS_FN("setSourcePositionCompatible", js_cocos2dx_ParticleSystem_setSourcePositionCompatible, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setSourcePositionCompatible", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setSourcePositionCompatible));
+  //         JS_FN("getStartSpinVar", js_cocos2dx_ParticleSystem_getStartSpinVar, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getStartSpinVar", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getStartSpinVar));
+  //         JS_FN("getRadialAccelVar", js_cocos2dx_ParticleSystem_getRadialAccelVar, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getRadialAccelVar", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getRadialAccelVar));
+  //         JS_FN("getEndSizeVar", js_cocos2dx_ParticleSystem_getEndSizeVar, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getEndSizeVar", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getEndSizeVar));
+  //         JS_FN("setTangentialAccel", js_cocos2dx_ParticleSystem_setTangentialAccel, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setTangentialAccel", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setTangentialAccel));
+  //         JS_FN("getRadialAccel", js_cocos2dx_ParticleSystem_getRadialAccel, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getRadialAccel", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getRadialAccel));
+  //         JS_FN("setStartRadius", js_cocos2dx_ParticleSystem_setStartRadius, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setStartRadius", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setStartRadius));
+  //         JS_FN("setRotatePerSecond", js_cocos2dx_ParticleSystem_setRotatePerSecond, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setRotatePerSecond", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setRotatePerSecond));
+  //         JS_FN("setEndSize", js_cocos2dx_ParticleSystem_setEndSize, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setEndSize", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setEndSize));
+  //         JS_FN("getGravity", js_cocos2dx_ParticleSystem_getGravity, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getGravity", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getGravity));
+  //         JS_FN("resumeEmissions", js_cocos2dx_ParticleSystem_resumeEmissions, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "resumeEmissions", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_resumeEmissions));
+  //         JS_FN("getTangentialAccel", js_cocos2dx_ParticleSystem_getTangentialAccel, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getTangentialAccel", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getTangentialAccel));
+  //         JS_FN("setEndRadius", js_cocos2dx_ParticleSystem_setEndRadius, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setEndRadius", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setEndRadius));
+  //         JS_FN("getSpeed", js_cocos2dx_ParticleSystem_getSpeed, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getSpeed", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getSpeed));
+  //         JS_FN("pauseEmissions", js_cocos2dx_ParticleSystem_pauseEmissions, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "pauseEmissions", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_pauseEmissions));
+  //         JS_FN("getAngle", js_cocos2dx_ParticleSystem_getAngle, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getAngle", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getAngle));
+  //         JS_FN("setEndColor", js_cocos2dx_ParticleSystem_setEndColor, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setEndColor", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setEndColor));
+  //         JS_FN("setStartSpin", js_cocos2dx_ParticleSystem_setStartSpin, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setStartSpin", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setStartSpin));
+  //         JS_FN("setDuration", js_cocos2dx_ParticleSystem_setDuration, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setDuration", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setDuration));
+  //         JS_FN("initWithTotalParticles", js_cocos2dx_ParticleSystem_initWithTotalParticles, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "initWithTotalParticles", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_initWithTotalParticles));
+  //         JS_FN("addParticles", js_cocos2dx_ParticleSystem_addParticles, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "addParticles", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_addParticles));
+  //         JS_FN("setTexture", js_cocos2dx_ParticleSystem_setTexture, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setTexture", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setTexture));
+  //         JS_FN("getPosVar", js_cocos2dx_ParticleSystem_getPosVar, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getPosVar", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getPosVar));
+  //         JS_FN("updateWithNoTime", js_cocos2dx_ParticleSystem_updateWithNoTime, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "updateWithNoTime", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_updateWithNoTime));
+  //         JS_FN("isBlendAdditive", js_cocos2dx_ParticleSystem_isBlendAdditive, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "isBlendAdditive", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_isBlendAdditive));
+  //         JS_FN("getSpeedVar", js_cocos2dx_ParticleSystem_getSpeedVar, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getSpeedVar", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getSpeedVar));
+  //         JS_FN("setPositionType", js_cocos2dx_ParticleSystem_setPositionType, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setPositionType", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setPositionType));
+  //         JS_FN("stopSystem", js_cocos2dx_ParticleSystem_stopSystem, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "stopSystem", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_stopSystem));
+  //         JS_FN("getSourcePosition", js_cocos2dx_ParticleSystem_getSourcePosition, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getSourcePosition", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getSourcePosition));
+  //         JS_FN("setLifeVar", js_cocos2dx_ParticleSystem_setLifeVar, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setLifeVar", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setLifeVar));
+  //         JS_FN("setTotalParticles", js_cocos2dx_ParticleSystem_setTotalParticles, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setTotalParticles", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setTotalParticles));
+  //         JS_FN("setEndColorVar", js_cocos2dx_ParticleSystem_setEndColorVar, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setEndColorVar", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setEndColorVar));
+  //         JS_FN("getAtlasIndex", js_cocos2dx_ParticleSystem_getAtlasIndex, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getAtlasIndex", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getAtlasIndex));
+  //         JS_FN("getStartSize", js_cocos2dx_ParticleSystem_getStartSize, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getStartSize", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getStartSize));
+  //         JS_FN("setStartSpinVar", js_cocos2dx_ParticleSystem_setStartSpinVar, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setStartSpinVar", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setStartSpinVar));
+  //         JS_FN("resetSystem", js_cocos2dx_ParticleSystem_resetSystem, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "resetSystem", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_resetSystem));
+  //         JS_FN("setAtlasIndex", js_cocos2dx_ParticleSystem_setAtlasIndex, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setAtlasIndex", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setAtlasIndex));
+  //         JS_FN("setTangentialAccelVar", js_cocos2dx_ParticleSystem_setTangentialAccelVar, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setTangentialAccelVar", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setTangentialAccelVar));
+  //         JS_FN("setEndRadiusVar", js_cocos2dx_ParticleSystem_setEndRadiusVar, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setEndRadiusVar", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setEndRadiusVar));
+  //         JS_FN("getEndRadius", js_cocos2dx_ParticleSystem_getEndRadius, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getEndRadius", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getEndRadius));
+  //         JS_FN("isActive", js_cocos2dx_ParticleSystem_isActive, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "isActive", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_isActive));
+  //         JS_FN("setRadialAccelVar", js_cocos2dx_ParticleSystem_setRadialAccelVar, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setRadialAccelVar", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setRadialAccelVar));
+  //         JS_FN("setStartSize", js_cocos2dx_ParticleSystem_setStartSize, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setStartSize", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setStartSize));
+  //         JS_FN("setSpeed", js_cocos2dx_ParticleSystem_setSpeed, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setSpeed", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setSpeed));
+  //         JS_FN("getStartSpin", js_cocos2dx_ParticleSystem_getStartSpin, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getStartSpin", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getStartSpin));
+  //         JS_FN("getResourceFile", js_cocos2dx_ParticleSystem_getResourceFile, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getResourceFile", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getResourceFile));
+  //         JS_FN("getRotatePerSecond", js_cocos2dx_ParticleSystem_getRotatePerSecond, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getRotatePerSecond", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getRotatePerSecond));
+  //         JS_FN("setEmitterMode", js_cocos2dx_ParticleSystem_setEmitterMode, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setEmitterMode", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setEmitterMode));
+  //         JS_FN("getDuration", js_cocos2dx_ParticleSystem_getDuration, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getDuration", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getDuration));
+  //         JS_FN("setSourcePosition", js_cocos2dx_ParticleSystem_setSourcePosition, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setSourcePosition", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setSourcePosition));
+  //         JS_FN("stop", js_cocos2dx_ParticleSystem_stop, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "stop", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_stop));
+  //         JS_FN("updateParticleQuads", js_cocos2dx_ParticleSystem_updateParticleQuads, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "updateParticleQuads", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_updateParticleQuads));
+  //         JS_FN("getEndSpinVar", js_cocos2dx_ParticleSystem_getEndSpinVar, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getEndSpinVar", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getEndSpinVar));
+  //         JS_FN("setBlendAdditive", js_cocos2dx_ParticleSystem_setBlendAdditive, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setBlendAdditive", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setBlendAdditive));
+  //         JS_FN("setLife", js_cocos2dx_ParticleSystem_setLife, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setLife", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setLife));
+  //         JS_FN("setAngleVar", js_cocos2dx_ParticleSystem_setAngleVar, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setAngleVar", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setAngleVar));
+  //         JS_FN("setRotationIsDir", js_cocos2dx_ParticleSystem_setRotationIsDir, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setRotationIsDir", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setRotationIsDir));
+  //         JS_FN("start", js_cocos2dx_ParticleSystem_start, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "start", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_start));
+  //         JS_FN("setEndSizeVar", js_cocos2dx_ParticleSystem_setEndSizeVar, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setEndSizeVar", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setEndSizeVar));
+  //         JS_FN("setAngle", js_cocos2dx_ParticleSystem_setAngle, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setAngle", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setAngle));
+  //         JS_FN("setBatchNode", js_cocos2dx_ParticleSystem_setBatchNode, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setBatchNode", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setBatchNode));
+  //         JS_FN("getTangentialAccelVar", js_cocos2dx_ParticleSystem_getTangentialAccelVar, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getTangentialAccelVar", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getTangentialAccelVar));
+  //         JS_FN("getEmitterMode", js_cocos2dx_ParticleSystem_getEmitterMode, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getEmitterMode", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getEmitterMode));
+  //         JS_FN("setEndSpinVar", js_cocos2dx_ParticleSystem_setEndSpinVar, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setEndSpinVar", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setEndSpinVar));
+  //         JS_FN("initWithFile", js_cocos2dx_ParticleSystem_initWithFile, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "initWithFile", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_initWithFile));
+  //         JS_FN("getAngleVar", js_cocos2dx_ParticleSystem_getAngleVar, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getAngleVar", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getAngleVar));
+  //         JS_FN("setStartColor", js_cocos2dx_ParticleSystem_setStartColor, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setStartColor", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setStartColor));
+  //         JS_FN("getRotatePerSecondVar", js_cocos2dx_ParticleSystem_getRotatePerSecondVar, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getRotatePerSecondVar", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getRotatePerSecondVar));
+  //         JS_FN("getEndSize", js_cocos2dx_ParticleSystem_getEndSize, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getEndSize", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getEndSize));
+  //         JS_FN("getLife", js_cocos2dx_ParticleSystem_getLife, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getLife", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getLife));
+  //         JS_FN("isPaused", js_cocos2dx_ParticleSystem_isPaused, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "isPaused", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_isPaused));
+  //         JS_FN("setSpeedVar", js_cocos2dx_ParticleSystem_setSpeedVar, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setSpeedVar", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setSpeedVar));
+  //         JS_FN("setAutoRemoveOnFinish", js_cocos2dx_ParticleSystem_setAutoRemoveOnFinish, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setAutoRemoveOnFinish", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setAutoRemoveOnFinish));
+  //         JS_FN("setGravity", js_cocos2dx_ParticleSystem_setGravity, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setGravity", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setGravity));
+  //         JS_FN("postStep", js_cocos2dx_ParticleSystem_postStep, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "postStep", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_postStep));
+  //         JS_FN("setEmissionRate", js_cocos2dx_ParticleSystem_setEmissionRate, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setEmissionRate", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setEmissionRate));
+  //         JS_FN("getEndColorVar", js_cocos2dx_ParticleSystem_getEndColorVar, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getEndColorVar", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getEndColorVar));
+  //         JS_FN("getRotationIsDir", js_cocos2dx_ParticleSystem_getRotationIsDir, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getRotationIsDir", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getRotationIsDir));
+  //         JS_FN("getEmissionRate", js_cocos2dx_ParticleSystem_getEmissionRate, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getEmissionRate", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getEmissionRate));
+  //         JS_FN("getEndColor", js_cocos2dx_ParticleSystem_getEndColor, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getEndColor", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getEndColor));
+  //         JS_FN("getLifeVar", js_cocos2dx_ParticleSystem_getLifeVar, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getLifeVar", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getLifeVar));
+  //         JS_FN("setStartSizeVar", js_cocos2dx_ParticleSystem_setStartSizeVar, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setStartSizeVar", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setStartSizeVar));
+  //         JS_FN("getStartRadius", js_cocos2dx_ParticleSystem_getStartRadius, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getStartRadius", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getStartRadius));
+  //         JS_FN("getParticleCount", js_cocos2dx_ParticleSystem_getParticleCount, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getParticleCount", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getParticleCount));
+  //         JS_FN("getStartRadiusVar", js_cocos2dx_ParticleSystem_getStartRadiusVar, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getStartRadiusVar", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getStartRadiusVar));
+  //         JS_FN("getBlendFunc", js_cocos2dx_ParticleSystem_getBlendFunc, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getBlendFunc", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getBlendFunc));
+  //         JS_FN("setStartColorVar", js_cocos2dx_ParticleSystem_setStartColorVar, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setStartColorVar", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setStartColorVar));
+  //         JS_FN("setEndSpin", js_cocos2dx_ParticleSystem_setEndSpin, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setEndSpin", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setEndSpin));
+  //         JS_FN("setRadialAccel", js_cocos2dx_ParticleSystem_setRadialAccel, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setRadialAccel", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setRadialAccel));
+  //         JS_FN("initWithDictionary", js_cocos2dx_ParticleSystem_initWithDictionary, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "initWithDictionary", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_initWithDictionary));
+  //         JS_FN("isAutoRemoveOnFinish", js_cocos2dx_ParticleSystem_isAutoRemoveOnFinish, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "isAutoRemoveOnFinish", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_isAutoRemoveOnFinish));
+  //         JS_FN("isSourcePositionCompatible", js_cocos2dx_ParticleSystem_isSourcePositionCompatible, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "isSourcePositionCompatible", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_isSourcePositionCompatible));
+  //         JS_FN("getTotalParticles", js_cocos2dx_ParticleSystem_getTotalParticles, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getTotalParticles", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getTotalParticles));
+  //         JS_FN("setStartRadiusVar", js_cocos2dx_ParticleSystem_setStartRadiusVar, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setStartRadiusVar", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setStartRadiusVar));
+  //         JS_FN("setBlendFunc", js_cocos2dx_ParticleSystem_setBlendFunc, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "setBlendFunc", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_setBlendFunc));
+  //         JS_FN("getEndRadiusVar", js_cocos2dx_ParticleSystem_getEndRadiusVar, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getEndRadiusVar", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getEndRadiusVar));
+  //         JS_FN("getStartColorVar", js_cocos2dx_ParticleSystem_getStartColorVar, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getStartColorVar", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getStartColorVar));
+  //         JS_FN("ctor", js_cocos2dx_ParticleSystem_ctor, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "ctor", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_ctor));
+  //         JS_FS_END};
 
-//     JS::RootedObject parent_proto(cx, jsb_cocos2d_Node_prototype);
-//     jsb_cocos2d_ParticleSystem_prototype = JS_InitClass(
-//         cx, global,
-//         parent_proto,
-//         jsb_cocos2d_ParticleSystem_class,
-//         js_cocos2dx_ParticleSystem_constructor, 0, // constructor
-//         properties,
-//         funcs,
-//         NULL, // no static properties
-//         st_funcs);
+  //     static JSFunctionSpec st_funcs[] = {
+  //         JS_FN("create", js_cocos2dx_ParticleSystem_create, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->Set(isolate, "create", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_create));
+  //         JS_FN("createWithTotalParticles", js_cocos2dx_ParticleSystem_createWithTotalParticles, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->Set(isolate, "createWithTotalParticles", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_createWithTotalParticles));
+  //         JS_FN("getAllParticleSystems", js_cocos2dx_ParticleSystem_getAllParticleSystems, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->Set(isolate, "getAllParticleSystems", v8::FunctionTemplate::New(isolate, js_cocos2dx_ParticleSystem_getAllParticleSystems));
+  //         JS_FS_END};
 
-//     JS::RootedObject proto(cx, jsb_cocos2d_ParticleSystem_prototype);
-//     JS::RootedValue className(cx, std_string_to_jsval(cx, "ParticleSystem"));
-//     JS_SetProperty(cx, proto, "_className", className);
-//     JS_SetProperty(cx, proto, "__nativeObj", JS::TrueHandleValue);
-//     JS_SetProperty(cx, proto, "__is_ref", JS::TrueHandleValue);
-//     // add the proto and JSClass to the type->js info hash table
-//     jsb_register_class<cocos2d::ParticleSystem>(cx, jsb_cocos2d_ParticleSystem_class, proto, parent_proto);
-//     anonEvaluate(cx, global, "(function () { cc.ParticleSystem.extend = cc.Class.extend; })()");
-// }
+  //     JS::RootedObject parent_proto(cx, jsb_cocos2d_Node_prototype);
+  //     jsb_cocos2d_ParticleSystem_prototype = JS_InitClass(
+  //         cx, global,
+  //         parent_proto,
+  //         jsb_cocos2d_ParticleSystem_class,
+  //         js_cocos2dx_ParticleSystem_constructor, 0, // constructor
+  //         properties,
+  //         funcs,
+  //         NULL, // no static properties
+  //         st_funcs);
 
+  //     JS::RootedObject proto(cx, jsb_cocos2d_ParticleSystem_prototype);
+  //     JS::RootedValue className(cx, std_string_to_jsval(cx, "ParticleSystem"));
+  //     JS_SetProperty(cx, proto, "_className", className);
+  tpl->Set(isolate, "_className", v8::String::NewFromUtf8(isolate, "ParticleSystem").ToLocalChecked());
+  //     JS_SetProperty(cx, proto, "__nativeObj", JS::TrueHandleValue);
+  tpl->Set(isolate, "__nativeObj", v8::Boolean::New(isolate, true));
+  //     JS_SetProperty(cx, proto, "__is_ref", JS::TrueHandleValue);
+  tpl->Set(isolate, "__is_ref", v8::Boolean::New(isolate, true));
+  //     // add the proto and JSClass to the type->js info hash table
+  //     jsb_register_class<cocos2d::ParticleSystem>(cx, jsb_cocos2d_ParticleSystem_class, proto, parent_proto);
+  //     anonEvaluate(cx, global, "(function () { cc.ParticleSystem.extend = cc.Class.extend; })()");
+  JsbUtils::RegisterV8Class(typeid(cocos2d::ParticleSystem).name(), &tpl);
+  JsbUtils::BindJsClass("ParticleSystem", global, tpl);
+}
+
+// TODO
 // JSClass *jsb_cocos2d_ParticleSystemQuad_class;
 // JSObject *jsb_cocos2d_ParticleSystemQuad_prototype;
 

@@ -1752,7 +1752,6 @@ void js_register_cocos2dx_ui_Button(v8::Isolate *isolate, v8::Local<v8::Object> 
     v8::Local<v8::FunctionTemplate> buttonTpl = v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_Button_constructor);
     buttonTpl->SetClassName(JsbUtils::ToV8String(isolate, "Button"));
     buttonTpl->InstanceTemplate()->SetInternalFieldCount(1);
-    JsbUtils::RegisterV8Class(typeid(cocos2d::ui::Button).name(), &buttonTpl);
 
     auto parentProto = ScriptEngine::getInstance()->getClassByName(typeid(cocos2d::ui::Widget).name());
     buttonTpl->Inherit(v8::Local<v8::FunctionTemplate>::New(isolate, parentProto));
@@ -1866,9 +1865,14 @@ void js_register_cocos2dx_ui_Button(v8::Isolate *isolate, v8::Local<v8::Object> 
     //     JS::RootedObject proto(cx, jsb_cocos2d_ui_Button_prototype);
     //     JS::RootedValue className(cx, std_string_to_jsval(cx, "Button"));
     //     JS_SetProperty(cx, proto, "_className", className);
+    buttonTpl->PrototypeTemplate()->Set(isolate, "_className", JsbUtils::ToV8String(isolate, "Button"));
     //     JS_SetProperty(cx, proto, "__nativeObj", JS::TrueHandleValue);
+    buttonTpl->PrototypeTemplate()->Set(isolate, "__nativeObj", v8::True(isolate));
     //     JS_SetProperty(cx, proto, "__is_ref", JS::TrueHandleValue);
+    buttonTpl->PrototypeTemplate()->Set(isolate, "__is_ref", v8::True(isolate));
     //     // add the proto and JSClass to the type->js info hash table
     //     jsb_register_class<cocos2d::ui::Button>(cx, jsb_cocos2d_ui_Button_class, proto, parent_proto);
     //     anonEvaluate(cx, global, "(function () { ccui.Button.extend = cc.Class.extend; })()");
+    JsbUtils::RegisterV8Class(typeid(cocos2d::ui::Button).name(), &buttonTpl);
+    JsbUtils::BindJsClass("Button", global, buttonTpl);
 }

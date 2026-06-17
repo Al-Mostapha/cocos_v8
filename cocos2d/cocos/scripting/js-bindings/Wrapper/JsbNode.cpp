@@ -7183,6 +7183,7 @@ void js_register_cocos2dx_Node(v8::Isolate *isolate, v8::Local<v8::Object> globa
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
   JsbUtils::RegisterV8Class(typeid(cocos2d::Node).name(), &tpl);
+  JsbUtils::BindJsClass("Node", global, tpl);
 
   // static JSPropertySpec properties[] = {
   //     JS_PS_END

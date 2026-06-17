@@ -1,31 +1,11 @@
 {
-  // "compilerOptions": {
-  //   "target": "es2020",
-  //   "module": "esnext",
-  //   "lib": ["ES2020", "DOM"],
-  //   // "skipLibCheck": true,
-
-  //   /* Bundler mode */
-  //   "moduleResolution": "bundler",
-  //   "allowImportingTsExtensions": true,
-  //   // "verbatimModuleSyntax": true,
-  //   "moduleDetection": "force",
-  //   "noEmit": true,
-
-  //   /* Linting */
-  //   "noUnusedLocals": true,
-  //   "noUnusedParameters": true,
-  //   // "erasableSyntaxOnly": true,
-  //   "noFallthroughCasesInSwitch": true
-  // },
   "compilerOptions": {
-    "target": "es6",
-    // "module": "es6",
-    // "moduleResolution": "NodeNext",
+    "target": "es2025",
+    "module": "esnext",
     "outDir": "./dist",
     "rootDir": "./",
     "strict": true,
-    "esModuleInterop": true,
+    "esModuleInterop": true
   },
   "include": ["Src", "Script", "Types"],
   "exclude": ["Types/CCStatic.d.ts"]

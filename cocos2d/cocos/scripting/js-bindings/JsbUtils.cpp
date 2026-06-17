@@ -766,8 +766,33 @@ bool JsbUtils::RegisterV8Class(const char *className, v8::Local<v8::FunctionTemp
     SE_REPORT_ERROR("Failed to get function template for class: %s", className);
     return false;
   }
-  SE_LOGD("Register class: %s", className);
+  SE_LOGD("Register class: %s \n", className);
   ScriptEngine::_registeredClasses[className] = v8::Global<v8::FunctionTemplate>(isolate, *constructor);
+  return true;
+}
+
+bool JsbUtils::BindJsClass(const char *className, v8::Local<v8::Object> global, v8::Local<v8::FunctionTemplate> constructor)
+{
+  v8::Isolate *isolate = v8::Isolate::GetCurrent();
+  if (constructor.IsEmpty())
+  {
+    SE_REPORT_ERROR("Failed to get function template for class: %s", className);
+    return false;
+  }
+
+  v8::Local<v8::Function> ctorFunc;
+  if (!constructor->GetFunction(isolate->GetCurrentContext()).ToLocal(&ctorFunc))
+  {
+    SE_REPORT_ERROR("Failed to get constructor function for class: %s", className);
+    return false;
+  }
+
+  if (!global->Set(isolate->GetCurrentContext(), ToV8String(isolate, className), ctorFunc).FromJust())
+  {
+    SE_REPORT_ERROR("Failed to set constructor function to global object for class: %s", className);
+    return false;
+  }
+
   return true;
 }
 

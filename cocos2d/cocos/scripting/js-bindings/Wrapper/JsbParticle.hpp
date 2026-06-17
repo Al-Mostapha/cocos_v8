@@ -30,6 +30,7 @@ void js_register_cocos2dx_ParticleBatchNode(v8::Isolate *isolate, v8::Local<v8::
 // bool js_cocos2dx_ParticleData_constructor(JSContext *cx, uint32_t argc, jsval *vp);
 // void js_cocos2dx_ParticleData_finalize(JSContext *cx, JSObject *obj);
 // void js_register_cocos2dx_ParticleData(JSContext *cx, JS::HandleObject global);
+void js_register_cocos2dx_ParticleData(v8::Isolate *isolate, v8::Local<v8::Object> global);
 // void register_all_cocos2dx(JSContext* cx, JS::HandleObject obj);
 // bool js_cocos2dx_ParticleData_release(JSContext *cx, uint32_t argc, jsval *vp);
 // bool js_cocos2dx_ParticleData_getMaxCount(JSContext *cx, uint32_t argc, jsval *vp);
@@ -43,6 +44,7 @@ void js_register_cocos2dx_ParticleBatchNode(v8::Isolate *isolate, v8::Local<v8::
 // bool js_cocos2dx_ParticleSystem_constructor(JSContext *cx, uint32_t argc, jsval *vp);
 // void js_cocos2dx_ParticleSystem_finalize(JSContext *cx, JSObject *obj);
 // void js_register_cocos2dx_ParticleSystem(JSContext *cx, JS::HandleObject global);
+void js_register_cocos2dx_ParticleSystem(v8::Isolate *isolate, v8::Local<v8::Object> global);
 // void register_all_cocos2dx(JSContext* cx, JS::HandleObject obj);
 // bool js_cocos2dx_ParticleSystem_getStartSizeVar(JSContext *cx, uint32_t argc, jsval *vp);
 // bool js_cocos2dx_ParticleSystem_getTexture(JSContext *cx, uint32_t argc, jsval *vp);

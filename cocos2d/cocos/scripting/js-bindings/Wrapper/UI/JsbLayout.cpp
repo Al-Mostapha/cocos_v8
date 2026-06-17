@@ -1374,7 +1374,6 @@ void js_register_cocos2dx_ui_Layout(v8::Isolate *iso, v8::Local<v8::Object> glob
   v8::Local<v8::FunctionTemplate> tpl = v8::FunctionTemplate::New(iso, js_cocos2dx_ui_Layout_constructor);
   tpl->SetClassName(JsbUtils::ToV8String(iso, "Layout"));
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
-  JsbUtils::RegisterV8Class(typeid(cocos2d::ui::Layout).name(), &tpl);
 
   auto proto = tpl->PrototypeTemplate();
   auto parent = ScriptEngine::getInstance()->getClassByName(typeid(cocos2d::ui::Widget).name());
@@ -1555,4 +1554,6 @@ void js_register_cocos2dx_ui_Layout(v8::Isolate *iso, v8::Local<v8::Object> glob
   //     jsb_register_class<cocos2d::ui::Layout>(cx, jsb_cocos2d_ui_Layout_class,
   //     proto, parent_proto); anonEvaluate(cx, global, "(function () {
   //     ccui.Layout.extend = cc.Class.extend; })()");
+  JsbUtils::RegisterV8Class(typeid(cocos2d::ui::Layout).name(), &tpl);
+  JsbUtils::BindJsClass("Layout", global, tpl);
 }

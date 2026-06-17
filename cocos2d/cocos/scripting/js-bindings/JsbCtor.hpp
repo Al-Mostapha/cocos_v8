@@ -80,7 +80,7 @@ v8::Local<v8::Object> jsb_ref_autoreleased_create_jsobject(T *ref)
     return handle_scope.Escape(v8::Local<v8::Object>());
   }
   const char *typeName = typeid(T).name();
-  obj= JsbUtils::NativePtrToObject<T>(ref);
+  obj = JsbUtils::NativePtrToObject<T>(ref);
   if (obj.IsEmpty())
   {
     SE_REPORT_ERROR("Failed to create js object for native type: %s", typeName);
@@ -119,6 +119,45 @@ v8::Local<v8::Object> jsb_ref_autoreleased_create_jsobject(T *ref)
 
 //     return jsObj;
 // }
+
+template <typename T>
+v8::Local<v8::Object> jsb_create_weak_jsobject(T *native)
+{
+  v8::Isolate *isolate = v8::Isolate::GetCurrent();
+  v8::EscapableHandleScope handle_scope(isolate);
+  if (!native)
+  {
+    SE_REPORT_ERROR("Failed to create native object");
+    return handle_scope.Escape(v8::Local<v8::Object>());
+  }
+  //     JS::RootedObject proto(cx, typeClass->proto.ref());
+  //     JS::RootedObject parent(cx, typeClass->parentProto.ref());
+  //     JS::RootedObject jsObj(cx, JS_NewObject(cx, typeClass->jsclass, proto, parent));
+  //     auto proxy = jsb_new_proxy(native, jsObj);
+  auto jsObj = JsbUtils::NativePtrToObject<T>(native);
+  const char *typeName = typeid(T).name();
+  if (jsObj.IsEmpty())
+  {
+    SE_REPORT_ERROR("Failed to create js object for native type: %s", typeName);
+    delete native;
+    return handle_scope.Escape(v8::Local<v8::Object>());
+  }
+  //     js_add_FinalizeHook(cx, jsObj, false);
+
+  // #if ! CC_ENABLE_GC_FOR_NATIVE_OBJECTS
+  //     JS::AddNamedObjectRoot(cx, &proxy->obj, debug);
+  // #else
+  //     CC_UNUSED_PARAM(proxy);
+  // #if COCOS2D_DEBUG > 1
+  //     if (debug != nullptr)
+  //     {
+  //         CCLOG("++++++WEAK_REF++++++ Cpp(%s): %p - JS: %p", debug, native, jsObj.get());
+  //     }
+  // #endif // COCOS2D_DEBUG
+  // #endif // CC_ENABLE_GC_FOR_NATIVE_OBJECTS
+  //     return jsObj;
+  return handle_scope.Escape(jsObj);
+}
 
 void CallCustomConstructor(const v8::FunctionCallbackInfo<v8::Value> &args, v8::Local<v8::Object> obj);
 

@@ -76,6 +76,8 @@ public:
   static bool RegisterV8Class(const char *className,
                               v8::Local<v8::FunctionTemplate> *constructor);
 
+  static bool BindJsClass(const char *className, v8::Local<v8::Object> global, v8::Local<v8::FunctionTemplate> constructor);
+
   static std::function<void()> FromJsFunc(v8::Isolate *isolate,
                                           v8::Local<v8::Function> func,
                                           v8::Local<v8::Object> self)

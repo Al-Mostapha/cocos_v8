@@ -617,6 +617,7 @@ void js_cocos2dx_ProtectedNode_constructor(const v8::FunctionCallbackInfo<v8::Va
 // {
 void js_register_cocos2dx_ProtectedNode(v8::Isolate *isolate, v8::Local<v8::Object> global)
 {
+  SE_LOGD("Registering JS API for ProtectedNode");
   v8::HandleScope handleScope(isolate);
   //     jsb_cocos2d_ProtectedNode_class = (JSClass *)calloc(1, sizeof(JSClass));
   //     jsb_cocos2d_ProtectedNode_class->name = "ProtectedNode";
@@ -630,8 +631,8 @@ void js_register_cocos2dx_ProtectedNode(v8::Isolate *isolate, v8::Local<v8::Obje
   //     jsb_cocos2d_ProtectedNode_class->flags = JSCLASS_HAS_RESERVED_SLOTS(2);
   v8::Local<v8::FunctionTemplate> tpl = v8::FunctionTemplate::New(isolate, js_cocos2dx_ProtectedNode_constructor);
   tpl->SetClassName(v8::String::NewFromUtf8(isolate, "ProtectedNode").ToLocalChecked());
-  tpl->InstanceTemplate()->SetInternalFieldCount(0);
-  JsbUtils::RegisterV8Class(typeid(cocos2d::ProtectedNode).name(), &tpl);
+  tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
   v8::Local<v8::FunctionTemplate> parentPrototype = ScriptEngine::getInstance()->getClassByName(typeid(cocos2d::Node).name());
   tpl->Inherit(parentPrototype);
   v8::Local<v8::ObjectTemplate> proto = tpl->PrototypeTemplate();
@@ -685,4 +686,6 @@ void js_register_cocos2dx_ProtectedNode(v8::Isolate *isolate, v8::Local<v8::Obje
   //     JS_SetProperty(cx, proto, "__is_ref", JS::TrueHandleValue);
   //     // add the proto and JSClass to the type->js info hash table
   //     jsb_register_class<cocos2d::ProtectedNode>(cx, jsb_cocos2d_ProtectedNode_class, proto, parent_proto);
+  JsbUtils::RegisterV8Class(typeid(cocos2d::ProtectedNode).name(), &tpl);
+  JsbUtils::BindJsClass("ProtectedNode", global, tpl);
 }

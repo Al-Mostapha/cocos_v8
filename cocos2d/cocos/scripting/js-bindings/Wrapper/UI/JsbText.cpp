@@ -1406,7 +1406,7 @@ void js_cocos2dx_ui_Text_ctor(const v8::FunctionCallbackInfo<v8::Value> &args)
 // void js_register_cocos2dx_ui_Text(JSContext *cx, JS::HandleObject global) {
 void js_register_cocos2dx_ui_Text(v8::Isolate *isolate, v8::Local<v8::Object> global)
 {
-
+  v8::HandleScope handleScope(isolate);
   //     jsb_cocos2d_ui_Text_class = (JSClass *)calloc(1, sizeof(JSClass));
   v8::Local<v8::FunctionTemplate> tpl = v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_Text_constructor);
   //     jsb_cocos2d_ui_Text_class->name = "Text";
@@ -1420,7 +1420,7 @@ void js_register_cocos2dx_ui_Text(v8::Isolate *isolate, v8::Local<v8::Object> gl
   //     jsb_cocos2d_ui_Text_class->flags = JSCLASS_HAS_RESERVED_SLOTS(2);
   tpl->SetClassName(JsbUtils::ToV8String(isolate, "Text"));
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
-  JsbUtils::RegisterV8Class(typeid(cocos2d::ui::Text).name(), &tpl);
+
   auto proto = tpl->PrototypeTemplate();
   auto parentPrototype = ScriptEngine::getInstance()->getClassByName(typeid(cocos2d::ui::Widget).name());
   tpl->Inherit(parentPrototype);
@@ -1527,7 +1527,10 @@ void js_register_cocos2dx_ui_Text(v8::Isolate *isolate, v8::Local<v8::Object> gl
   proto->Set(isolate, "__nativeObj", v8::True(isolate));
   //     JS_SetProperty(cx, proto, "__is_ref", JS::TrueHandleValue);
   proto->Set(isolate, "__is_ref", v8::True(isolate));
+
   //     // add the proto and JSClass to the type->js info hash table
   //     jsb_register_class<cocos2d::ui::Text>(cx, jsb_cocos2d_ui_Text_class, proto, parent_proto);
   //     anonEvaluate(cx, global, "(function () { ccui.Text.extend = cc.Class.extend; })()");
+  JsbUtils::RegisterV8Class(typeid(cocos2d::ui::Text).name(), &tpl);
+  JsbUtils::BindJsClass("Text", global, tpl);
 }

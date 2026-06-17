@@ -3114,6 +3114,8 @@ void js_register_cocos2dx_Label(v8::Isolate *isolate, v8::Local<v8::Object> glob
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
   v8::Local<v8::ObjectTemplate> proto = tpl->PrototypeTemplate();
   JsbUtils::RegisterV8Class(typeid(cocos2d::Label).name(), &tpl);
+  JsbUtils::BindJsClass("Label", global, tpl);
+
   v8::Local<v8::FunctionTemplate> parentClass = ScriptEngine::getInstance()->getClassByName(typeid(cocos2d::Node).name());
   tpl->Inherit(parentClass);
   //     static JSPropertySpec properties[] = {

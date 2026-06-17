@@ -476,9 +476,9 @@ bool ScriptEngine::didStart()
     //     double now = result2.As<v8::Number>()->Value();
     //     cocos2d::log("[JSB] performance.now() returned: %f", now);
     // }
-    runScript("test.js");
-    runScript("script/jsb_boot.js");
-    runScript("dist/ss.es.js");
+    // runScript("test.js");
+    // runScript("script/jsb_boot.js");
+    runScript("dist/game.js");
     return true;
 }
 
@@ -517,6 +517,11 @@ bool ScriptEngine::start()
         assert(ok);
         if (!ok)
             break;
+    }
+
+    for (auto cb : _afterInitHookArray)
+    {
+        cb(_isolate, _globalObj.Get(_isolate));
     }
 
     // After ScriptEngine is started, _registerCallbackArray isn't needed. Therefore, clear it here.

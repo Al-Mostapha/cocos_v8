@@ -452,7 +452,7 @@ void js_register_cocos2dx_Scene(v8::Isolate *isolate, v8::Local<v8::Object> glob
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
   tpl->Inherit(ScriptEngine::getInstance()->getClassByName(typeid(cocos2d::Node).name()));
   JsbUtils::RegisterV8Class(typeid(cocos2d::Scene).name(), &tpl);
-
+  JsbUtils::BindJsClass("Scene", global, tpl);
   //     static JSPropertySpec properties[] = {
   //         JS_PS_END
   //     };

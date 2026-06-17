@@ -2223,7 +2223,7 @@ void js_register_cocos2dx_ui_ScrollView(v8::Isolate *iso, v8::Local<v8::Object> 
   //     jsb_cocos2d_ui_ScrollView_class->flags = JSCLASS_HAS_RESERVED_SLOTS(2);
   auto tpl = v8::FunctionTemplate::New(iso, js_cocos2dx_ui_ScrollView_constructor);
   tpl->SetClassName(JsbUtils::ToV8String(iso, "ScrollView"));
-  JsbUtils::RegisterV8Class(typeid(cocos2d::ui::ScrollView).name(), &tpl);
+
   auto proto = tpl->PrototypeTemplate();
   auto parent = ScriptEngine::getInstance()->getClassByName(typeid(cocos2d::ui::Layout).name());
   tpl->Inherit(parent);
@@ -2388,4 +2388,6 @@ void js_register_cocos2dx_ui_ScrollView(v8::Isolate *iso, v8::Local<v8::Object> 
   //     // add the proto and JSClass to the type->js info hash table
   //     jsb_register_class<cocos2d::ui::ScrollView>(cx, jsb_cocos2d_ui_ScrollView_class, proto, parent_proto);
   //     anonEvaluate(cx, global, "(function () { ccui.ScrollView.extend = cc.Class.extend; })()");
+  JsbUtils::RegisterV8Class(typeid(cocos2d::ui::ScrollView).name(), &tpl);
+  JsbUtils::BindJsClass("ScrollView", global, tpl);
 }

@@ -8,7 +8,7 @@
   "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
   "C_Cpp.intelliSenseEngine": "default",
   "cmake.configureOnOpen": true,
-
+  "cmake.cmakePath": "C:\\Program Files\\Microsoft Visual Studio\\18\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin\\cmake.exe",
   "cmake.configureSettings": {
     "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
     "CMAKE_CXX_CLANG_TIDY": "clang-tidy",

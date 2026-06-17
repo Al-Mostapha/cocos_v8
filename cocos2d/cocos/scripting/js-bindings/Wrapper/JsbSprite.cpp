@@ -1801,6 +1801,7 @@ void js_register_cocos2dx_Sprite(v8::Isolate *isolate, v8::Local<v8::Object> glo
   v8::Local<v8::FunctionTemplate> parentProto = ScriptEngine::getInstance()->getClassByName(typeid(cocos2d::Node).name());
   tpl->Inherit(parentProto);
   JsbUtils::RegisterV8Class(typeid(cocos2d::Sprite).name(), &tpl);
+  JsbUtils::BindJsClass("Sprite", global, tpl);
 
   //     static JSPropertySpec properties[] = {
   //         JS_PS_END};
