@@ -1,4 +1,5 @@
 #pragma once
+#include "v8.h"
 
 // extern JSClass  *jsb_cocos2d_Texture2D_class;
 // extern JSObject *jsb_cocos2d_Texture2D_prototype;
@@ -6,6 +7,7 @@
 // bool js_cocos2dx_Texture2D_constructor(JSContext *cx, uint32_t argc, jsval *vp);
 // void js_cocos2dx_Texture2D_finalize(JSContext *cx, JSObject *obj);
 // void js_register_cocos2dx_Texture2D(JSContext *cx, JS::HandleObject global);
+void js_register_cocos2dx_Texture2D(v8::Isolate *isolate, v8::Local<v8::ObjectTemplate> global);
 // void register_all_cocos2dx(JSContext* cx, JS::HandleObject obj);
 // bool js_cocos2dx_Texture2D_getGLProgram(JSContext *cx, uint32_t argc, jsval *vp);
 // bool js_cocos2dx_Texture2D_getMaxT(JSContext *cx, uint32_t argc, jsval *vp);
@@ -73,13 +75,13 @@
 // bool js_cocos2dx_RenderTexture_create(JSContext *cx, uint32_t argc, jsval *vp);
 // bool js_cocos2dx_RenderTexture_RenderTexture(JSContext *cx, uint32_t argc, jsval *vp);
 
-
 // extern JSClass  *jsb_cocos2d_TextureCache_class;
 // extern JSObject *jsb_cocos2d_TextureCache_prototype;
 
 // bool js_cocos2dx_TextureCache_constructor(JSContext *cx, uint32_t argc, jsval *vp);
 // void js_cocos2dx_TextureCache_finalize(JSContext *cx, JSObject *obj);
 // void js_register_cocos2dx_TextureCache(JSContext *cx, JS::HandleObject global);
+void js_register_cocos2dx_TextureCache(v8::Isolate *isolate, v8::Local<v8::Object> global);
 // void register_all_cocos2dx(JSContext* cx, JS::HandleObject obj);
 // bool js_cocos2dx_TextureCache_reloadTexture(JSContext *cx, uint32_t argc, jsval *vp);
 // bool js_cocos2dx_TextureCache_unbindAllImageAsync(JSContext *cx, uint32_t argc, jsval *vp);

@@ -4,6 +4,7 @@ set(JSB_SRC
     ScriptEngine.cpp
     JsbUtils.cpp
     JsbCtor.cpp
+    JsbConvert.cpp
     Core/jsb_module_register.cpp
     Core/jsb_global.cpp
     Core/JsbClass.cpp
@@ -15,6 +16,7 @@ set(JSB_SRC
 
     Wrapper/JsbCommon.cpp
     Wrapper/JsbAllCocos.cpp
+    Wrapper/JsbGLProgram.cpp
     Wrapper/JsbNode.cpp
     Wrapper/JsbScene.cpp
     Wrapper/JsbDirector.cpp
@@ -23,6 +25,7 @@ set(JSB_SRC
     Wrapper/JsbSprite.cpp
     Wrapper/JsbNodeSpecial.cpp
     Wrapper/JsbParticle.cpp
+    Wrapper/JsbTexture2DWrapper.cpp
     Wrapper/UI/JsbWidget.cpp
     Wrapper/UI/JsbButton.cpp
     Wrapper/UI/JsbText.cpp
@@ -30,6 +33,7 @@ set(JSB_SRC
     Wrapper/UI/JsbLayout.cpp
     Wrapper/UI/JsbUIScrollView.cpp
     Wrapper/Spec/JsbSpecifics.cpp
+    Wrapper/Common/JsbFileUtils.cpp
 )
 
 set(JSB_HEADERS
@@ -38,6 +42,8 @@ set(JSB_HEADERS
     JsbCtor.hpp
     HelperMacros.h
     ScriptEngine.hpp
+    JsbConvert.hpp
+    JsbConvert.hpp
     Core/jsb_module_register.hpp
     Core/jsb_global.hpp
     Core/jsb_conversions.hpp
@@ -50,6 +56,7 @@ set(JSB_HEADERS
 
     Wrapper/JsbAllCocos.hpp
     Wrapper/JsbCommon.hpp
+    Wrapper/JsbGLProgram.hpp
     Wrapper/JsbNode.hpp
     Wrapper/JsbScene.hpp
     Wrapper/JsbDirector.hpp
@@ -58,6 +65,7 @@ set(JSB_HEADERS
     Wrapper/JsbNodeSpecial.hpp
     Wrapper/JsbParticle.hpp
     Wrapper/JsbGLView.hpp
+    Wrapper/JsbTexture2DWrapper.hpp
     Wrapper/UI/JsbWidget.hpp
     Wrapper/UI/JsbButton.hpp
     Wrapper/UI/JsbText.hpp
@@ -65,6 +73,7 @@ set(JSB_HEADERS
     Wrapper/UI/JsbLayout.hpp
     Wrapper/UI/JsbUIScrollView.hpp
     Wrapper/Spec/JsbSpecifics.hpp
+    Wrapper/Common/JsbFileUtils.hpp
 )
 
 add_library(jsb STATIC ${JSB_SRC} ${JSB_HEADERS})

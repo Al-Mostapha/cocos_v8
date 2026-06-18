@@ -1,3 +1,5 @@
+#pragma once 
+#include "v8.h"
 // extern JSClass  *jsb_cocos2d_GLProgram_class;
 // extern JSObject *jsb_cocos2d_GLProgram_prototype;
 
@@ -39,6 +41,7 @@
 // bool js_cocos2dx_GLProgramCache_constructor(JSContext *cx, uint32_t argc, jsval *vp);
 // void js_cocos2dx_GLProgramCache_finalize(JSContext *cx, JSObject *obj);
 // void js_register_cocos2dx_GLProgramCache(JSContext *cx, JS::HandleObject global);
+void js_register_cocos2dx_GLProgramCache(v8::Isolate* isolate, v8::Local<v8::Object> global);
 // void register_all_cocos2dx(JSContext* cx, JS::HandleObject obj);
 // bool js_cocos2dx_GLProgramCache_loadDefaultGLPrograms(JSContext *cx, uint32_t argc, jsval *vp);
 // bool js_cocos2dx_GLProgramCache_reloadDefaultGLProgramsRelativeToLights(JSContext *cx, uint32_t argc, jsval *vp);

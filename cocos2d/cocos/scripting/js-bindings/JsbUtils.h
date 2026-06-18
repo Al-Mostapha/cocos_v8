@@ -107,6 +107,7 @@ public:
     };
   }
 
+
   static bool jsval_to_ccvalue(v8::Isolate *isolate, v8::Local<v8::Value> value,
                                cocos2d::Value *outValue);
   static bool jsval_to_ccvaluemap(v8::Isolate *isolate,

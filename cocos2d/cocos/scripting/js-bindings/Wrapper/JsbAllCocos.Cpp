@@ -7,6 +7,8 @@
 #include "ScriptEngine.hpp"
 #include "JsbScene.hpp"
 #include "JsbNodeSpecial.hpp"
+#include "JsbTexture2DWrapper.hpp"
+#include "JsbGLProgram.hpp"
 
 #include "JsbParticle.hpp"
 
@@ -30,9 +32,11 @@ void register_all_cocos2dx(v8::Isolate *isolate, v8::Local<v8::Object> obj)
   js_register_cocos2dx_Director(isolate, ns);
   js_register_cocos2dx_GLView(isolate, ns);
   js_register_cocos2dx_SimpleAudioEngine(isolate, ns);
+  js_register_cocos2dx_GLProgramCache(isolate, ns);
   js_register_cocos2dx_Node(isolate, ns);
   js_register_cocos2dx_Scene(isolate, ns);
   js_register_cocos2dx_ProtectedNode(isolate, ns);
+  js_register_cocos2dx_TextureCache(isolate, ns);
   js_register_cocos2dx_ui_Widget(isolate, ns);
   js_register_cocos2dx_ui_Button(isolate, ns);
   js_register_cocos2dx_ui_Text(isolate, ns);
