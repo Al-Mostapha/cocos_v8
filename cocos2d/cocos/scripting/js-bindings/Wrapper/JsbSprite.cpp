@@ -3,7 +3,9 @@
 #include "JsbUtils.h"
 #include "2d/CCSprite.h"
 #include "2d/CCSpriteFrame.h"
+#include "2d/CCAnimationCache.h"
 #include "2d/CCSpriteBatchNode.h"
+#include "2d/CCSpriteFrameCache.h"
 #include "renderer/CCTexture2D.h"
 #include "ScriptEngine.hpp"
 
@@ -1916,3 +1918,1072 @@ void js_register_cocos2dx_Sprite(v8::Isolate *isolate, v8::Local<v8::Object> glo
   //     jsb_register_class<cocos2d::Sprite>(cx, jsb_cocos2d_Sprite_class, proto, parent_proto);
   //     anonEvaluate(cx, global, "(function () { cc.Sprite.extend = cc.Class.extend; })()");
 }
+
+// JSClass *jsb_cocos2d_AnimationCache_class;
+// JSObject *jsb_cocos2d_AnimationCache_prototype;
+
+// bool js_cocos2dx_AnimationCache_getAnimation(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_AnimationCache_getAnimation(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::AnimationCache *cobj = (cocos2d::AnimationCache *)(proxy ? proxy->ptr : NULL);
+  cocos2d::AnimationCache *cAnimationCache = (cocos2d::AnimationCache *)(args.This()->GetAlignedPointerFromInternalField(0));
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_AnimationCache_getAnimation : Invalid Native Object");
+  SE_PRECONDITION2(cAnimationCache, "js_cocos2dx_AnimationCache_getAnimation : Invalid Native Object");
+  //     if (argc == 1)
+  //     {
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_AnimationCache_getAnimation : wrong number of arguments");
+    return;
+  }
+  //         std::string arg0;
+  //         ok &= jsval_to_std_string(cx, args.get(0), &arg0);
+  std::string animKey = JsbUtils::FromV8String(isolate, args[0]);
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_AnimationCache_getAnimation : Error processing arguments");
+  //         cocos2d::Animation *ret = cobj->getAnimation(arg0);
+  cocos2d::Animation *animation = cAnimationCache->getAnimation(animKey);
+  //         JS::RootedValue jsret(cx);
+  //         if (ret)
+  //         {
+  //             jsret = OBJECT_TO_JSVAL(js_get_or_create_jsobject<cocos2d::Animation>(cx, (cocos2d::Animation *)ret));
+  //         }
+  //         else
+  //         {
+  //             jsret = JSVAL_NULL;
+  //         };
+  auto jsret = JsbUtils::NativePtrToObject(animation);
+  //         args.rval().set(jsret);
+  args.GetReturnValue().Set(jsret);
+  //         return true;
+  //     }
+
+  //     JS_ReportError(cx, "js_cocos2dx_AnimationCache_getAnimation : wrong number of arguments: %d, was expecting %d", argc, 1);
+  //     return false;
+}
+
+// bool js_cocos2dx_AnimationCache_addAnimation(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_AnimationCache_addAnimation(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::AnimationCache *cobj = (cocos2d::AnimationCache *)(proxy ? proxy->ptr : NULL);
+  cocos2d::AnimationCache *cAnimationCache = (cocos2d::AnimationCache *)(args.This()->GetAlignedPointerFromInternalField(0));
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_AnimationCache_addAnimation : Invalid Native Object");
+  SE_PRECONDITION2(cAnimationCache, "js_cocos2dx_AnimationCache_addAnimation : Invalid Native Object");
+  //     if (argc == 2)
+  //     {
+  if (args.Length() != 2)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_AnimationCache_addAnimation : wrong number of arguments");
+    return;
+  }
+  //         cocos2d::Animation *arg0 = nullptr;
+  cocos2d::Animation *animation = nullptr;
+  //         std::string arg1;
+  std::string animKey;
+  //         do
+  //         {
+  //             if (args.get(0).isNull())
+  //             {
+  //                 arg0 = nullptr;
+  //                 break;
+  //             }
+  if (args[0]->IsNull())
+  {
+    SE_REPORT_ERROR("js_cocos2dx_AnimationCache_addAnimation : argument 0 is null");
+    return;
+  }
+  //             if (!args.get(0).isObject())
+  //             {
+  //                 ok = false;
+  //                 break;
+  //             }
+  if (!args[0]->IsObject())
+  {
+    SE_REPORT_ERROR("js_cocos2dx_AnimationCache_addAnimation : argument 0 is not an object");
+    return;
+  }
+  //             js_proxy_t *jsProxy;
+  //             JS::RootedObject tmpObj(cx, args.get(0).toObjectOrNull());
+  //             jsProxy = jsb_get_js_proxy(tmpObj);
+  //             arg0 = (cocos2d::Animation *)(jsProxy ? jsProxy->ptr : NULL);
+  auto jsObj = args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
+  animation = (cocos2d::Animation *)jsObj->GetAlignedPointerFromInternalField(0);
+  SE_PRECONDITION2(animation, "js_cocos2dx_AnimationCache_addAnimation : argument 0 is not a valid Animation object");
+  //             JSB_PRECONDITION2(arg0, cx, false, "Invalid Native Object");
+  //         } while (0);
+  //         ok &= jsval_to_std_string(cx, args.get(1), &arg1);
+  animKey = JsbUtils::FromV8String(isolate, args[1]);
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_AnimationCache_addAnimation : Error processing arguments");
+  //         cobj->addAnimation(arg0, arg1);
+  cAnimationCache->addAnimation(animation, animKey);
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
+
+  //     JS_ReportError(cx, "js_cocos2dx_AnimationCache_addAnimation : wrong number of arguments: %d, was expecting %d", argc, 2);
+  //     return false;
+}
+
+// bool js_cocos2dx_AnimationCache_init(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_AnimationCache_init(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::AnimationCache *cobj = (cocos2d::AnimationCache *)(proxy ? proxy->ptr : NULL);
+  cocos2d::AnimationCache *cAnimationCache = (cocos2d::AnimationCache *)(args.This()->GetAlignedPointerFromInternalField(0));
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_AnimationCache_init : Invalid Native Object");
+  SE_PRECONDITION2(cAnimationCache, "js_cocos2dx_AnimationCache_init : Invalid Native Object");
+  //     if (argc == 0)
+  //     {
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_AnimationCache_init : wrong number of arguments");
+    return;
+  }
+  //         bool ret = cobj->init();
+  bool ret = cAnimationCache->init();
+  //         JS::RootedValue jsret(cx);
+  //         jsret = BOOLEAN_TO_JSVAL(ret);
+  //         args.rval().set(jsret);
+  args.GetReturnValue().Set(v8::Boolean::New(isolate, ret));
+  //         return true;
+  //     }
+
+  //     JS_ReportError(cx, "js_cocos2dx_AnimationCache_init : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
+// bool js_cocos2dx_AnimationCache_addAnimationsWithDictionary(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_AnimationCache_addAnimationsWithDictionary(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::AnimationCache *cobj = (cocos2d::AnimationCache *)(proxy ? proxy->ptr : NULL);
+  cocos2d::AnimationCache *cAnimationCache = (cocos2d::AnimationCache *)(args.This()->GetAlignedPointerFromInternalField(0));
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_AnimationCache_addAnimationsWithDictionary : Invalid Native Object");
+  SE_PRECONDITION2(cAnimationCache, "js_cocos2dx_AnimationCache_addAnimationsWithDictionary : Invalid Native Object");
+  //     if (argc == 2)
+  //     {
+  if (args.Length() != 2)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_AnimationCache_addAnimationsWithDictionary : wrong number of arguments");
+    return;
+  }
+  //         cocos2d::ValueMap arg0;
+  //         std::string arg1;
+  //         ok &= jsval_to_ccvaluemap(cx, args.get(0), &arg0);
+  cocos2d::ValueMap dict;
+  bool ok = JsbUtils::jsval_to_ccvaluemap(isolate, args[0], &dict);
+  if (!ok)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_AnimationCache_addAnimationsWithDictionary : Error processing arguments");
+    return;
+  }
+  //         ok &= jsval_to_std_string(cx, args.get(1), &arg1);
+  std::string animKeyPrefix = JsbUtils::FromV8String(isolate, args[1]);
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_AnimationCache_addAnimationsWithDictionary : Error processing arguments");
+  //         cobj->addAnimationsWithDictionary(arg0, arg1);
+  cAnimationCache->addAnimationsWithDictionary(dict, animKeyPrefix);
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
+
+  //     JS_ReportError(cx, "js_cocos2dx_AnimationCache_addAnimationsWithDictionary : wrong number of arguments: %d, was expecting %d", argc, 2);
+  //     return false;
+}
+
+// bool js_cocos2dx_AnimationCache_removeAnimation(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_AnimationCache_removeAnimation(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::AnimationCache *cobj = (cocos2d::AnimationCache *)(proxy ? proxy->ptr : NULL);
+  cocos2d::AnimationCache *cAnimationCache = (cocos2d::AnimationCache *)(args.This()->GetAlignedPointerFromInternalField(0));
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_AnimationCache_removeAnimation : Invalid Native Object");
+  SE_PRECONDITION2(cAnimationCache, "js_cocos2dx_AnimationCache_removeAnimation : Invalid Native Object");
+  //     if (argc == 1)
+  //     {
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_AnimationCache_removeAnimation : wrong number of arguments");
+    return;
+  }
+  //         std::string arg0;
+  //         ok &= jsval_to_std_string(cx, args.get(0), &arg0);
+  std::string animKey = JsbUtils::FromV8String(isolate, args[0]);
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_AnimationCache_removeAnimation : Error processing arguments");
+  //         cobj->removeAnimation(arg0);
+  cAnimationCache->removeAnimation(animKey);
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
+
+  //     JS_ReportError(cx, "js_cocos2dx_AnimationCache_removeAnimation : wrong number of arguments: %d, was expecting %d", argc, 1);
+  //     return false;
+}
+
+// bool js_cocos2dx_AnimationCache_addAnimationsWithFile(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_AnimationCache_addAnimationsWithFile(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::AnimationCache *cobj = (cocos2d::AnimationCache *)(proxy ? proxy->ptr : NULL);
+  cocos2d::AnimationCache *cAnimationCache = (cocos2d::AnimationCache *)(args.This()->GetAlignedPointerFromInternalField(0));
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_AnimationCache_addAnimationsWithFile : Invalid Native Object");
+  SE_PRECONDITION2(cAnimationCache, "js_cocos2dx_AnimationCache_addAnimationsWithFile : Invalid Native Object");
+  //     if (argc == 1)
+  //     {
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_AnimationCache_addAnimationsWithFile : wrong number of arguments");
+    return;
+  }
+  std::string file = JsbUtils::FromV8String(isolate, args[0]);
+  cAnimationCache->addAnimationsWithFile(file);
+  //         std::string arg0;
+  //         ok &= jsval_to_std_string(cx, args.get(0), &arg0);
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_AnimationCache_addAnimationsWithFile : Error processing arguments");
+  //         cobj->addAnimationsWithFile(arg0);
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
+
+  //     JS_ReportError(cx, "js_cocos2dx_AnimationCache_addAnimationsWithFile : wrong number of arguments: %d, was expecting %d", argc, 1);
+  //     return false;
+}
+
+// bool js_cocos2dx_AnimationCache_destroyInstance(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_AnimationCache_destroyInstance(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     if (argc == 0)
+  //     {
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_AnimationCache_destroyInstance : wrong number of arguments");
+    return;
+  }
+  //         cocos2d::AnimationCache::destroyInstance();
+  cocos2d::AnimationCache::destroyInstance();
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
+  //     JS_ReportError(cx, "js_cocos2dx_AnimationCache_destroyInstance : wrong number of arguments");
+  //     return false;
+}
+
+// bool js_cocos2dx_AnimationCache_getInstance(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_AnimationCache_getInstance(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     if (argc == 0)
+  //     {
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_AnimationCache_getInstance : wrong number of arguments");
+    return;
+  }
+  //         auto ret = cocos2d::AnimationCache::getInstance();
+  auto animationCache = cocos2d::AnimationCache::getInstance();
+  //         js_type_class_t *typeClass = js_get_type_from_native<cocos2d::AnimationCache>(ret);
+  //         JS::RootedObject jsret(cx, jsb_ref_get_or_create_jsobject(cx, ret, typeClass, "cocos2d::AnimationCache"));
+  auto jsret = JsbUtils::NativePtrToObject(animationCache);
+  //         args.rval().set(OBJECT_TO_JSVAL(jsret));
+  args.GetReturnValue().Set(jsret);
+  //         return true;
+  //     }
+  //     JS_ReportError(cx, "js_cocos2dx_AnimationCache_getInstance : wrong number of arguments");
+  //     return false;
+}
+
+// bool js_cocos2dx_AnimationCache_constructor(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_AnimationCache_constructor(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     cocos2d::AnimationCache *cobj = new (std::nothrow) cocos2d::AnimationCache();
+  cocos2d::AnimationCache *cAnimationCache = new (std::nothrow) cocos2d::AnimationCache();
+
+  //     js_type_class_t *typeClass = js_get_type_from_native<cocos2d::AnimationCache>(cobj);
+  auto jsret = jsb_ref_create_jsobject(cAnimationCache);
+  //     // link the native object with the javascript object
+  //     JS::RootedObject jsobj(cx, jsb_ref_create_jsobject(cx, cobj, typeClass, "cocos2d::AnimationCache"));
+  //     args.rval().set(OBJECT_TO_JSVAL(jsobj));
+  args.GetReturnValue().Set(jsret);
+  //     if (JS_HasProperty(cx, jsobj, "_ctor", &ok) && ok)
+  //         ScriptingCore::getInstance()->executeFunctionWithOwner(OBJECT_TO_JSVAL(jsobj), "_ctor", args);
+  CallCustomConstructor(args, args.This());
+  //     return true;
+}
+
+// static bool js_cocos2dx_AnimationCache_ctor(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_AnimationCache_ctor(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     cocos2d::AnimationCache *nobj = new (std::nothrow) cocos2d::AnimationCache();
+  cocos2d::AnimationCache *nAnimationCache = new (std::nothrow) cocos2d::AnimationCache();
+  //     js_proxy_t *p = jsb_new_proxy(nobj, obj);
+  //     jsb_ref_init(cx, &p->obj, nobj, "cocos2d::AnimationCache");
+  //     bool isFound = false;
+  auto jsObj = jsb_ref_create_jsobject(nAnimationCache);
+  //     if (JS_HasProperty(cx, obj, "_ctor", &isFound) && isFound)
+  //         ScriptingCore::getInstance()->executeFunctionWithOwner(OBJECT_TO_JSVAL(obj), "_ctor", args);
+  CallCustomConstructor(args, args.This());
+  //     args.rval().setUndefined();
+  //     return true;
+}
+
+// void js_register_cocos2dx_AnimationCache(JSContext *cx, JS::HandleObject global)
+// {
+void js_register_cocos2dx_AnimationCache(v8::Isolate *isolate, v8::Local<v8::Object> global)
+{
+  //     jsb_cocos2d_AnimationCache_class = (JSClass *)calloc(1, sizeof(JSClass));
+  //     jsb_cocos2d_AnimationCache_class->name = "AnimationCache";
+  //     jsb_cocos2d_AnimationCache_class->addProperty = JS_PropertyStub;
+  //     jsb_cocos2d_AnimationCache_class->delProperty = JS_DeletePropertyStub;
+  //     jsb_cocos2d_AnimationCache_class->getProperty = JS_PropertyStub;
+  //     jsb_cocos2d_AnimationCache_class->setProperty = JS_StrictPropertyStub;
+  //     jsb_cocos2d_AnimationCache_class->enumerate = JS_EnumerateStub;
+  //     jsb_cocos2d_AnimationCache_class->resolve = JS_ResolveStub;
+  //     jsb_cocos2d_AnimationCache_class->convert = JS_ConvertStub;
+  //     jsb_cocos2d_AnimationCache_class->flags = JSCLASS_HAS_RESERVED_SLOTS(2);
+  auto tpl = v8::FunctionTemplate::New(isolate, js_cocos2dx_AnimationCache_constructor);
+  tpl->SetClassName(JsbUtils::ToV8String(isolate, "AnimationCache"));
+  tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+  auto proto = tpl->PrototypeTemplate();
+
+  //     static JSPropertySpec properties[] = {
+  //         JS_PS_END};
+
+  //     static JSFunctionSpec funcs[] = {
+  //         JS_FN("getAnimation", js_cocos2dx_AnimationCache_getAnimation, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "getAnimation", v8::FunctionTemplate::New(isolate, js_cocos2dx_AnimationCache_getAnimation));
+  //         JS_FN("addAnimation", js_cocos2dx_AnimationCache_addAnimation, 2, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "addAnimation", v8::FunctionTemplate::New(isolate, js_cocos2dx_AnimationCache_addAnimation));
+  //         JS_FN("init", js_cocos2dx_AnimationCache_init, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "init", v8::FunctionTemplate::New(isolate, js_cocos2dx_AnimationCache_init));
+  //         JS_FN("addAnimationsWithDictionary", js_cocos2dx_AnimationCache_addAnimationsWithDictionary, 2, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "addAnimationsWithDictionary", v8::FunctionTemplate::New(isolate, js_cocos2dx_AnimationCache_addAnimationsWithDictionary));
+  //         JS_FN("removeAnimation", js_cocos2dx_AnimationCache_removeAnimation, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "removeAnimation", v8::FunctionTemplate::New(isolate, js_cocos2dx_AnimationCache_removeAnimation));
+  //         JS_FN("addAnimations", js_cocos2dx_AnimationCache_addAnimationsWithFile, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "addAnimations", v8::FunctionTemplate::New(isolate, js_cocos2dx_AnimationCache_addAnimationsWithFile));
+  //         JS_FN("ctor", js_cocos2dx_AnimationCache_ctor, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  proto->Set(isolate, "ctor", v8::FunctionTemplate::New(isolate, js_cocos2dx_AnimationCache_ctor));
+  //         JS_FS_END};
+
+  //     static JSFunctionSpec st_funcs[] = {
+  //         JS_FN("destroyInstance", js_cocos2dx_AnimationCache_destroyInstance, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->Set(isolate, "destroyInstance", v8::FunctionTemplate::New(isolate, js_cocos2dx_AnimationCache_destroyInstance));
+  //         JS_FN("getInstance", js_cocos2dx_AnimationCache_getInstance, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->Set(isolate, "getInstance", v8::FunctionTemplate::New(isolate, js_cocos2dx_AnimationCache_getInstance));
+  //         JS_FS_END};
+
+  //     jsb_cocos2d_AnimationCache_prototype = JS_InitClass(
+  //         cx, global,
+  //         JS::NullPtr(),
+  //         jsb_cocos2d_AnimationCache_class,
+  //         js_cocos2dx_AnimationCache_constructor, 0, // constructor
+  //         properties,
+  //         funcs,
+  //         NULL, // no static properties
+  //         st_funcs);
+
+  //     JS::RootedObject proto(cx, jsb_cocos2d_AnimationCache_prototype);
+  //     JS::RootedValue className(cx, std_string_to_jsval(cx, "AnimationCache"));
+  //     JS_SetProperty(cx, proto, "_className", className);
+  proto->Set(isolate, "_className", JsbUtils::ToV8String(isolate, "AnimationCache"));
+  //     JS_SetProperty(cx, proto, "__nativeObj", JS::TrueHandleValue);
+  proto->Set(isolate, "__nativeObj", v8::Boolean::New(isolate, true));
+  //     JS_SetProperty(cx, proto, "__is_ref", JS::TrueHandleValue);
+  proto->Set(isolate, "__is_ref", v8::Boolean::New(isolate, true));
+  //     // add the proto and JSClass to the type->js info hash table
+  //     jsb_register_class<cocos2d::AnimationCache>(cx, jsb_cocos2d_AnimationCache_class, proto, JS::NullPtr());
+  //     anonEvaluate(cx, global, "(function () { cc.AnimationCache.extend = cc.Class.extend; })()");
+  JsbUtils::RegisterV8Class(typeid(cocos2d::AnimationCache).name(), &tpl);
+  JsbUtils::BindJsClass("AnimationCache", global, tpl);
+}
+
+// JSClass *jsb_cocos2d_SpriteFrameCache_class;
+// JSObject *jsb_cocos2d_SpriteFrameCache_prototype;
+
+// bool js_cocos2dx_SpriteFrameCache_reloadTexture(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_SpriteFrameCache_reloadTexture(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::SpriteFrameCache *cobj = (cocos2d::SpriteFrameCache *)(proxy ? proxy->ptr : NULL);
+  cocos2d::SpriteFrameCache *cSpriteFrameCache = (cocos2d::SpriteFrameCache *)(args.This()->GetAlignedPointerFromInternalField(0));
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_SpriteFrameCache_reloadTexture : Invalid Native Object");
+  SE_PRECONDITION2(cSpriteFrameCache, "js_cocos2dx_SpriteFrameCache_reloadTexture : Invalid Native Object");
+  //     if (argc == 1)
+  //     {
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_SpriteFrameCache_reloadTexture : wrong number of arguments");
+    return;
+  }
+  //         std::string arg0;
+  //         ok &= jsval_to_std_string(cx, args.get(0), &arg0);
+  std::string textureFile = JsbUtils::FromV8String(isolate, args[0]);
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_SpriteFrameCache_reloadTexture : Error processing arguments");
+  //         bool ret = cobj->reloadTexture(arg0);
+  bool ret = cSpriteFrameCache->reloadTexture(textureFile);
+  //         JS::RootedValue jsret(cx);
+  //         jsret = BOOLEAN_TO_JSVAL(ret);
+  //         args.rval().set(jsret);
+  args.GetReturnValue().Set(v8::Boolean::New(isolate, ret));
+  //         return true;
+  //     }
+
+  //     JS_ReportError(cx, "js_cocos2dx_SpriteFrameCache_reloadTexture : wrong number of arguments: %d, was expecting %d", argc, 1);
+  //     return false;
+}
+
+// bool js_cocos2dx_SpriteFrameCache_addSpriteFramesWithFileContent(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_SpriteFrameCache_addSpriteFramesWithFileContent(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::SpriteFrameCache *cobj = (cocos2d::SpriteFrameCache *)(proxy ? proxy->ptr : NULL);
+  cocos2d::SpriteFrameCache *cSpriteFrameCache = (cocos2d::SpriteFrameCache *)(args.This()->GetAlignedPointerFromInternalField(0));
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_SpriteFrameCache_addSpriteFramesWithFileContent : Invalid Native Object");
+  SE_PRECONDITION2(cSpriteFrameCache, "js_cocos2dx_SpriteFrameCache_addSpriteFramesWithFileContent : Invalid Native Object");
+  //     if (argc == 2)
+  //     {
+  if (args.Length() != 2)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_SpriteFrameCache_addSpriteFramesWithFileContent : wrong number of arguments");
+    return;
+  }
+  //         std::string arg0;
+  //         cocos2d::Texture2D *arg1 = nullptr;
+  cocos2d::Texture2D *texture = nullptr;
+  std::string plistContent;
+  //         ok &= jsval_to_std_string(cx, args.get(0), &arg0);
+  plistContent = JsbUtils::FromV8String(isolate, args[0]);
+  //         do
+  //         {
+  //             if (args.get(1).isNull())
+  //             {
+  //                 arg1 = nullptr;
+  //                 break;
+  //             }
+  if (args[1]->IsNull())
+  {
+    SE_REPORT_ERROR("js_cocos2dx_SpriteFrameCache_addSpriteFramesWithFileContent : argument 1 is null");
+    return;
+  }
+  //             if (!args.get(1).isObject())
+  //             {
+  //                 ok = false;
+  //                 break;
+  //             }
+  if (!args[1]->IsObject())
+  {
+    SE_REPORT_ERROR("js_cocos2dx_SpriteFrameCache_addSpriteFramesWithFileContent : argument 1 is not an object");
+    return;
+  }
+  //             js_proxy_t *jsProxy;
+  //             JS::RootedObject tmpObj(cx, args.get(1).toObjectOrNull());
+  //             jsProxy = jsb_get_js_proxy(tmpObj);
+  //             arg1 = (cocos2d::Texture2D *)(jsProxy ? jsProxy->ptr : NULL);
+  auto jsObj = args[1]->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
+  texture = (cocos2d::Texture2D *)jsObj->GetAlignedPointerFromInternalField(0);
+  //             JSB_PRECONDITION2(arg1, cx, false, "Invalid Native Object");
+  SE_PRECONDITION2(texture, "js_cocos2dx_SpriteFrameCache_addSpriteFramesWithFileContent : argument 1 is not a valid Texture2D object");
+  //         } while (0);
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_SpriteFrameCache_addSpriteFramesWithFileContent : Error processing arguments");
+  //         cobj->addSpriteFramesWithFileContent(arg0, arg1);
+  cSpriteFrameCache->addSpriteFramesWithFileContent(plistContent, texture);
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
+
+  //     JS_ReportError(cx, "js_cocos2dx_SpriteFrameCache_addSpriteFramesWithFileContent : wrong number of arguments: %d, was expecting %d", argc, 2);
+  //     return false;
+}
+
+// bool js_cocos2dx_SpriteFrameCache_addSpriteFrame(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_SpriteFrameCache_addSpriteFrame(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::SpriteFrameCache *cobj = (cocos2d::SpriteFrameCache *)(proxy ? proxy->ptr : NULL);
+  cocos2d::SpriteFrameCache *cSpriteFrameCache = (cocos2d::SpriteFrameCache *)(args.This()->GetAlignedPointerFromInternalField(0));
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_SpriteFrameCache_addSpriteFrame : Invalid Native Object");
+  SE_PRECONDITION2(cSpriteFrameCache, "js_cocos2dx_SpriteFrameCache_addSpriteFrame : Invalid Native Object");
+  //     if (argc == 2)
+  //     {
+  if (args.Length() != 2)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_SpriteFrameCache_addSpriteFrame : wrong number of arguments");
+    return;
+  }
+  //         cocos2d::SpriteFrame *arg0 = nullptr;
+  cocos2d::SpriteFrame *spriteFrame = nullptr;
+  //         std::string arg1;
+  std::string frameKey;
+  //         do
+  //         {
+  //             if (args.get(0).isNull())
+  //             {
+  //                 arg0 = nullptr;
+  //                 break;
+  //             }
+  if (args[0]->IsNull())
+  {
+    SE_REPORT_ERROR("js_cocos2dx_SpriteFrameCache_addSpriteFrame : argument 0 is null");
+    return;
+  }
+  //             if (!args.get(0).isObject())
+  //             {
+  //                 ok = false;
+  //                 break;
+  //             }
+  if (!args[0]->IsObject())
+  {
+    SE_REPORT_ERROR("js_cocos2dx_SpriteFrameCache_addSpriteFrame : argument 0 is not an object");
+    return;
+  }
+  //             js_proxy_t *jsProxy;
+  //             JS::RootedObject tmpObj(cx, args.get(0).toObjectOrNull());
+  //             jsProxy = jsb_get_js_proxy(tmpObj);
+  //             arg0 = (cocos2d::SpriteFrame *)(jsProxy ? jsProxy->ptr : NULL);
+  auto jsObj = args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
+  spriteFrame = (cocos2d::SpriteFrame *)jsObj->GetAlignedPointerFromInternalField(0);
+  //             JSB_PRECONDITION2(arg0, cx, false, "Invalid Native Object");
+  SE_PRECONDITION2(spriteFrame, "js_cocos2dx_SpriteFrameCache_addSpriteFrame : argument 0 is not a valid SpriteFrame object");
+  //         } while (0);
+  //         ok &= jsval_to_std_string(cx, args.get(1), &arg1);
+  frameKey = JsbUtils::FromV8String(isolate, args[1]);
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_SpriteFrameCache_addSpriteFrame : Error processing arguments");
+  //         cobj->addSpriteFrame(arg0, arg1);
+  cSpriteFrameCache->addSpriteFrame(spriteFrame, frameKey);
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
+
+  //     JS_ReportError(cx, "js_cocos2dx_SpriteFrameCache_addSpriteFrame : wrong number of arguments: %d, was expecting %d", argc, 2);
+  //     return false;
+}
+
+// bool js_cocos2dx_SpriteFrameCache_addSpriteFramesWithFile(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_SpriteFrameCache_addSpriteFramesWithFile(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     bool ok = true;
+  //     cocos2d::SpriteFrameCache *cobj = nullptr;
+
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx);
+  //     obj.set(args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cobj = (cocos2d::SpriteFrameCache *)(proxy ? proxy->ptr : nullptr);
+  cocos2d::SpriteFrameCache *cSpriteFrameCache = (cocos2d::SpriteFrameCache *)(args.This()->GetAlignedPointerFromInternalField(0));
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_SpriteFrameCache_addSpriteFramesWithFile : Invalid Native Object");
+  SE_PRECONDITION2(cSpriteFrameCache, "js_cocos2dx_SpriteFrameCache_addSpriteFramesWithFile : Invalid Native Object");
+
+  //     do
+  //     {
+  //         if (argc == 1)
+  //         {
+  //             std::string arg0;
+  //             ok &= jsval_to_std_string(cx, args.get(0), &arg0);
+  //             if (!ok)
+  //             {
+  //                 ok = true;
+  //                 break;
+  //             }
+  //             cobj->addSpriteFramesWithFile(arg0);
+  //             args.rval().setUndefined();
+  //             return true;
+  //         }
+  if (args.Length() == 1)
+  {
+    std::string plistFile = JsbUtils::FromV8String(isolate, args[0]);
+    cSpriteFrameCache->addSpriteFramesWithFile(plistFile);
+    return;
+  }
+  //     } while (0);
+
+  //     do
+  //     {
+  //         if (argc == 2)
+  //         {
+  if (args.Length() == 2)
+  {
+    //             std::string arg0;
+    //             ok &= jsval_to_std_string(cx, args.get(0), &arg0);
+    std::string plistFile = JsbUtils::FromV8String(isolate, args[0]);
+
+    //             std::string arg1;
+    //             ok &= jsval_to_std_string(cx, args.get(1), &arg1);
+    //             if (!ok)
+    //             {
+    //                 ok = true;
+    //                 break;
+    //             }
+    //             cobj->addSpriteFramesWithFile(arg0, arg1);
+    //             args.rval().setUndefined();
+    //             return true;
+    if (args[1]->IsString())
+    {
+      std::string textureFile = JsbUtils::FromV8String(isolate, args[1]);
+      cSpriteFrameCache->addSpriteFramesWithFile(plistFile, textureFile);
+      return;
+    }
+    else if (args[1]->IsObject())
+    {
+      auto jsObj = args[1]->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
+      cocos2d::Texture2D *texture = (cocos2d::Texture2D *)jsObj->GetAlignedPointerFromInternalField(0);
+      SE_PRECONDITION2(texture, "js_cocos2dx_SpriteFrameCache_addSpriteFramesWithFile : argument 1 is not a valid Texture2D object");
+      cSpriteFrameCache->addSpriteFramesWithFile(plistFile, texture);
+      return;
+    }
+  }
+
+  //     } while (0);
+
+  //     do
+  //     {
+  //         if (argc == 2)
+  //         {
+  //             std::string arg0;
+  //             ok &= jsval_to_std_string(cx, args.get(0), &arg0);
+  //             if (!ok)
+  //             {
+  //                 ok = true;
+  //                 break;
+  //             }
+  //             cocos2d::Texture2D *arg1 = nullptr;
+  //             do
+  //             {
+  //                 if (args.get(1).isNull())
+  //                 {
+  //                     arg1 = nullptr;
+  //                     break;
+  //                 }
+  //                 if (!args.get(1).isObject())
+  //                 {
+  //                     ok = false;
+  //                     break;
+  //                 }
+  //                 js_proxy_t *jsProxy;
+  //                 JS::RootedObject tmpObj(cx, args.get(1).toObjectOrNull());
+  //                 jsProxy = jsb_get_js_proxy(tmpObj);
+  //                 arg1 = (cocos2d::Texture2D *)(jsProxy ? jsProxy->ptr : NULL);
+  //                 JSB_PRECONDITION2(arg1, cx, false, "Invalid Native Object");
+  //             } while (0);
+  //             if (!ok)
+  //             {
+  //                 ok = true;
+  //                 break;
+  //             }
+  //             cobj->addSpriteFramesWithFile(arg0, arg1);
+  //             args.rval().setUndefined();
+  //             return true;
+  //         }
+  //     } while (0);
+
+  //     JS_ReportError(cx, "js_cocos2dx_SpriteFrameCache_addSpriteFramesWithFile : wrong number of arguments");
+  SE_REPORT_ERROR("js_cocos2dx_SpriteFrameCache_addSpriteFramesWithFile : wrong number of arguments");
+  //     return false;
+}
+
+// bool js_cocos2dx_SpriteFrameCache_getSpriteFrameByName(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_SpriteFrameCache_getSpriteFrameByName(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::SpriteFrameCache *cobj = (cocos2d::SpriteFrameCache *)(proxy ? proxy->ptr : NULL);
+  cocos2d::SpriteFrameCache *cSpriteFrameCache = (cocos2d::SpriteFrameCache *)(args.This()->GetAlignedPointerFromInternalField(0));
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_SpriteFrameCache_getSpriteFrameByName : Invalid Native Object");
+  SE_PRECONDITION2(cSpriteFrameCache, "js_cocos2dx_SpriteFrameCache_getSpriteFrameByName : Invalid Native Object");
+  //     if (argc == 1)
+  //     {
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_SpriteFrameCache_getSpriteFrameByName : wrong number of arguments");
+    return;
+  }
+  //         std::string arg0;
+  //         ok &= jsval_to_std_string(cx, args.get(0), &arg0);
+  std::string frameName = JsbUtils::FromV8String(isolate, args[0]);
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_SpriteFrameCache_getSpriteFrameByName : Error processing arguments");
+  //         cocos2d::SpriteFrame *ret = cobj->getSpriteFrameByName(arg0);
+  cocos2d::SpriteFrame *spriteFrame = cSpriteFrameCache->getSpriteFrameByName(frameName);
+  //         JS::RootedValue jsret(cx);
+  //         if (ret)
+  //         {
+  //             jsret = OBJECT_TO_JSVAL(js_get_or_create_jsobject<cocos2d::SpriteFrame>(cx, (cocos2d::SpriteFrame *)ret));
+  //         }
+  //         else
+  //         {
+  //             jsret = JSVAL_NULL;
+  //         };
+  auto jsret = JsbUtils::NativePtrToObject(spriteFrame);
+  //         args.rval().set(jsret);
+  args.GetReturnValue().Set(jsret);
+  //         return true;
+  //     }
+
+  //     JS_ReportError(cx, "js_cocos2dx_SpriteFrameCache_getSpriteFrameByName : wrong number of arguments: %d, was expecting %d", argc, 1);
+  //     return false;
+}
+
+// bool js_cocos2dx_SpriteFrameCache_removeSpriteFramesFromFile(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_SpriteFrameCache_removeSpriteFramesFromFile(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::SpriteFrameCache *cobj = (cocos2d::SpriteFrameCache *)(proxy ? proxy->ptr : NULL);
+  cocos2d::SpriteFrameCache *cSpriteFrameCache = (cocos2d::SpriteFrameCache *)(args.This()->GetAlignedPointerFromInternalField(0));
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_SpriteFrameCache_removeSpriteFramesFromFile : Invalid Native Object");
+  SE_PRECONDITION2(cSpriteFrameCache, "js_cocos2dx_SpriteFrameCache_removeSpriteFramesFromFile : Invalid Native Object");
+  //     if (argc == 1)
+  //     {
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_SpriteFrameCache_removeSpriteFramesFromFile : wrong number of arguments");
+    return;
+  }
+  //         std::string arg0;
+  //         ok &= jsval_to_std_string(cx, args.get(0), &arg0);
+  std::string plistFile = JsbUtils::FromV8String(isolate, args[0]);
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_SpriteFrameCache_removeSpriteFramesFromFile : Error processing arguments");
+  //         cobj->removeSpriteFramesFromFile(arg0);
+  cSpriteFrameCache->removeSpriteFramesFromFile(plistFile);
+  //         args.rval().setUndefined();
+  //         return true;
+  //     }
+
+  //     JS_ReportError(cx, "js_cocos2dx_SpriteFrameCache_removeSpriteFramesFromFile : wrong number of arguments: %d, was expecting %d", argc, 1);
+  //     return false;
+}
+
+// bool js_cocos2dx_SpriteFrameCache_init(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_SpriteFrameCache_init(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::SpriteFrameCache *cobj = (cocos2d::SpriteFrameCache *)(proxy ? proxy->ptr : NULL);
+  cocos2d::SpriteFrameCache *cSpriteFrameCache = (cocos2d::SpriteFrameCache *)(args.This()->GetAlignedPointerFromInternalField(0));
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_SpriteFrameCache_init : Invalid Native Object");
+  SE_PRECONDITION2(cSpriteFrameCache, "js_cocos2dx_SpriteFrameCache_init : Invalid Native Object");
+  //     if (argc == 0)
+  //     {
+  if(args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_SpriteFrameCache_init : wrong number of arguments");
+    return;
+  }[]
+  //         bool ret = cobj->init();
+  //         JS::RootedValue jsret(cx);
+  //         jsret = BOOLEAN_TO_JSVAL(ret);
+  //         args.rval().set(jsret);
+  //         return true;
+  //     }
+
+  //     JS_ReportError(cx, "js_cocos2dx_SpriteFrameCache_init : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
+// bool js_cocos2dx_SpriteFrameCache_removeSpriteFrames(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+//     cocos2d::SpriteFrameCache *cobj = (cocos2d::SpriteFrameCache *)(proxy ? proxy->ptr : NULL);
+//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_SpriteFrameCache_removeSpriteFrames : Invalid Native Object");
+//     if (argc == 0)
+//     {
+//         cobj->removeSpriteFrames();
+//         args.rval().setUndefined();
+//         return true;
+//     }
+
+//     JS_ReportError(cx, "js_cocos2dx_SpriteFrameCache_removeSpriteFrames : wrong number of arguments: %d, was expecting %d", argc, 0);
+//     return false;
+// }
+// bool js_cocos2dx_SpriteFrameCache_removeUnusedSpriteFrames(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+//     cocos2d::SpriteFrameCache *cobj = (cocos2d::SpriteFrameCache *)(proxy ? proxy->ptr : NULL);
+//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_SpriteFrameCache_removeUnusedSpriteFrames : Invalid Native Object");
+//     if (argc == 0)
+//     {
+//         cobj->removeUnusedSpriteFrames();
+//         args.rval().setUndefined();
+//         return true;
+//     }
+
+//     JS_ReportError(cx, "js_cocos2dx_SpriteFrameCache_removeUnusedSpriteFrames : wrong number of arguments: %d, was expecting %d", argc, 0);
+//     return false;
+// }
+// bool js_cocos2dx_SpriteFrameCache_removeSpriteFramesFromFileContent(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+//     bool ok = true;
+//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+//     cocos2d::SpriteFrameCache *cobj = (cocos2d::SpriteFrameCache *)(proxy ? proxy->ptr : NULL);
+//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_SpriteFrameCache_removeSpriteFramesFromFileContent : Invalid Native Object");
+//     if (argc == 1)
+//     {
+//         std::string arg0;
+//         ok &= jsval_to_std_string(cx, args.get(0), &arg0);
+//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_SpriteFrameCache_removeSpriteFramesFromFileContent : Error processing arguments");
+//         cobj->removeSpriteFramesFromFileContent(arg0);
+//         args.rval().setUndefined();
+//         return true;
+//     }
+
+//     JS_ReportError(cx, "js_cocos2dx_SpriteFrameCache_removeSpriteFramesFromFileContent : wrong number of arguments: %d, was expecting %d", argc, 1);
+//     return false;
+// }
+// bool js_cocos2dx_SpriteFrameCache_removeSpriteFrameByName(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+//     bool ok = true;
+//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+//     cocos2d::SpriteFrameCache *cobj = (cocos2d::SpriteFrameCache *)(proxy ? proxy->ptr : NULL);
+//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_SpriteFrameCache_removeSpriteFrameByName : Invalid Native Object");
+//     if (argc == 1)
+//     {
+//         std::string arg0;
+//         ok &= jsval_to_std_string(cx, args.get(0), &arg0);
+//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_SpriteFrameCache_removeSpriteFrameByName : Error processing arguments");
+//         cobj->removeSpriteFrameByName(arg0);
+//         args.rval().setUndefined();
+//         return true;
+//     }
+
+//     JS_ReportError(cx, "js_cocos2dx_SpriteFrameCache_removeSpriteFrameByName : wrong number of arguments: %d, was expecting %d", argc, 1);
+//     return false;
+// }
+// bool js_cocos2dx_SpriteFrameCache_isSpriteFramesWithFileLoaded(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+//     bool ok = true;
+//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+//     cocos2d::SpriteFrameCache *cobj = (cocos2d::SpriteFrameCache *)(proxy ? proxy->ptr : NULL);
+//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_SpriteFrameCache_isSpriteFramesWithFileLoaded : Invalid Native Object");
+//     if (argc == 1)
+//     {
+//         std::string arg0;
+//         ok &= jsval_to_std_string(cx, args.get(0), &arg0);
+//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_SpriteFrameCache_isSpriteFramesWithFileLoaded : Error processing arguments");
+//         bool ret = cobj->isSpriteFramesWithFileLoaded(arg0);
+//         JS::RootedValue jsret(cx);
+//         jsret = BOOLEAN_TO_JSVAL(ret);
+//         args.rval().set(jsret);
+//         return true;
+//     }
+
+//     JS_ReportError(cx, "js_cocos2dx_SpriteFrameCache_isSpriteFramesWithFileLoaded : wrong number of arguments: %d, was expecting %d", argc, 1);
+//     return false;
+// }
+// bool js_cocos2dx_SpriteFrameCache_removeSpriteFramesFromTexture(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+//     bool ok = true;
+//     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+//     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+//     cocos2d::SpriteFrameCache *cobj = (cocos2d::SpriteFrameCache *)(proxy ? proxy->ptr : NULL);
+//     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_SpriteFrameCache_removeSpriteFramesFromTexture : Invalid Native Object");
+//     if (argc == 1)
+//     {
+//         cocos2d::Texture2D *arg0 = nullptr;
+//         do
+//         {
+//             if (args.get(0).isNull())
+//             {
+//                 arg0 = nullptr;
+//                 break;
+//             }
+//             if (!args.get(0).isObject())
+//             {
+//                 ok = false;
+//                 break;
+//             }
+//             js_proxy_t *jsProxy;
+//             JS::RootedObject tmpObj(cx, args.get(0).toObjectOrNull());
+//             jsProxy = jsb_get_js_proxy(tmpObj);
+//             arg0 = (cocos2d::Texture2D *)(jsProxy ? jsProxy->ptr : NULL);
+//             JSB_PRECONDITION2(arg0, cx, false, "Invalid Native Object");
+//         } while (0);
+//         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_SpriteFrameCache_removeSpriteFramesFromTexture : Error processing arguments");
+//         cobj->removeSpriteFramesFromTexture(arg0);
+//         args.rval().setUndefined();
+//         return true;
+//     }
+
+//     JS_ReportError(cx, "js_cocos2dx_SpriteFrameCache_removeSpriteFramesFromTexture : wrong number of arguments: %d, was expecting %d", argc, 1);
+//     return false;
+// }
+// bool js_cocos2dx_SpriteFrameCache_destroyInstance(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+//     if (argc == 0)
+//     {
+//         cocos2d::SpriteFrameCache::destroyInstance();
+//         args.rval().setUndefined();
+//         return true;
+//     }
+//     JS_ReportError(cx, "js_cocos2dx_SpriteFrameCache_destroyInstance : wrong number of arguments");
+//     return false;
+// }
+
+// bool js_cocos2dx_SpriteFrameCache_getInstance(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+//     if (argc == 0)
+//     {
+
+//         auto ret = cocos2d::SpriteFrameCache::getInstance();
+//         js_type_class_t *typeClass = js_get_type_from_native<cocos2d::SpriteFrameCache>(ret);
+//         JS::RootedObject jsret(cx, jsb_ref_get_or_create_jsobject(cx, ret, typeClass, "cocos2d::SpriteFrameCache"));
+//         args.rval().set(OBJECT_TO_JSVAL(jsret));
+//         return true;
+//     }
+//     JS_ReportError(cx, "js_cocos2dx_SpriteFrameCache_getInstance : wrong number of arguments");
+//     return false;
+// }
+
+// void js_register_cocos2dx_SpriteFrameCache(JSContext *cx, JS::HandleObject global)
+// {
+//     jsb_cocos2d_SpriteFrameCache_class = (JSClass *)calloc(1, sizeof(JSClass));
+//     jsb_cocos2d_SpriteFrameCache_class->name = "SpriteFrameCache";
+//     jsb_cocos2d_SpriteFrameCache_class->addProperty = JS_PropertyStub;
+//     jsb_cocos2d_SpriteFrameCache_class->delProperty = JS_DeletePropertyStub;
+//     jsb_cocos2d_SpriteFrameCache_class->getProperty = JS_PropertyStub;
+//     jsb_cocos2d_SpriteFrameCache_class->setProperty = JS_StrictPropertyStub;
+//     jsb_cocos2d_SpriteFrameCache_class->enumerate = JS_EnumerateStub;
+//     jsb_cocos2d_SpriteFrameCache_class->resolve = JS_ResolveStub;
+//     jsb_cocos2d_SpriteFrameCache_class->convert = JS_ConvertStub;
+//     jsb_cocos2d_SpriteFrameCache_class->flags = JSCLASS_HAS_RESERVED_SLOTS(2);
+
+//     static JSPropertySpec properties[] = {
+//         JS_PS_END};
+
+//     static JSFunctionSpec funcs[] = {
+//         JS_FN("reloadTexture", js_cocos2dx_SpriteFrameCache_reloadTexture, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+//         JS_FN("addSpriteFramesWithFileContent", js_cocos2dx_SpriteFrameCache_addSpriteFramesWithFileContent, 2, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+//         JS_FN("addSpriteFrame", js_cocos2dx_SpriteFrameCache_addSpriteFrame, 2, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+//         JS_FN("addSpriteFrames", js_cocos2dx_SpriteFrameCache_addSpriteFramesWithFile, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+//         JS_FN("getSpriteFrame", js_cocos2dx_SpriteFrameCache_getSpriteFrameByName, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+//         JS_FN("removeSpriteFramesFromFile", js_cocos2dx_SpriteFrameCache_removeSpriteFramesFromFile, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+//         JS_FN("init", js_cocos2dx_SpriteFrameCache_init, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+//         JS_FN("removeSpriteFrames", js_cocos2dx_SpriteFrameCache_removeSpriteFrames, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+//         JS_FN("removeUnusedSpriteFrames", js_cocos2dx_SpriteFrameCache_removeUnusedSpriteFrames, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+//         JS_FN("removeSpriteFramesFromFileContent", js_cocos2dx_SpriteFrameCache_removeSpriteFramesFromFileContent, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+//         JS_FN("removeSpriteFrameByName", js_cocos2dx_SpriteFrameCache_removeSpriteFrameByName, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+//         JS_FN("isSpriteFramesWithFileLoaded", js_cocos2dx_SpriteFrameCache_isSpriteFramesWithFileLoaded, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+//         JS_FN("removeSpriteFramesFromTexture", js_cocos2dx_SpriteFrameCache_removeSpriteFramesFromTexture, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+//         JS_FS_END};
+
+//     static JSFunctionSpec st_funcs[] = {
+//         JS_FN("destroyInstance", js_cocos2dx_SpriteFrameCache_destroyInstance, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+//         JS_FN("getInstance", js_cocos2dx_SpriteFrameCache_getInstance, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+//         JS_FS_END};
+
+//     jsb_cocos2d_SpriteFrameCache_prototype = JS_InitClass(
+//         cx, global,
+//         JS::NullPtr(),
+//         jsb_cocos2d_SpriteFrameCache_class,
+//         empty_constructor, 0,
+//         properties,
+//         funcs,
+//         NULL, // no static properties
+//         st_funcs);
+
+//     JS::RootedObject proto(cx, jsb_cocos2d_SpriteFrameCache_prototype);
+//     JS::RootedValue className(cx, std_string_to_jsval(cx, "SpriteFrameCache"));
+//     JS_SetProperty(cx, proto, "_className", className);
+//     JS_SetProperty(cx, proto, "__nativeObj", JS::TrueHandleValue);
+//     JS_SetProperty(cx, proto, "__is_ref", JS::TrueHandleValue);
+//     // add the proto and JSClass to the type->js info hash table
+//     jsb_register_class<cocos2d::SpriteFrameCache>(cx, jsb_cocos2d_SpriteFrameCache_class, proto, JS::NullPtr());
+// }

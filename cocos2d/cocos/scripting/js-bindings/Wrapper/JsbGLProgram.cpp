@@ -311,6 +311,6 @@ void js_register_cocos2dx_GLProgramCache(v8::Isolate *isolate, v8::Local<v8::Obj
   tpl->PrototypeTemplate()->Set(isolate, "__is_ref", v8::True(isolate));
   //     // add the proto and JSClass to the type->js info hash table
   //     jsb_register_class<cocos2d::GLProgramCache>(cx, jsb_cocos2d_GLProgramCache_class, proto, JS::NullPtr());
-  JsbUtils::RegisterV8Class("GLProgramCache", &tpl);
-  JsbUtils::BindJsClass("GLProgramCache", global, tpl);
+  JsbUtils::RegisterV8Class(typeid(cocos2d::backend::ProgramCache).name(), &tpl);
+  JsbUtils::BindJsClass("ShaderCache", global, tpl);
 }

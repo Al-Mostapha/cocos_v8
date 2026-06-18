@@ -1,6 +1,6 @@
 //+++++++++++++++++++++++++something about CCGame begin+++++++++++++++++++++++++++
 namespace cc {
-  export let renderMode: string;
+  // export let renderMode: string;
   export enum EDebugMode {
     DEBUG_MODE_NONE = 0,
     DEBUG_MODE_INFO,

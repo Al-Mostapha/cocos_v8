@@ -361,7 +361,7 @@ declare namespace cc {
    *
    */
   class DirectorDelegate {}
-  class Director extends Class {
+  export class Director extends Class {
     /**
      * The event projection changed of cc.Director
      * @constant

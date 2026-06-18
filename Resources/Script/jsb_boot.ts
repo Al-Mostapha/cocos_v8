@@ -1,26 +1,3 @@
-/*
- * Copyright (c) 2015-2016 Chukong Technologies Inc.
- * Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 //
 // cocos2d boot
 //
@@ -31,12 +8,12 @@ namespace cc {
   // TODO
   // director._actionManager = cc.director.getActionManager();
   // director._scheduler = cc.director.getScheduler();
-  export const winSize = cc.director.getWinSize();
+  export const winSize = director.getWinSize();
   //+++++++++++++++++++++++++Engine initialization function begin+++++++++++++++++++++++++++
 
-  export const view = cc.director.getOpenGLView();
-  cc.view.getDevicePixelRatio = cc.view.getRetinaFactor;
-  cc.view.convertToLocationInView = function (
+  export const view = director.getOpenGLView();
+  view.getDevicePixelRatio = view.getRetinaFactor;
+  view.convertToLocationInView = function (
     tx: number,
     ty: number,
     relatedPos: {
@@ -45,39 +22,39 @@ namespace cc {
       height: number;
     },
   ) {
-    const _devicePixelRatio = cc.view.getDevicePixelRatio();
+    const _devicePixelRatio = view.getDevicePixelRatio();
     return {
       x: _devicePixelRatio * (tx - relatedPos.left),
       y: _devicePixelRatio * (relatedPos.top + relatedPos.height - ty),
     };
   };
 
-  cc.view.enableRetina = function (enabled: boolean) {};
-  cc.view.isRetinaEnabled = function () {
+  view.enableRetina = function (enabled: boolean) {};
+  view.isRetinaEnabled = function () {
     const sys = cc.sys;
     return sys.os == sys.OS_IOS || sys.os == sys.OS_OSX ? true : false;
   };
-  cc.view.adjustViewPort = function () {};
-  cc.view.resizeWithBrowserSize = function () {
+  view.adjustViewPort = function () {};
+  view.resizeWithBrowserSize = function () {
     return;
   };
-  cc.view.setResizeCallback = function () {
+  view.setResizeCallback = function () {
     return;
   };
-  cc.view.enableAutoFullScreen = function () {
+  view.enableAutoFullScreen = function () {
     return;
   };
-  cc.view.isAutoFullScreenEnabled = function () {
+  view.isAutoFullScreenEnabled = function () {
     return true;
   };
   // TODO
-  (<any>cc).view._setDesignResolutionSize = cc.view.setDesignResolutionSize;
+  (<any>view)._setDesignResolutionSize = view.setDesignResolutionSize;
   cc.view.setDesignResolutionSize = function (
     width: number,
     height: number,
     resolutionPolicy: cc.ResolutionPolicy,
   ) {
-    (<any>cc).view._setDesignResolutionSize(width, height, resolutionPolicy);
+    (<any>view)._setDesignResolutionSize(width, height, resolutionPolicy);
     (<any>cc).winSize = cc.director.getWinSize();
     (<any>cc).visibleRect.init();
   };
@@ -168,7 +145,7 @@ namespace cc {
 
   export const initEngine = (config: GameConfig, cb: Function) => {
     // TODO
-    require("script/jsb.js");
+    // require("script/jsb.js");
     cc._renderType = cc.game.RENDER_TYPE_OPENGL;
     cc._initDebugSetting(config.debugMode ?? 0);
     cc._engineLoaded = true;

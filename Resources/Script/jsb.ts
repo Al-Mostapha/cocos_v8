@@ -7,6 +7,7 @@
 import "./jsb_cocos2d_constants";
 // require('script/jsb_cocos2d.js');
 import "./jsb_cocos2d";
+import "./Game";
 // require('script/jsb_common.js');
 // require('script/jsb_property_impls.js');
 // require('script/jsb_property_apis.js');

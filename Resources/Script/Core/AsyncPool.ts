@@ -15,30 +15,30 @@ namespace cc {
     //     self._srcObj = srcObj;
     _srcObj: any;
     //     self._limit = limit;
-    _limit!: number;
+    _limit: number;
     //     self._pool = [];
-    _pool!: {
+    _pool: {
       index: number;
       value: any;
     }[];
     //     self._iterator = iterator;
-    _iterator!: Function;
+    _iterator: Function;
     //     self._iteratorTarget = target;
-    _iteratorTarget!: any;
+    _iteratorTarget: any;
     //     self._onEnd = onEnd;
-    _onEnd!: Function;
+    _onEnd: Function;
     //     self._onEndTarget = target;
-    _onEndTarget!: any;
+    _onEndTarget: any;
     //     self._results = srcObj instanceof Array ? [] : {};
-    _results!: any;
+    _results: any;
     //     self._isErr = false;
-    _isErr!: boolean;
+    _isErr: boolean;
     //     self.size = self._pool.length;
-    size!: number;
+    size: number;
     //     self.finishedSize = 0;
-    finishedSize!: number;
+    finishedSize: number;
     //     self._workingSize = 0;
-    _workingSize!: number;
+    _workingSize: number;
     //     self._limit = self._limit || self.size;
 
     constructor(

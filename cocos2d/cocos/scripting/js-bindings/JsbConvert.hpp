@@ -10,6 +10,9 @@ class JsbConvert
 {
 public:
   static v8::Local<v8::Value> ToV8Value(v8::Isolate *isolate, cocos2d::Texture2D *texture);
+  static v8::Local<v8::Value> ToV8Value(v8::Isolate *isolate, long value);
+  static v8::Local<v8::Value> ToV8Value(v8::Isolate *isolate, bool value);
+  static v8::Local<v8::Value> ToV8Value(v8::Isolate *isolate, const std::string &value);
 
   template <typename T, typename... Args>
   static std::function<T(Args...)> FromJsFunc(v8::Isolate *isolate,

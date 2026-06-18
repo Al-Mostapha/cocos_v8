@@ -1,3 +1,11 @@
+
+for(const key in cc) {
+  console.log(`cc.${key} = ${(<any>cc)[key]}`);
+}
+
+import "../Script/jsb_boot";
+import "../Script/jsb";
+
 console.log("Hello from test.js!");
 console.log(
   "This is a test script to verify that the JavaScript engine is working correctly.",
@@ -16,7 +24,9 @@ if (config) {
   console.error("Failed to create Configuration instance.");
 }
 
+
 const g_resources: string[] = [];
+
 
 class HelloWorldLayer extends cc.Layer {
   sprite: cc.Sprite | null = null;

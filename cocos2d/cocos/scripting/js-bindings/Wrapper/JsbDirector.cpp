@@ -2661,13 +2661,9 @@ void js_register_cocos2dx_Director(v8::Isolate *isolate, v8::Local<v8::Object> g
   // jsb_cocos2d_Director_class->resolve = JS_ResolveStub;
   // jsb_cocos2d_Director_class->convert = JS_ConvertStub;
   // jsb_cocos2d_Director_class->flags = JSCLASS_HAS_RESERVED_SLOTS(2);
-  v8::Local<v8::FunctionTemplate> tpl = v8::FunctionTemplate::New(isolate, nullptr);
+  v8::Local<v8::FunctionTemplate> tpl = v8::FunctionTemplate::New(isolate);
   tpl->SetClassName(JsbUtils::ToV8String(isolate, "Director"));
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
-  JsbUtils::RegisterV8Class(typeid(cocos2d::Director).name(), &tpl);
-
-
-
 
   // static JSPropertySpec properties[] = {
   //     JS_PS_END}
@@ -2843,6 +2839,7 @@ void js_register_cocos2dx_Director(v8::Isolate *isolate, v8::Local<v8::Object> g
   // JS_SetProperty(cx, proto, "__is_ref", JS::TrueHandleValue);
   tpl->PrototypeTemplate()->Set(isolate, "__is_ref", v8::True(isolate));
 
+  JsbUtils::RegisterV8Class(typeid(cocos2d::Director).name(), &tpl);
   JsbUtils::BindJsClass("Director", global, tpl);
   // // add the proto and JSClass to the type->js info hash table
   // jsb_register_class<cocos2d::Director>(cx, jsb_cocos2d_Director_class, proto, JS::NullPtr());
