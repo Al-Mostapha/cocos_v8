@@ -34,6 +34,7 @@ set(JSB_SRC
     Wrapper/UI/JsbUIScrollView.cpp
     Wrapper/Spec/JsbSpecifics.cpp
     Wrapper/Common/JsbFileUtils.cpp
+    Wrapper/Common/JsbEvent.cpp
 )
 
 set(JSB_HEADERS
@@ -74,6 +75,7 @@ set(JSB_HEADERS
     Wrapper/UI/JsbUIScrollView.hpp
     Wrapper/Spec/JsbSpecifics.hpp
     Wrapper/Common/JsbFileUtils.hpp
+    Wrapper/Common/JsbEvent.hpp
 )
 
 add_library(jsb STATIC ${JSB_SRC} ${JSB_HEADERS})

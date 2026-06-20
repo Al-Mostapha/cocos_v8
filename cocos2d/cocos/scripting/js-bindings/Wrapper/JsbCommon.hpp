@@ -1,4 +1,6 @@
+#pragma once
 #include "v8.h"
+#include "platform/CCSAXParser.h"
 
 // extern JSClass  *jsb_cocos2d_Configuration_class;
 // extern JSObject *jsb_cocos2d_Configuration_prototype;
@@ -102,3 +104,37 @@ void js_register_cocos2dx_SimpleAudioEngine(v8::Isolate *isolate, v8::Local<v8::
 // bool js_cocos2dx_SimpleAudioEngine_resumeEffect(JSContext *cx, uint32_t argc, jsval *vp);
 // bool js_cocos2dx_SimpleAudioEngine_end(JSContext *cx, uint32_t argc, jsval *vp);
 // bool js_cocos2dx_SimpleAudioEngine_getInstance(JSContext *cx, uint32_t argc, jsval *vp);
+
+void js_register_cocos2dx_SAXParser(v8::Isolate *isolate, v8::Local<v8::Object> global);
+
+class __JSPlistDelegator : public cocos2d::SAXDelegator
+{
+public:
+  static __JSPlistDelegator *getInstance()
+  {
+    static __JSPlistDelegator *pInstance = NULL;
+    if (pInstance == NULL)
+    {
+      pInstance = new (std::nothrow) __JSPlistDelegator();
+    }
+    return pInstance;
+  };
+
+  ~__JSPlistDelegator();
+
+  cocos2d::SAXParser *getParser();
+
+  std::string parse(const std::string &path);
+  std::string parseText(const std::string &text);
+
+  // implement pure virtual methods of SAXDelegator
+  void startElement(void *ctx, const char *name, const char **atts) override;
+  void endElement(void *ctx, const char *name) override;
+  void textHandler(void *ctx, const char *ch, size_t len) override;
+
+private:
+  cocos2d::SAXParser _parser;
+  std::string _result;
+  bool _isStoringCharacters;
+  std::string _currentValue;
+};

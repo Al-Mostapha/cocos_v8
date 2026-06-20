@@ -4,6 +4,8 @@
 #include "JsbCommon.hpp"
 #include "base/CCConfiguration.h"
 #include "platform/CCDevice.h"
+#include "platform/CCSAXParser.h"
+#include "platform/CCFileUtils.h"
 #include "editor-support/cocostudio/SimpleAudioEngine.h"
 
 using CocosDenshion::SimpleAudioEngine;
@@ -2228,4 +2230,300 @@ void js_register_cocos2dx_SimpleAudioEngine(v8::Isolate *isolate, v8::Local<v8::
 
   JsbUtils::RegisterV8Class(typeid(CocosDenshion::SimpleAudioEngine).name(), &tpl);
   JsbUtils::BindJsClass("AudioEngine", global, tpl);
+}
+
+// JSClass *jsb_cocos2d_SAXParser_class;
+// JSObject *jsb_cocos2d_SAXParser_prototype;
+
+// bool js_cocos2dx_SAXParser_init(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_SAXParser_init(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::SAXParser *cobj = (cocos2d::SAXParser *)(proxy ? proxy->ptr : NULL);
+  cocos2d::SAXParser *cobj = (cocos2d::SAXParser *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_SAXParser_init : Invalid Native Object");
+  SE_PRECONDITION2(cobj, "js_cocos2dx_SAXParser_init : Invalid Native Object");
+  //     if (argc == 1)
+  //     {
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_SAXParser_init : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  //         const char *arg0 = nullptr;
+  //         std::string arg0_tmp;
+  //         ok &= jsval_to_std_string(cx, args.get(0), &arg0_tmp);
+  std::string filename = JsbUtils::FromV8String(isolate, args[0]);
+  //         arg0 = arg0_tmp.c_str();
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_SAXParser_init : Error processing arguments");
+  SE_PRECONDITION2(!filename.empty(), "js_cocos2dx_SAXParser_init : Error processing arguments");
+  //         bool ret = cobj->init(arg0);
+  bool ret = cobj->init(filename.c_str());
+  //         JS::RootedValue jsret(cx);
+  //         jsret = BOOLEAN_TO_JSVAL(ret);
+  //         args.rval().set(jsret);
+  args.GetReturnValue().Set(v8::Boolean::New(isolate, ret));
+  //         return true;
+  //     }
+
+  //     JS_ReportError(cx, "js_cocos2dx_SAXParser_init : wrong number of arguments: %d, was expecting %d", argc, 1);
+  //     return false;
+}
+
+// // cc.PlistParser.getInstance()
+// bool js_PlistParser_getInstance(JSContext *cx, unsigned argc, JS::Value *vp)
+// {
+void js_PlistParser_getInstance(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  __JSPlistDelegator *delegator = __JSPlistDelegator::getInstance();
+  cocos2d::SAXParser *parser = delegator->getParser();
+
+  //     jsval jsret;
+  //     if (parser) {
+  //         js_proxy_t *p = jsb_get_native_proxy(parser);
+  //         if (p) {
+  //             jsret = OBJECT_TO_JSVAL(p->obj);
+  //         } else {
+  //             // create a new js obj of that class
+  //             jsret = OBJECT_TO_JSVAL(js_get_or_create_jsobject<SAXParser>(cx, parser));
+  //         }
+  //     } else {
+  //         jsret = JSVAL_NULL;
+  //     }
+  auto jsobj = JsbUtils::NativePtrToObject(parser);
+  args.GetReturnValue().Set(jsobj);
+  //     args.rval().set(jsret);
+
+  //     return true;
+}
+
+cocos2d::SAXParser *__JSPlistDelegator::getParser()
+{
+  return &_parser;
+}
+
+std::string __JSPlistDelegator::parse(const std::string &path)
+{
+  _result.clear();
+
+  cocos2d::SAXParser parser;
+  if (false != parser.init("UTF-8"))
+  {
+    parser.setDelegator(this);
+    parser.parse(cocos2d::FileUtils::getInstance()->fullPathForFilename(path));
+  }
+
+  return _result;
+}
+
+__JSPlistDelegator::~__JSPlistDelegator()
+{
+  CCLOGINFO("deallocing __JSSAXDelegator: %p", this);
+}
+
+std::string __JSPlistDelegator::parseText(const std::string &text)
+{
+  _result.clear();
+
+  cocos2d::SAXParser parser;
+  if (false != parser.init("UTF-8"))
+  {
+    parser.setDelegator(this);
+    parser.parse(text.c_str(), text.size());
+  }
+
+  return _result;
+}
+
+void __JSPlistDelegator::startElement(void *ctx, const char *name, const char **atts)
+{
+  _isStoringCharacters = true;
+  _currentValue.clear();
+
+  std::string elementName = (char *)name;
+
+  int end = (int)_result.size() - 1;
+  if (end >= 0 && _result[end] != '{' && _result[end] != '[' && _result[end] != ':')
+  {
+    _result += ",";
+  }
+
+  if (elementName == "dict")
+  {
+    _result += "{";
+  }
+  else if (elementName == "array")
+  {
+    _result += "[";
+  }
+}
+
+void __JSPlistDelegator::endElement(void *ctx, const char *name)
+{
+  _isStoringCharacters = false;
+  std::string elementName = (char *)name;
+
+  if (elementName == "dict")
+  {
+    _result += "}";
+  }
+  else if (elementName == "array")
+  {
+    _result += "]";
+  }
+  else if (elementName == "key")
+  {
+    _result += "\"" + _currentValue + "\":";
+  }
+  else if (elementName == "string")
+  {
+    _result += "\"" + _currentValue + "\"";
+  }
+  else if (elementName == "false" || elementName == "true")
+  {
+    _result += elementName;
+  }
+  else if (elementName == "real" || elementName == "integer")
+  {
+    _result += _currentValue;
+  }
+}
+
+void __JSPlistDelegator::textHandler(void * /*ctx*/, const char *ch, size_t len)
+{
+  std::string text((char *)ch, 0, len);
+
+  if (_isStoringCharacters)
+  {
+    _currentValue += text;
+  }
+}
+
+// // cc.PlistParser.getInstance().parse(text)
+// bool js_PlistParser_parse(JSContext *cx, unsigned argc, JS::Value *vp) {
+void js_PlistParser_parse(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  __JSPlistDelegator *delegator = __JSPlistDelegator::getInstance();
+
+  //     bool ok = true;
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     if (argc == 1) {
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_PlistParser_parse : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  //         std::string arg0;
+  //         ok &= jsval_to_std_string(cx, args.get(0), &arg0);
+  std::string xml = JsbUtils::FromV8String(isolate, args[0]);
+  //         JSB_PRECONDITION2(ok, cx, false, "Error processing arguments");
+
+  //         std::string parsedStr = delegator->parseText(arg0);
+  std::string parsedStr = delegator->parseText(xml);
+
+  //         std::replace(parsedStr.begin(), parsedStr.end(), '\n', ' ');
+  std::replace(parsedStr.begin(), parsedStr.end(), '\n', ' ');
+
+  //         jsval strVal = std_string_to_jsval(cx, parsedStr);
+  auto jsstr = JsbUtils::ToV8String(isolate, parsedStr);
+  //         // create a new js obj of the parsed string
+  //         JS::RootedValue outVal(cx);
+
+  //         //JS_GetStringCharsZ was removed in SpiderMonkey 33
+  //         JS::RootedString jsout(cx, strVal.toString());
+  //         ok = JS_ParseJSON(cx, jsout, &outVal);
+  auto parsedJson = v8::JSON::Parse(isolate->GetCurrentContext(), jsstr).ToLocalChecked();
+  if (!parsedJson.IsEmpty())
+  {
+    args.GetReturnValue().Set(parsedJson);
+  }
+  else
+  {
+    SE_REPORT_ERROR("js_PlistParser_parse : parse error std::string: %s", parsedStr.c_str());
+    args.GetReturnValue().Set(v8::Undefined(isolate));
+  }
+
+  //         if (ok)
+  //             args.rval().set(outVal);
+  //         else {
+  //             args.rval().setUndefined();
+  //             JS_ReportError(cx, "js_PlistParser_parse : parse error");
+  //         }
+  //         return true;
+  //     }
+  //     JS_ReportError(cx, "js_PlistParser_parse : wrong number of arguments: %d, was expecting %d", argc, 1);
+  //     return false;
+}
+
+// void js_register_cocos2dx_SAXParser(JSContext *cx, JS::HandleObject global)
+// {
+void js_register_cocos2dx_SAXParser(v8::Isolate *isolate, v8::Local<v8::Object> global)
+{
+  v8::HandleScope handleScope(isolate);
+  //     jsb_cocos2d_SAXParser_class = (JSClass *)calloc(1, sizeof(JSClass));
+  //     jsb_cocos2d_SAXParser_class->name = "PlistParser";
+  //     jsb_cocos2d_SAXParser_class->addProperty = JS_PropertyStub;
+  //     jsb_cocos2d_SAXParser_class->delProperty = JS_DeletePropertyStub;
+  //     jsb_cocos2d_SAXParser_class->getProperty = JS_PropertyStub;
+  //     jsb_cocos2d_SAXParser_class->setProperty = JS_StrictPropertyStub;
+  //     jsb_cocos2d_SAXParser_class->enumerate = JS_EnumerateStub;
+  //     jsb_cocos2d_SAXParser_class->resolve = JS_ResolveStub;
+  //     jsb_cocos2d_SAXParser_class->convert = JS_ConvertStub;
+  //     jsb_cocos2d_SAXParser_class->flags = JSCLASS_HAS_RESERVED_SLOTS(2);
+  auto tpl = v8::FunctionTemplate::New(isolate);
+  tpl->SetClassName(v8::String::NewFromUtf8(isolate, "PlistParser").ToLocalChecked());
+  tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+  //     static JSPropertySpec properties[] = {
+  //         JS_PS_END};
+
+  //     JS_GetProperty(cx, ccObj, "PlistParser", &tmpVal);
+  //     tmpObj = tmpVal.toObjectOrNull();
+  //     JS_DefineFunction(cx, tmpObj, "getInstance", js_PlistParser_getInstance, 0, JSPROP_READONLY | JSPROP_PERMANENT);
+  tpl->Set(isolate, "getInstance", v8::FunctionTemplate::New(isolate, js_PlistParser_getInstance));
+  //     JS::RootedObject proto(cx, jsb_cocos2d_SAXParser_prototype);
+  //     JS_DefineFunction(cx, proto, "parse", js_PlistParser_parse, 1, JSPROP_READONLY | JSPROP_PERMANENT);
+  tpl->PrototypeTemplate()->Set(isolate, "parse", v8::FunctionTemplate::New(isolate, js_PlistParser_parse));
+
+  //     static JSFunctionSpec funcs[] = {
+  //         JS_FN("init", js_cocos2dx_SAXParser_init, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "init", v8::FunctionTemplate::New(isolate, js_cocos2dx_SAXParser_init));
+  //         JS_FS_END};
+
+  //     JSFunctionSpec *st_funcs = NULL;
+
+  //     jsb_cocos2d_SAXParser_prototype = JS_InitClass(
+  //         cx, global,
+  //         JS::NullPtr(),
+  //         jsb_cocos2d_SAXParser_class,
+  //         empty_constructor, 0,
+  //         properties,
+  //         funcs,
+  //         NULL, // no static properties
+  //         st_funcs);
+
+  //     JS::RootedObject proto(cx, jsb_cocos2d_SAXParser_prototype);
+  //     JS::RootedValue className(cx, std_string_to_jsval(cx, "SAXParser"));
+  tpl->PrototypeTemplate()->Set(isolate, "_className", JsbUtils::ToV8String(isolate, "SAXParser"));
+  //     JS_SetProperty(cx, proto, "_className", className);
+  //     JS_SetProperty(cx, proto, "__nativeObj", JS::TrueHandleValue);
+  tpl->PrototypeTemplate()->Set(isolate, "__nativeObj", v8::True(isolate));
+  //     JS_SetProperty(cx, proto, "__is_ref", JS::FalseHandleValue);
+  tpl->PrototypeTemplate()->Set(isolate, "__is_ref", v8::False(isolate));
+  //     // add the proto and JSClass to the type->js info hash table
+  //     jsb_register_class<cocos2d::SAXParser>(cx, jsb_cocos2d_SAXParser_class, proto, JS::NullPtr());
+  JsbUtils::RegisterV8Class(typeid(cocos2d::SAXParser).name(), &tpl);
+  JsbUtils::BindJsClass("PlistParser", global, tpl);
 }

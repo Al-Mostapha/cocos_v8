@@ -3,6 +3,7 @@ for(const key in cc) {
   console.log(`cc.${key} = ${(<any>cc)[key]}`);
 }
 
+import "../Script/jsb_prepare";
 import "../Script/jsb_boot";
 import "../Script/jsb";
 
