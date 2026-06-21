@@ -26,6 +26,7 @@
 // #include "cocos2d.h"
 #include "cocos2d.h"
 #include "ScriptEngine.hpp"
+#include "jsb_global.hpp"
 
 // #include "cocos/scripting/js-bindings/manual/jsb_module_register.hpp"
 // #include "cocos/scripting/js-bindings/jswrapper/SeApi.h"
@@ -128,7 +129,7 @@ bool jsb_register_all_modules()
                                      //         PoolManager::getInstance()->getCurrentPool()->clear();
                                  });
 
-    //     se->addRegisterCallback(jsb_register_global_variables);
+    engine->addRegisterCallback(jsb_register_global_variables);
     //     se->addRegisterCallback(JSB_register_opengl);
     //     se->addRegisterCallback(register_all_engine);
     //     se->addRegisterCallback(register_all_cocos2dx_manual);

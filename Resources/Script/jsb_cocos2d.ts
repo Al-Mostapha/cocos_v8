@@ -1056,61 +1056,93 @@ namespace cc {
   // cc.Director.EVENT_AFTER_UPDATE = "director_after_update";
   // cc.Director.EVENT_BEFORE_SCENE_LAUNCH = "director_before_scene_launch";
 
-  // cc.Director.prototype.runScene = cc.Director.prototype.replaceScene;
+  cc.Director.prototype.runScene = cc.Director.prototype.replaceScene;
 
-  // cc.visibleRect = {
-  //   topLeft: cc.p(0, 0),
-  //   topRight: cc.p(0, 0),
-  //   top: cc.p(0, 0),
-  //   bottomLeft: cc.p(0, 0),
-  //   bottomRight: cc.p(0, 0),
-  //   bottom: cc.p(0, 0),
-  //   center: cc.p(0, 0),
-  //   left: cc.p(0, 0),
-  //   right: cc.p(0, 0),
-  //   width: 0,
-  //   height: 0,
+  export class visibleRect {
+    //   topLeft: cc.p(0, 0),
+    static topLeft: cc.Point = cc.p(0, 0);
+    //   topRight: cc.p(0, 0),
+    static topRight: cc.Point = cc.p(0, 0);
+    //   top: cc.p(0, 0),
+    static top: cc.Point = cc.p(0, 0);
+    //   bottomLeft: cc.p(0, 0),
+    static bottomLeft: cc.Point = cc.p(0, 0);
+    //   bottomRight: cc.p(0, 0),
+    static bottomRight: cc.Point = cc.p(0, 0);
+    //   bottom: cc.p(0, 0),
+    static bottom: cc.Point = cc.p(0, 0);
+    //   center: cc.p(0, 0),
+    static center: cc.Point = cc.p(0, 0);
+    //   left: cc.p(0, 0),
+    static left: cc.Point = cc.p(0, 0);
+    //   right: cc.p(0, 0),
+    static right: cc.Point = cc.p(0, 0);
+    //   width: 0,
+    static width: number = 0;
+    //   height: 0,
+    static height: number = 0;
 
-  //   init: function () {
-  //     var origin = cc.director.getVisibleOrigin();
-  //     var size = cc.director.getVisibleSize();
-  //     var w = (this.width = size.width);
-  //     var h = (this.height = size.height);
-  //     var l = origin.x,
-  //       b = origin.y,
-  //       t = b + h,
-  //       r = l + w;
-
-  //     //top
-  //     this.topLeft.x = l;
-  //     this.topLeft.y = t;
-  //     this.topRight.x = r;
-  //     this.topRight.y = t;
-  //     this.top.x = l + w / 2;
-  //     this.top.y = t;
-
-  //     //bottom
-  //     this.bottomLeft.x = l;
-  //     this.bottomLeft.y = b;
-  //     this.bottomRight.x = r;
-  //     this.bottomRight.y = b;
-  //     this.bottom.x = l + w / 2;
-  //     this.bottom.y = b;
-
-  //     //center
-  //     this.center.x = l + w / 2;
-  //     this.center.y = b + h / 2;
-
-  //     //left
-  //     this.left.x = l;
-  //     this.left.y = b + h / 2;
-
-  //     //right
-  //     this.right.x = r;
-  //     this.right.y = b + h / 2;
-  //   },
-  // };
-  // cc.visibleRect.init();
+    static init() {
+      //     var origin = cc.director.getVisibleOrigin();
+      const origin = cc.view.getVisibleOrigin();
+      //     var size = cc.director.getVisibleSize();
+      const size = cc.view.getVisibleSize();
+      //     var w = (this.width = size.width);
+      const w = (this.width = size.width);
+      //     var h = (this.height = size.height);
+      const h = (this.height = size.height);
+      //     var l = origin.x,
+      //       b = origin.y,
+      //       t = b + h,
+      //       r = l + w;
+      const l = origin.x,
+        b = origin.y,
+        t = b + h,
+        r = l + w;
+      //     //top
+      //     this.topLeft.x = l;
+      this.topLeft.x = l;
+      //     this.topLeft.y = t;
+      this.topLeft.y = t;
+      //     this.topRight.x = r;
+      this.topRight.x = r;
+      //     this.topRight.y = t;
+      this.topRight.y = t;
+      //     this.top.x = l + w / 2;
+      this.top.x = l + w / 2;
+      //     this.top.y = t;
+      this.top.y = t;
+      //     //bottom
+      //     this.bottomLeft.x = l;
+      this.bottomLeft.x = l;
+      //     this.bottomLeft.y = b;
+      this.bottomLeft.y = b;
+      //     this.bottomRight.x = r;
+      this.bottomRight.x = r;
+      //     this.bottomRight.y = b;
+      this.bottomRight.y = b;
+      //     this.bottom.x = l + w / 2;
+      this.bottom.x = l + w / 2;
+      //     this.bottom.y = b;
+      this.bottom.y = b;
+      //     //center
+      //     this.center.x = l + w / 2;
+      this.center.x = l + w / 2;
+      //     this.center.y = b + h / 2;
+      this.center.y = b + h / 2;
+      //     //left
+      //     this.left.x = l;
+      this.left.x = l;
+      //     this.left.y = b + h / 2;
+      this.left.y = b + h / 2;
+      //     //right
+      //     this.right.x = r;
+      this.right.x = r;
+      //     this.right.y = b + h / 2;
+      this.right.y = b + h / 2;
+    }
+  }
+  visibleRect.init();
 
   // //
   // // setBlendFunc JS API Wrapper

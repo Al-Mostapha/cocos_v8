@@ -1402,9 +1402,6 @@ void js_register_cocos2dx_GLView(v8::Isolate *isolate, v8::Local<v8::Object> glo
   tpl->SetClassName(v8::String::NewFromUtf8(isolate, "GLView").ToLocalChecked());
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
-  JsbUtils::RegisterV8Class(typeid(cocos2d::GLView).name(), &tpl);
-  JsbUtils::BindJsClass("GLView", global, tpl);
-
   //     static JSPropertySpec properties[] = {
   //         JS_PS_END};
 
@@ -1511,4 +1508,7 @@ void js_register_cocos2dx_GLView(v8::Isolate *isolate, v8::Local<v8::Object> glo
   tpl->PrototypeTemplate()->Set(isolate, "__is_ref", v8::True(isolate));
   //     // add the proto and JSClass to the type->js info hash table
   //     jsb_register_class<cocos2d::GLView>(cx, jsb_cocos2d_GLView_class, proto, JS::NullPtr());
+
+  JsbUtils::RegisterV8Class(typeid(cocos2d::GLView).name(), &tpl);
+  JsbUtils::BindJsClass("GLView", global, tpl);
 }

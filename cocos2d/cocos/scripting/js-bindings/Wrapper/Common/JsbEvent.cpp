@@ -5,6 +5,7 @@
 #include "base/CCEventListener.h"
 #include "base/CCEventDispatcher.h"
 #include "base/CCEventCustom.h"
+#include "2d/CCNode.h"
 
 // JSClass *jsb_cocos2d_EventListener_class;
 // JSObject *jsb_cocos2d_EventListener_prototype;
@@ -1409,7 +1410,7 @@ void js_cocos2dx_EventCustom_getEventName(const v8::FunctionCallbackInfo<v8::Val
   SE_PRECONDITION2(cobj, "js_cocos2dx_EventCustom_getEventName : Invalid Native Object");
   //     if (argc == 0)
   //     {
-  if(args.Length() != 0)
+  if (args.Length() != 0)
   {
     SE_REPORT_ERROR("js_cocos2dx_EventCustom_getEventName : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
     return;
@@ -1429,63 +1430,87 @@ void js_cocos2dx_EventCustom_getEventName(const v8::FunctionCallbackInfo<v8::Val
 
 // bool js_cocos2dx_EventCustom_constructor(JSContext *cx, uint32_t argc, jsval *vp)
 // {
-//     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
-//     bool ok = true;
-//     std::string arg0;
-//     ok &= jsval_to_std_string(cx, args.get(0), &arg0);
-//     JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_EventCustom_constructor : Error processing arguments");
-//     cocos2d::EventCustom *cobj = new (std::nothrow) cocos2d::EventCustom(arg0);
+void js_cocos2dx_EventCustom_constructor(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     std::string arg0;
+  //     ok &= jsval_to_std_string(cx, args.get(0), &arg0);
+  std::string eventName = JsbUtils::FromV8String(isolate, args[0]);
+  //     JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_EventCustom_constructor : Error processing arguments");
+  //     cocos2d::EventCustom *cobj = new (std::nothrow) cocos2d::EventCustom(arg0);
+  cocos2d::EventCustom *cobj = new (std::nothrow) cocos2d::EventCustom(eventName);
 
-//     js_type_class_t *typeClass = js_get_type_from_native<cocos2d::EventCustom>(cobj);
+  //     js_type_class_t *typeClass = js_get_type_from_native<cocos2d::EventCustom>(cobj);
 
-//     // link the native object with the javascript object
-//     JS::RootedObject jsobj(cx, jsb_ref_create_jsobject(cx, cobj, typeClass, "cocos2d::EventCustom"));
-//     args.rval().set(OBJECT_TO_JSVAL(jsobj));
-//     if (JS_HasProperty(cx, jsobj, "_ctor", &ok) && ok)
-//         ScriptingCore::getInstance()->executeFunctionWithOwner(OBJECT_TO_JSVAL(jsobj), "_ctor", args);
-//     return true;
-// }
+  //     // link the native object with the javascript object
+  //     JS::RootedObject jsobj(cx, jsb_ref_create_jsobject(cx, cobj, typeClass, "cocos2d::EventCustom"));
+  auto jsobj = jsb_ref_create_jsobject(cobj);
+  args.GetReturnValue().Set(jsobj);
+  //     args.rval().set(OBJECT_TO_JSVAL(jsobj));
+  //     if (JS_HasProperty(cx, jsobj, "_ctor", &ok) && ok)
+  //         ScriptingCore::getInstance()->executeFunctionWithOwner(OBJECT_TO_JSVAL(jsobj), "_ctor", args);
+  CallCustomConstructor(args, jsobj);
+  //     return true;
+}
 
 // extern JSObject *jsb_cocos2d_Event_prototype;
 
 // void js_register_cocos2dx_EventCustom(JSContext *cx, JS::HandleObject global)
 // {
-//     jsb_cocos2d_EventCustom_class = (JSClass *)calloc(1, sizeof(JSClass));
-//     jsb_cocos2d_EventCustom_class->name = "EventCustom";
-//     jsb_cocos2d_EventCustom_class->addProperty = JS_PropertyStub;
-//     jsb_cocos2d_EventCustom_class->delProperty = JS_DeletePropertyStub;
-//     jsb_cocos2d_EventCustom_class->getProperty = JS_PropertyStub;
-//     jsb_cocos2d_EventCustom_class->setProperty = JS_StrictPropertyStub;
-//     jsb_cocos2d_EventCustom_class->enumerate = JS_EnumerateStub;
-//     jsb_cocos2d_EventCustom_class->resolve = JS_ResolveStub;
-//     jsb_cocos2d_EventCustom_class->convert = JS_ConvertStub;
-//     jsb_cocos2d_EventCustom_class->flags = JSCLASS_HAS_RESERVED_SLOTS(2);
+void js_register_cocos2dx_EventCustom(v8::Isolate *isolate, v8::Local<v8::Object> global)
+{
+  v8::HandleScope handleScope(isolate);
+  //     jsb_cocos2d_EventCustom_class = (JSClass *)calloc(1, sizeof(JSClass));
+  //     jsb_cocos2d_EventCustom_class->name = "EventCustom";
+  //     jsb_cocos2d_EventCustom_class->addProperty = JS_PropertyStub;
+  //     jsb_cocos2d_EventCustom_class->delProperty = JS_DeletePropertyStub;
+  //     jsb_cocos2d_EventCustom_class->getProperty = JS_PropertyStub;
+  //     jsb_cocos2d_EventCustom_class->setProperty = JS_StrictPropertyStub;
+  //     jsb_cocos2d_EventCustom_class->enumerate = JS_EnumerateStub;
+  //     jsb_cocos2d_EventCustom_class->resolve = JS_ResolveStub;
+  //     jsb_cocos2d_EventCustom_class->convert = JS_ConvertStub;
+  //     jsb_cocos2d_EventCustom_class->flags = JSCLASS_HAS_RESERVED_SLOTS(2);
+  auto tpl = v8::FunctionTemplate::New(isolate, js_cocos2dx_EventCustom_constructor);
+  tpl->SetClassName(JsbUtils::ToV8String(isolate, "EventCustom"));
+  tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
-//     static JSPropertySpec properties[] = {
-//         JS_PS_END};
+  auto event = ScriptEngine::getInstance()->getClassByName(typeid(cocos2d::Event).name());
+  tpl->Inherit(event);
 
-//     static JSFunctionSpec funcs[] = {
-//         JS_FN("getEventName", js_cocos2dx_EventCustom_getEventName, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
-//         JS_FS_END};
+  //     static JSPropertySpec properties[] = {
+  //         JS_PS_END};
 
-//     JSFunctionSpec *st_funcs = NULL;
+  //     static JSFunctionSpec funcs[] = {
+  //         JS_FN("getEventName", js_cocos2dx_EventCustom_getEventName, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getEventName", v8::FunctionTemplate::New(isolate, js_cocos2dx_EventCustom_getEventName));
+  //         JS_FS_END};
 
-//     JS::RootedObject parent_proto(cx, jsb_cocos2d_Event_prototype);
-//     jsb_cocos2d_EventCustom_prototype = JS_InitClass(
-//         cx, global,
-//         parent_proto,
-//         jsb_cocos2d_EventCustom_class,
-//         js_cocos2dx_EventCustom_constructor, 0, // constructor
-//         properties,
-//         funcs,
-//         NULL, // no static properties
-//         st_funcs);
+  //     JSFunctionSpec *st_funcs = NULL;
 
-//     JS::RootedObject proto(cx, jsb_cocos2d_EventCustom_prototype);
-//     JS::RootedValue className(cx, std_string_to_jsval(cx, "EventCustom"));
-//     JS_SetProperty(cx, proto, "_className", className);
-//     JS_SetProperty(cx, proto, "__nativeObj", JS::TrueHandleValue);
-//     JS_SetProperty(cx, proto, "__is_ref", JS::TrueHandleValue);
-//     // add the proto and JSClass to the type->js info hash table
-//     jsb_register_class<cocos2d::EventCustom>(cx, jsb_cocos2d_EventCustom_class, proto, parent_proto);
-// }
+  //     JS::RootedObject parent_proto(cx, jsb_cocos2d_Event_prototype);
+  //     jsb_cocos2d_EventCustom_prototype = JS_InitClass(
+  //         cx, global,
+  //         parent_proto,
+  //         jsb_cocos2d_EventCustom_class,
+  //         js_cocos2dx_EventCustom_constructor, 0, // constructor
+  //         properties,
+  //         funcs,
+  //         NULL, // no static properties
+  //         st_funcs);
+
+  //     JS::RootedObject proto(cx, jsb_cocos2d_EventCustom_prototype);
+  //     JS::RootedValue className(cx, std_string_to_jsval(cx, "EventCustom"));
+  //     JS_SetProperty(cx, proto, "_className", className);
+  tpl->PrototypeTemplate()->Set(isolate, "_className", JsbUtils::ToV8String(isolate, "EventCustom"));
+  //     JS_SetProperty(cx, proto, "__nativeObj", JS::TrueHandleValue);
+  tpl->PrototypeTemplate()->Set(isolate, "__nativeObj", v8::Boolean::New(isolate, true));
+  //     JS_SetProperty(cx, proto, "__is_ref", JS::TrueHandleValue);
+  tpl->PrototypeTemplate()->Set(isolate, "__is_ref", v8::Boolean::New(isolate, true));
+  //     // add the proto and JSClass to the type->js info hash table
+  //     jsb_register_class<cocos2d::EventCustom>(cx, jsb_cocos2d_EventCustom_class, proto, parent_proto);
+  JsbUtils::RegisterV8Class(typeid(cocos2d::EventCustom).name(), &tpl);
+  JsbUtils::BindJsClass("EventCustom", global, tpl);
+}

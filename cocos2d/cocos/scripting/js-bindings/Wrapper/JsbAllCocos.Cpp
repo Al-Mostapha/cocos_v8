@@ -19,6 +19,7 @@
 #include "UI/JsbButton.hpp"
 #include "UI/JsbText.hpp"
 #include "UI/JsbLayout.hpp"
+#include "UI/JsbImageView.hpp"
 #include "UI/JsbUIScrollView.hpp"
 
 void register_all_cocos2dx(v8::Isolate *isolate, v8::Local<v8::Object> obj)
@@ -37,25 +38,36 @@ void register_all_cocos2dx(v8::Isolate *isolate, v8::Local<v8::Object> obj)
   js_register_cocos2dx_GLView(isolate, ns);
   js_register_cocos2dx_SimpleAudioEngine(isolate, ns);
 
+  js_register_cocos2dx_Application(isolate, ns);
+
   js_register_cocos2dx_GLProgramCache(isolate, ns);
   js_register_cocos2dx_TextureCache(isolate, ns);
   js_register_cocos2dx_AnimationCache(isolate, ns);
   js_register_cocos2dx_SpriteFrameCache(isolate, ns);
-  
+
   js_register_cocos2dx_FileUtils(isolate, ns);
   js_register_cocos2dx_EventListener(isolate, ns);
   js_register_cocos2dx_EventDispatcher(isolate, ns);
+  js_register_cocos2dx_Event(isolate, ns);
+  js_register_cocos2dx_EventCustom(isolate, ns);
 
   js_register_cocos2dx_Node(isolate, ns);
   js_register_cocos2dx_Sprite(isolate, ns);
   js_register_cocos2dx_Scene(isolate, ns);
   js_register_cocos2dx_ProtectedNode(isolate, ns);
-  js_register_cocos2dx_ui_Widget(isolate, ns);
-  js_register_cocos2dx_ui_Button(isolate, ns);
-  js_register_cocos2dx_ui_Text(isolate, ns);
-  js_register_cocos2dx_ui_Layout(isolate, ns);
-  js_register_cocos2dx_ui_ScrollView(isolate, ns);
+
   js_register_cocos2dx_ParticleBatchNode(isolate, ns);
   js_register_cocos2dx_ParticleData(isolate, ns);
   js_register_cocos2dx_ParticleSystem(isolate, ns);
+
+  v8::Local<v8::Object> UIns;
+  // get_or_create_js_obj(cx, obj, "cc", &ns);
+  JsbUtils::GetOrCreateJsObject(isolate, obj, "ccui", &UIns);
+
+  js_register_cocos2dx_ui_Widget(isolate, UIns);
+  js_register_cocos2dx_ui_Button(isolate, UIns);
+  js_register_cocos2dx_ui_Text(isolate, UIns);
+  js_register_cocos2dx_ui_Layout(isolate, UIns);
+  js_register_cocos2dx_ui_ScrollView(isolate, UIns);
+  js_register_cocos2dx_ui_ImageView(isolate, UIns);
 }

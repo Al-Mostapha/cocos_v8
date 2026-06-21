@@ -1802,8 +1802,6 @@ void js_register_cocos2dx_Sprite(v8::Isolate *isolate, v8::Local<v8::Object> glo
   v8::Local<v8::ObjectTemplate> proto = tpl->PrototypeTemplate();
   v8::Local<v8::FunctionTemplate> parentProto = ScriptEngine::getInstance()->getClassByName(typeid(cocos2d::Node).name());
   tpl->Inherit(parentProto);
-  JsbUtils::RegisterV8Class(typeid(cocos2d::Sprite).name(), &tpl);
-  JsbUtils::BindJsClass("Sprite", global, tpl);
 
   //     static JSPropertySpec properties[] = {
   //         JS_PS_END};
@@ -1917,6 +1915,8 @@ void js_register_cocos2dx_Sprite(v8::Isolate *isolate, v8::Local<v8::Object> glo
   //     // add the proto and JSClass to the type->js info hash table
   //     jsb_register_class<cocos2d::Sprite>(cx, jsb_cocos2d_Sprite_class, proto, parent_proto);
   //     anonEvaluate(cx, global, "(function () { cc.Sprite.extend = cc.Class.extend; })()");
+  JsbUtils::RegisterV8Class(typeid(cocos2d::Sprite).name(), &tpl);
+  JsbUtils::BindJsClass("Sprite", global, tpl);
 }
 
 // JSClass *jsb_cocos2d_AnimationCache_class;

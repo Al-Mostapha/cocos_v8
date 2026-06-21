@@ -6,6 +6,7 @@
 #include "platform/CCDevice.h"
 #include "platform/CCSAXParser.h"
 #include "platform/CCFileUtils.h"
+#include "platform/CCApplication.h"
 #include "editor-support/cocostudio/SimpleAudioEngine.h"
 
 using CocosDenshion::SimpleAudioEngine;
@@ -1182,9 +1183,7 @@ void js_register_cocos2dx_Device(v8::Isolate *isolate, v8::Local<v8::Object> glo
 {
   v8::Local<v8::Context> ctx = isolate->GetCurrentContext();
   //     jsb_cocos2d_Device_class = (JSClass *)calloc(1, sizeof(JSClass));
-  v8::Local<v8::FunctionTemplate> tpl = JsbUtils::CreateClass(isolate, "Device", nullptr);
-  JsbUtils::RegisterV8Class(typeid(cocos2d::Device).name(), &tpl);
-  JsbUtils::BindJsClass("Device", global, tpl);
+
   //     jsb_cocos2d_Device_class->name = "Device";
   //     jsb_cocos2d_Device_class->addProperty = JS_PropertyStub;
   //     jsb_cocos2d_Device_class->delProperty = JS_DeletePropertyStub;
@@ -1194,6 +1193,10 @@ void js_register_cocos2dx_Device(v8::Isolate *isolate, v8::Local<v8::Object> glo
   //     jsb_cocos2d_Device_class->resolve = JS_ResolveStub;
   //     jsb_cocos2d_Device_class->convert = JS_ConvertStub;
   //     jsb_cocos2d_Device_class->flags = JSCLASS_HAS_RESERVED_SLOTS(2);
+
+  v8::Local<v8::FunctionTemplate> tpl = v8::FunctionTemplate::New(isolate);
+  tpl->SetClassName(JsbUtils::ToV8String(isolate, "Device"));
+  tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
   //     static JSPropertySpec properties[] = {
   //         JS_PS_END
@@ -1230,10 +1233,15 @@ void js_register_cocos2dx_Device(v8::Isolate *isolate, v8::Local<v8::Object> glo
   //     JS::RootedObject proto(cx, jsb_cocos2d_Device_prototype);
   //     JS::RootedValue className(cx, std_string_to_jsval(cx, "Device"));
   //     JS_SetProperty(cx, proto, "_className", className);
+  tpl->PrototypeTemplate()->Set(isolate, "_className", JsbUtils::ToV8String(isolate, "Device"));
   //     JS_SetProperty(cx, proto, "__nativeObj", JS::TrueHandleValue);
+  tpl->PrototypeTemplate()->Set(isolate, "__nativeObj", v8::Boolean::New(isolate, true));
   //     JS_SetProperty(cx, proto, "__is_ref", JS::FalseHandleValue);
+  tpl->PrototypeTemplate()->Set(isolate, "__is_ref", v8::Boolean::New(isolate, false));
   //     // add the proto and JSClass to the type->js info hash table
   //     jsb_register_class<cocos2d::Device>(cx, jsb_cocos2d_Device_class, proto, JS::NullPtr());
+  JsbUtils::RegisterV8Class(typeid(cocos2d::Device).name(), &tpl);
+  JsbUtils::BindJsClass("Device", global, tpl);
 }
 
 // JSClass *jsb_CocosDenshion_SimpleAudioEngine_class;
@@ -2526,4 +2534,238 @@ void js_register_cocos2dx_SAXParser(v8::Isolate *isolate, v8::Local<v8::Object> 
   //     jsb_register_class<cocos2d::SAXParser>(cx, jsb_cocos2d_SAXParser_class, proto, JS::NullPtr());
   JsbUtils::RegisterV8Class(typeid(cocos2d::SAXParser).name(), &tpl);
   JsbUtils::BindJsClass("PlistParser", global, tpl);
+}
+
+// JSClass *jsb_cocos2d_Application_class;
+// JSObject *jsb_cocos2d_Application_prototype;
+
+// bool js_cocos2dx_Application_getTargetPlatform(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_Application_getTargetPlatform(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::Application *cobj = (cocos2d::Application *)(proxy ? proxy->ptr : NULL);
+  cocos2d::Application *cobj = (cocos2d::Application *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_Application_getTargetPlatform : Invalid Native Object");
+  SE_PRECONDITION2(cobj, "js_cocos2dx_Application_getTargetPlatform : Invalid Native Object");
+  //     if (argc == 0)
+  //     {
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_Application_getTargetPlatform : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  //         int ret = (int)cobj->getTargetPlatform();
+  int ret = (int)cobj->getTargetPlatform();
+  args.GetReturnValue().Set(v8::Integer::New(isolate, ret));
+  //         JS::RootedValue jsret(cx);
+  //         jsret = int32_to_jsval(cx, ret);
+  //         args.rval().set(jsret);
+  //         return true;
+  //     }
+
+  //     JS_ReportError(cx, "js_cocos2dx_Application_getTargetPlatform : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
+// bool js_cocos2dx_Application_getCurrentLanguage(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_Application_getCurrentLanguage(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::Application *cobj = (cocos2d::Application *)(proxy ? proxy->ptr : NULL);
+  cocos2d::Application *cobj = (cocos2d::Application *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_Application_getCurrentLanguage : Invalid Native Object");
+  SE_PRECONDITION2(cobj, "js_cocos2dx_Application_getCurrentLanguage : Invalid Native Object");
+  //     if (argc == 0)
+  //     {
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_Application_getCurrentLanguage : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  //         int ret = (int)cobj->getCurrentLanguage();
+  int ret = (int)cobj->getCurrentLanguage();
+  args.GetReturnValue().Set(v8::Integer::New(isolate, ret));
+  //         JS::RootedValue jsret(cx);
+  //         jsret = int32_to_jsval(cx, ret);
+  //         args.rval().set(jsret);
+  //         return true;
+  //     }
+
+  //     JS_ReportError(cx, "js_cocos2dx_Application_getCurrentLanguage : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
+// bool js_cocos2dx_Application_openURL(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_Application_openURL(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     bool ok = true;
+  //     JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
+  //     js_proxy_t *proxy = jsb_get_js_proxy(obj);
+  //     cocos2d::Application *cobj = (cocos2d::Application *)(proxy ? proxy->ptr : NULL);
+  cocos2d::Application *cobj = (cocos2d::Application *)args.This()->GetAlignedPointerFromInternalField(0);
+  //     JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_Application_openURL : Invalid Native Object");
+  SE_PRECONDITION2(cobj, "js_cocos2dx_Application_openURL : Invalid Native Object");
+  //     if (argc == 1)
+  //     {
+  if (args.Length() != 1)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_Application_openURL : wrong number of arguments: %d, was expecting %d", args.Length(), 1);
+    return;
+  }
+  //         std::string arg0;
+  //         ok &= jsval_to_std_string(cx, args.get(0), &arg0);
+  std::string url = JsbUtils::FromV8String(isolate, args[0]);
+  //         JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_Application_openURL : Error processing arguments");
+  SE_PRECONDITION2(!url.empty(), "js_cocos2dx_Application_openURL : Error processing arguments");
+  //         bool ret = cobj->openURL(arg0);
+  bool ret = cobj->openURL(url.c_str());
+  args.GetReturnValue().Set(v8::Boolean::New(isolate, ret));
+  //         JS::RootedValue jsret(cx);
+  //         jsret = BOOLEAN_TO_JSVAL(ret);
+  //         args.rval().set(jsret);
+  //         return true;
+  //     }
+
+  //     JS_ReportError(cx, "js_cocos2dx_Application_openURL : wrong number of arguments: %d, was expecting %d", argc, 1);
+  //     return false;
+}
+
+// bool js_cocos2dx_Application_getVersion(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_Application_getVersion(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  cocos2d::Application *cobj = (cocos2d::Application *)args.This()->GetAlignedPointerFromInternalField(0);
+  SE_PRECONDITION2(cobj, "js_cocos2dx_Application_getVersion : Invalid Native Object");
+  //     if (argc == 0)
+  //     {
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_Application_getVersion : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+  //         std::string ret = cobj->getVersion();
+  std::string version = cobj->getVersion();
+  //         JS::RootedValue jsret(cx);
+  //         jsret = std_string_to_jsval(cx, ret);
+  auto jsversion = JsbUtils::ToV8String(isolate, version);
+  args.GetReturnValue().Set(jsversion);
+  //         args.rval().set(jsret);
+  //         return true;
+  //     }
+
+  //     JS_ReportError(cx, "js_cocos2dx_Application_getVersion : wrong number of arguments: %d, was expecting %d", argc, 0);
+  //     return false;
+}
+
+// bool js_cocos2dx_Application_getInstance(JSContext *cx, uint32_t argc, jsval *vp)
+// {
+void js_cocos2dx_Application_getInstance(const v8::FunctionCallbackInfo<v8::Value> &args)
+{
+  v8::Isolate *isolate = args.GetIsolate();
+  v8::HandleScope handleScope(isolate);
+  //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
+  //     if (argc == 0)
+  //     {
+  if (args.Length() != 0)
+  {
+    SE_REPORT_ERROR("js_cocos2dx_Application_getInstance : wrong number of arguments: %d, was expecting %d", args.Length(), 0);
+    return;
+  }
+
+  //         cocos2d::Application *ret = cocos2d::Application::getInstance();
+  cocos2d::Application *ret = cocos2d::Application::getInstance();
+  //         jsval jsret = JSVAL_NULL;
+  //         if (ret)
+  //         {
+  //             jsret = OBJECT_TO_JSVAL(js_get_or_create_jsobject<cocos2d::Application>(cx, (cocos2d::Application *)ret));
+  //         }
+  //         else
+  //         {
+  //             jsret = JSVAL_NULL;
+  //         };
+  auto jsobj = JsbUtils::NativePtrToObject(ret);
+  args.GetReturnValue().Set(jsobj);
+  //         args.rval().set(jsret);
+  //         return true;
+  //     }
+  //     JS_ReportError(cx, "js_cocos2dx_Application_getInstance : wrong number of arguments");
+  //     return false;
+}
+
+// void js_register_cocos2dx_Application(JSContext *cx, JS::HandleObject global)
+// {
+void js_register_cocos2dx_Application(v8::Isolate *isolate, v8::Local<v8::Object> global)
+{
+  v8::HandleScope handleScope(isolate);
+  //     jsb_cocos2d_Application_class = (JSClass *)calloc(1, sizeof(JSClass));
+  //     jsb_cocos2d_Application_class->name = "Application";
+  //     jsb_cocos2d_Application_class->addProperty = JS_PropertyStub;
+  //     jsb_cocos2d_Application_class->delProperty = JS_DeletePropertyStub;
+  //     jsb_cocos2d_Application_class->getProperty = JS_PropertyStub;
+  //     jsb_cocos2d_Application_class->setProperty = JS_StrictPropertyStub;
+  //     jsb_cocos2d_Application_class->enumerate = JS_EnumerateStub;
+  //     jsb_cocos2d_Application_class->resolve = JS_ResolveStub;
+  //     jsb_cocos2d_Application_class->convert = JS_ConvertStub;
+  //     jsb_cocos2d_Application_class->flags = JSCLASS_HAS_RESERVED_SLOTS(2);
+  auto tpl = v8::FunctionTemplate::New(isolate);
+  tpl->SetClassName(JsbUtils::ToV8String(isolate, "Application"));
+  tpl->InstanceTemplate()->SetInternalFieldCount(1);
+
+  //     static JSPropertySpec properties[] = {
+  //         JS_PS_END};
+
+  //     static JSFunctionSpec funcs[] = {
+  //         JS_FN("getTargetPlatform", js_cocos2dx_Application_getTargetPlatform, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getTargetPlatform", v8::FunctionTemplate::New(isolate, js_cocos2dx_Application_getTargetPlatform));
+  //         JS_FN("getCurrentLanguage", js_cocos2dx_Application_getCurrentLanguage, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getCurrentLanguage", v8::FunctionTemplate::New(isolate, js_cocos2dx_Application_getCurrentLanguage));
+  //         JS_FN("openURL", js_cocos2dx_Application_openURL, 1, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "openURL", v8::FunctionTemplate::New(isolate, js_cocos2dx_Application_openURL));
+  //         JS_FN("getVersion", js_cocos2dx_Application_getVersion, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->PrototypeTemplate()->Set(isolate, "getVersion", v8::FunctionTemplate::New(isolate, js_cocos2dx_Application_getVersion));
+  //         JS_FS_END};
+
+  //     static JSFunctionSpec st_funcs[] = {
+  //         JS_FN("getInstance", js_cocos2dx_Application_getInstance, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),
+  tpl->Set(isolate, "getInstance", v8::FunctionTemplate::New(isolate, js_cocos2dx_Application_getInstance));
+  //         JS_FS_END};
+
+  //     jsb_cocos2d_Application_prototype = JS_InitClass(
+  //         cx, global,
+  //         JS::NullPtr(),
+  //         jsb_cocos2d_Application_class,
+  //         empty_constructor, 0,
+  //         properties,
+  //         funcs,
+  //         NULL, // no static properties
+  //         st_funcs);
+
+  //     JS::RootedObject proto(cx, jsb_cocos2d_Application_prototype);
+  //     JS::RootedValue className(cx, std_string_to_jsval(cx, "Application"));
+  tpl->PrototypeTemplate()->Set(isolate, "_className", JsbUtils::ToV8String(isolate, "Application"));
+  //     JS_SetProperty(cx, proto, "_className", className);
+  //     JS_SetProperty(cx, proto, "__nativeObj", JS::TrueHandleValue);
+  tpl->PrototypeTemplate()->Set(isolate, "__nativeObj", v8::True(isolate));
+  //     JS_SetProperty(cx, proto, "__is_ref", JS::FalseHandleValue);
+  tpl->PrototypeTemplate()->Set(isolate, "__is_ref", v8::False(isolate));
+  //     // add the proto and JSClass to the type->js info hash table
+  //     jsb_register_class<cocos2d::Application>(cx, jsb_cocos2d_Application_class, proto, JS::NullPtr());
+  JsbUtils::RegisterV8Class(typeid(cocos2d::Application).name(), &tpl);
+  JsbUtils::BindJsClass("Application", global, tpl);
 }

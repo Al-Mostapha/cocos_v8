@@ -1,9 +1,7 @@
-
-for(const key in cc) {
-  console.log(`cc.${key} = ${(<any>cc)[key]}`);
-}
-
+import "../Script/Core/Loader";
+import "../Script/Core/Math/Point";
 import "../Script/jsb_prepare";
+import "../Script/Core/System";
 import "../Script/jsb_boot";
 import "../Script/jsb";
 
@@ -25,11 +23,9 @@ if (config) {
   console.error("Failed to create Configuration instance.");
 }
 
-
 const g_resources: string[] = [];
 
-
-class HelloWorldLayer extends cc.Layer {
+class HelloWorldLayer extends cc.Node {
   sprite: cc.Sprite | null = null;
   constructor() {
     //////////////////////////////
@@ -40,38 +36,68 @@ class HelloWorldLayer extends cc.Layer {
     // 2. add a menu item with "X" image, which is clicked to quit the program
     //    you may modify it.
     // ask the window size
-    var size = cc.winSize;
+    const size = cc.winSize;
 
-    /////////////////////////////
-    // 3. add your codes below...
-    // add a label shows "Hello World"
-    // create and initialize a label
-    var helloLabel = new cc.LabelTTF("Hello ccccccc World", "Arial", 38);
-    // position the label on the center of the screen
-    helloLabel.x = size.width / 2;
-    helloLabel.y = size.height / 2 + 200;
-    // add the label as a child to this layer
-    this.addChild(helloLabel, 5);
+    console.log("Window size: " + size.width + "x" + size.height);
 
-    // add "HelloWorld" splash screen"
-    this.sprite = new cc.Sprite("res/HelloWorld.png");
-    this.sprite.attr({
-      x: size.width / 2,
-      y: size.height / 2,
-    });
-    this.addChild(this.sprite, 0);
+    try {
+      const helloLabel = new ccui.Text("Hello ccccccc World", "fonts/arial.ttf", 38);
+      // position the label on the center of the screen
+      helloLabel.x = size.width / 2;
+      helloLabel.y = size.height / 2 + 200;
+      // add the label as a child to this layer
+      this.addChild(helloLabel, 5);
+
+      // add "HelloWorld" splash screen"
+      this.sprite = new cc.Sprite("HelloWorld.png");
+      this.sprite.attr({
+        x: size.width / 2,
+        y: size.height / 2,
+      });
+      this.addChild(this.sprite, 0);
+    } catch (error) {
+      console.error("Error creating HelloWorldLayer: " + error);
+    }
   }
 }
 
 class HelloWorldScene extends cc.Scene {
+  constructor() {
+    super();
+    console.log("HelloWorldScene constructor called");
+    const helloLabel = new ccui.Text("Hello ccccccc World");
+    const size = cc.winSize;
+
+    // position the label on the center of the screen
+    helloLabel.x = 100;
+    helloLabel.y = 150;
+
+    this.addChild(helloLabel, 5);
+  }
+
   onEnter() {
     super.onEnter();
-    const layer = new HelloWorldLayer();
-    this.addChild(layer);
+
+    console.log("HelloWorldScene onEnter called");
+
+    // const layer = new HelloWorldLayer();
+    // this.addChild(layer);
+    // const helloLabel = new cc.LabelTTF("Hello ccccccc World", "Arial", 38);
+
+    const size = cc.winSize;
+
+    // position the label on the center of the screen
+    // helloLabel.x = size.width / 2;
+    // helloLabel.y = size.height / 2 + 250;
+
+    // this.addChild(helloLabel, 5);
+
+    // console.log("HelloWorldScene onEnter called");
   }
 }
 
 cc.game.onStart = function () {
+  console.log("cc.game.onStart called");
   const sys = cc.sys;
   if (!sys.isNative && document.getElementById("cocosLoading")) {
     //If referenced loading.js, please remove it
@@ -105,8 +131,10 @@ cc.game.onStart = function () {
   //load resources
   cc.LoaderScene.preload(
     g_resources,
-    function () {
-      cc.director.runScene(new HelloWorldScene());
+    () => {
+      console.log("Resources preloaded, running HelloWorldScene");
+      const lScene = new HelloWorldScene();
+      cc.director.runScene(lScene);
     },
     this as any,
   );

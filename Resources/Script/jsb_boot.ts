@@ -12,6 +12,11 @@ namespace cc {
   //+++++++++++++++++++++++++Engine initialization function begin+++++++++++++++++++++++++++
 
   export const view = director.getOpenGLView();
+  const lWindowSize = view.getFrameSize();
+
+  cc.sys.windowPixelResolution.width = lWindowSize.width;
+  cc.sys.windowPixelResolution.height = lWindowSize.height;
+
   view.getDevicePixelRatio = view.getRetinaFactor;
   view.convertToLocationInView = function (
     tx: number,
@@ -55,8 +60,9 @@ namespace cc {
     resolutionPolicy: cc.ResolutionPolicy,
   ) {
     (<any>view)._setDesignResolutionSize(width, height, resolutionPolicy);
-    (<any>cc).winSize = cc.director.getWinSize();
-    (<any>cc).visibleRect.init();
+    cc.winSize.width = cc.director.getWinSize().width;
+    cc.winSize.height = cc.director.getWinSize().height;
+    cc.visibleRect.init();
   };
   cc.view.setRealPixelResolution = cc.view.setDesignResolutionSize;
   cc.view.setResolutionPolicy = function (resolutionPolicy) {

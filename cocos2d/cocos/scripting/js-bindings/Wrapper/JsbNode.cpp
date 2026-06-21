@@ -7182,9 +7182,6 @@ void js_register_cocos2dx_Node(v8::Isolate *isolate, v8::Local<v8::Object> globa
   tpl->SetClassName(JsbUtils::ToV8String(isolate, "Node"));
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
-  JsbUtils::RegisterV8Class(typeid(cocos2d::Node).name(), &tpl);
-  JsbUtils::BindJsClass("Node", global, tpl);
-
   // static JSPropertySpec properties[] = {
   //     JS_PS_END
   // };
@@ -7549,4 +7546,7 @@ void js_register_cocos2dx_Node(v8::Isolate *isolate, v8::Local<v8::Object> globa
   // // add the proto and JSClass to the type->js info hash table
   // jsb_register_class<cocos2d::Node>(cx, jsb_cocos2d_Node_class, proto, JS::NullPtr());
   // anonEvaluate(cx, global, "(function () { cc.Node.extend = cc.Class.extend; })()");
+
+  JsbUtils::RegisterV8Class(typeid(cocos2d::Node).name(), &tpl);
+  JsbUtils::BindJsClass("Node", global, tpl);
 }

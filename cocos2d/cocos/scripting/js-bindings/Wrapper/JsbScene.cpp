@@ -397,7 +397,7 @@ void js_cocos2dx_Scene_constructor(const v8::FunctionCallbackInfo<v8::Value> &ar
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     cocos2d::Scene* cobj = new (std::nothrow) cocos2d::Scene();
-  cocos2d::Scene *cobj = new (std::nothrow) cocos2d::Scene();
+  cocos2d::Scene *cobj = cocos2d::Scene::create();
 
   //     js_type_class_t *typeClass = js_get_type_from_native<cocos2d::Scene>(cobj);
 
@@ -451,8 +451,7 @@ void js_register_cocos2dx_Scene(v8::Isolate *isolate, v8::Local<v8::Object> glob
   tpl->SetClassName(v8::String::NewFromUtf8(isolate, "Scene").ToLocalChecked());
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
   tpl->Inherit(ScriptEngine::getInstance()->getClassByName(typeid(cocos2d::Node).name()));
-  JsbUtils::RegisterV8Class(typeid(cocos2d::Scene).name(), &tpl);
-  JsbUtils::BindJsClass("Scene", global, tpl);
+
   //     static JSPropertySpec properties[] = {
   //         JS_PS_END
   //     };
@@ -505,4 +504,7 @@ void js_register_cocos2dx_Scene(v8::Isolate *isolate, v8::Local<v8::Object> glob
   //     // add the proto and JSClass to the type->js info hash table
   //     jsb_register_class<cocos2d::Scene>(cx, jsb_cocos2d_Scene_class, proto, parent_proto);
   //     anonEvaluate(cx, global, "(function () { cc.Scene.extend = cc.Class.extend; })()");
+
+  JsbUtils::RegisterV8Class(typeid(cocos2d::Scene).name(), &tpl);
+  JsbUtils::BindJsClass("Scene", global, tpl);
 }

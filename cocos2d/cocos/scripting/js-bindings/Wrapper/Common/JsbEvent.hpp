@@ -56,14 +56,7 @@ void js_register_cocos2dx_EventDispatcher(v8::Isolate *isolate, v8::Local<v8::Ob
 // bool js_cocos2dx_EventDispatcher_isEnabled(JSContext *cx, uint32_t argc, jsval *vp);
 // bool js_cocos2dx_EventDispatcher_EventDispatcher(JSContext *cx, uint32_t argc, jsval *vp);
 
-// extern JSClass  *jsb_cocos2d_EventFocus_class;
-// extern JSObject *jsb_cocos2d_EventFocus_prototype;
 
-// bool js_cocos2dx_EventFocus_constructor(JSContext *cx, uint32_t argc, jsval *vp);
-// void js_cocos2dx_EventFocus_finalize(JSContext *cx, JSObject *obj);
-// void js_register_cocos2dx_EventFocus(JSContext *cx, JS::HandleObject global);
-// void register_all_cocos2dx(JSContext* cx, JS::HandleObject obj);
-// bool js_cocos2dx_EventFocus_EventFocus(JSContext *cx, uint32_t argc, jsval *vp);
 
 // extern JSClass  *jsb_cocos2d_EventListenerAcceleration_class;
 // extern JSObject *jsb_cocos2d_EventListenerAcceleration_prototype;
@@ -183,3 +176,28 @@ void js_register_cocos2dx_EventDispatcher(v8::Isolate *isolate, v8::Local<v8::Ob
 // bool js_cocos2dx_EventController_getController(JSContext *cx, uint32_t argc, jsval *vp);
 // bool js_cocos2dx_EventController_getKeyCode(JSContext *cx, uint32_t argc, jsval *vp);
 // bool js_cocos2dx_EventController_EventController(JSContext *cx, uint32_t argc, jsval *vp);
+
+// extern JSClass  *jsb_cocos2d_EventFocus_class;
+// extern JSObject *jsb_cocos2d_EventFocus_prototype;
+
+// bool js_cocos2dx_EventFocus_constructor(JSContext *cx, uint32_t argc, jsval *vp);
+// void js_cocos2dx_EventFocus_finalize(JSContext *cx, JSObject *obj);
+// void js_register_cocos2dx_EventFocus(JSContext *cx, JS::HandleObject global);
+// void register_all_cocos2dx(JSContext* cx, JS::HandleObject obj);
+// bool js_cocos2dx_EventFocus_EventFocus(JSContext *cx, uint32_t argc, jsval *vp);
+
+// extern JSClass  *jsb_cocos2d_Event_class;
+// extern JSObject *jsb_cocos2d_Event_prototype;
+
+// bool js_cocos2dx_Event_constructor(JSContext *cx, uint32_t argc, jsval *vp);
+// void js_cocos2dx_Event_finalize(JSContext *cx, JSObject *obj);
+// void js_register_cocos2dx_Event(JSContext *cx, JS::HandleObject global);
+// void register_all_cocos2dx(JSContext* cx, JS::HandleObject obj);
+void js_register_cocos2dx_Event(v8::Isolate *isolate, v8::Local<v8::Object> global);
+// bool js_cocos2dx_Event_isStopped(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_Event_getType(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_Event_getCurrentTarget(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_Event_stopPropagation(JSContext *cx, uint32_t argc, jsval *vp);
+// bool js_cocos2dx_Event_Event(JSContext *cx, uint32_t argc, jsval *vp);
+
+void js_register_cocos2dx_EventCustom(v8::Isolate *isolate, v8::Local<v8::Object> global);

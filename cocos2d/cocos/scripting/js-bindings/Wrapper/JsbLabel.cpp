@@ -3113,8 +3113,6 @@ void js_register_cocos2dx_Label(v8::Isolate *isolate, v8::Local<v8::Object> glob
   tpl->SetClassName(JsbUtils::ToV8String(isolate, "Label"));
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
   v8::Local<v8::ObjectTemplate> proto = tpl->PrototypeTemplate();
-  JsbUtils::RegisterV8Class(typeid(cocos2d::Label).name(), &tpl);
-  JsbUtils::BindJsClass("Label", global, tpl);
 
   v8::Local<v8::FunctionTemplate> parentClass = ScriptEngine::getInstance()->getClassByName(typeid(cocos2d::Node).name());
   tpl->Inherit(parentClass);
@@ -3290,6 +3288,9 @@ void js_register_cocos2dx_Label(v8::Isolate *isolate, v8::Local<v8::Object> glob
   //     // add the proto and JSClass to the type->js info hash table
   //     jsb_register_class<cocos2d::Label>(cx, jsb_cocos2d_Label_class, proto, parent_proto);
   //     anonEvaluate(cx, global, "(function () { cc.Label.extend = cc.Class.extend; })()");
+
+  JsbUtils::RegisterV8Class(typeid(cocos2d::Label).name(), &tpl);
+  JsbUtils::BindJsClass("Label", global, tpl);
 }
 
 // JSClass *jsb_cocos2d_LabelAtlas_class;

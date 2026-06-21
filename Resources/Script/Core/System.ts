@@ -528,7 +528,7 @@ namespace cc {
      * @name windowPixelResolution
      * @type {Number}
      */
-    export const windowPixelResolution = cc.view.getFrameSize();
+    export const windowPixelResolution = {width: 0, height: 0}; //null in jsb
 
     /**
      * The capabilities of the current platform

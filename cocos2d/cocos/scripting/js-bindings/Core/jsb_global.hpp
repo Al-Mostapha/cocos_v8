@@ -27,7 +27,7 @@
 #include "v8.h"
 #include <string>
 
-bool jsb_register_global_variables(v8::Object *global);
+bool jsb_register_global_variables(v8::Local<v8::Object> global);
 
 void jsb_init_file_operation_delegate();
 bool jsb_enable_debugger(const std::string &debuggerServerAddr, uint32_t port, bool isWaitForConnect = false);

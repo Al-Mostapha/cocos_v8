@@ -27,6 +27,7 @@
 #include "ScriptEngine.hpp"
 #include "JsbUtils.h"
 #include "Wrapper/JsbAllCocos.hpp"
+#include "Core/jsb_module_register.hpp"
 
 // #define USE_AUDIO_ENGINE 1
 
@@ -117,15 +118,15 @@ bool AppDelegate::applicationDidFinishLaunching()
 
     js->addAfterInitHook(register_all_cocos2dx);
 
-    // jsb_register_all_modules();
+    jsb_register_all_modules();
 
-    js->start();
-    
     // create a scene. it's an autorelease object
     auto scene = HelloWorld::createScene();
 
     // run
     director->runWithScene(scene);
+
+    js->start();
 
     return true;
 }

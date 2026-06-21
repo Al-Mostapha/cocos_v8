@@ -148,153 +148,155 @@ static std::string removeFileExt(const std::string &filePath)
 
 void jsb_init_file_operation_delegate()
 {
-    static ScriptEngine::FileOperationDelegate delegate;
-    if (!delegate.isValid())
-    {
-        delegate.onGetDataFromFile = [](const std::string &path, const std::function<void(const uint8_t *, size_t)> &readCallback) -> void
-        {
-            assert(!path.empty());
+    // static ScriptEngine::FileOperationDelegate delegate;
+    // if (!delegate.isValid())
+    // {
+    //     delegate.onGetDataFromFile = [](const std::string &path, const std::function<void(const uint8_t *, size_t)> &readCallback) -> void
+    //     {
+    //         assert(!path.empty());
 
-            cocos2d::Data fileData;
+    //         cocos2d::Data fileData;
 
-            std::string byteCodePath = removeFileExt(path) + BYTE_CODE_FILE_EXT;
-            if (cocos2d::FileUtils::getInstance()->isFileExist(byteCodePath))
-            {
-                fileData = cocos2d::FileUtils::getInstance()->getDataFromFile(byteCodePath);
+    //         std::string byteCodePath = removeFileExt(path) + BYTE_CODE_FILE_EXT;
+    //         if (cocos2d::FileUtils::getInstance()->isFileExist(byteCodePath))
+    //         {
+    //             fileData = cocos2d::FileUtils::getInstance()->getDataFromFile(byteCodePath);
 
-                size_t dataLen = 0;
-                uint8_t *data = xxtea_decrypt((unsigned char *)fileData.getBytes(), (uint32_t)fileData.getSize(), (unsigned char *)xxteaKey.c_str(), (uint32_t)xxteaKey.size(), (uint32_t *)&dataLen);
+    //             size_t dataLen = 0;
+    //             uint8_t *data = xxtea_decrypt((unsigned char *)fileData.getBytes(), (uint32_t)fileData.getSize(), (unsigned char *)xxteaKey.c_str(), (uint32_t)xxteaKey.size(), (uint32_t *)&dataLen);
 
-                if (data == nullptr)
-                {
-                    SE_REPORT_ERROR("Can't decrypt code for %s", byteCodePath.c_str());
-                    return;
-                }
+    //             if (data == nullptr)
+    //             {
+    //                 SE_REPORT_ERROR("Can't decrypt code for %s", byteCodePath.c_str());
+    //                 return;
+    //             }
 
-                if (ZipUtils::isGZipBuffer(data, dataLen))
-                {
-                    uint8_t *unpackedData;
-                    ssize_t unpackedLen = ZipUtils::inflateMemory(data, dataLen, &unpackedData);
+    //             if (ZipUtils::isGZipBuffer(data, dataLen))
+    //             {
+    //                 uint8_t *unpackedData;
+    //                 ssize_t unpackedLen = ZipUtils::inflateMemory(data, dataLen, &unpackedData);
 
-                    if (unpackedData == nullptr)
-                    {
-                        SE_REPORT_ERROR("Can't decrypt code for %s", byteCodePath.c_str());
-                        return;
-                    }
+    //                 if (unpackedData == nullptr)
+    //                 {
+    //                     SE_REPORT_ERROR("Can't decrypt code for %s", byteCodePath.c_str());
+    //                     return;
+    //                 }
 
-                    readCallback(unpackedData, unpackedLen);
-                    free(data);
-                    free(unpackedData);
-                }
-                else
-                {
-                    readCallback(data, dataLen);
-                    free(data);
-                }
+    //                 readCallback(unpackedData, unpackedLen);
+    //                 free(data);
+    //                 free(unpackedData);
+    //             }
+    //             else
+    //             {
+    //                 readCallback(data, dataLen);
+    //                 free(data);
+    //             }
 
-                return;
-            }
+    //             return;
+    //         }
 
-            fileData = FileUtils::getInstance()->getDataFromFile(path);
-            readCallback(fileData.getBytes(), fileData.getSize());
-        };
+    //         fileData = FileUtils::getInstance()->getDataFromFile(path);
+    //         readCallback(fileData.getBytes(), fileData.getSize());
+    //     };
 
-        delegate.onGetStringFromFile = [](const std::string &path) -> std::string
-        {
-            assert(!path.empty());
+    //     delegate.onGetStringFromFile = [](const std::string &path) -> std::string
+    //     {
+    //         assert(!path.empty());
 
-            std::string byteCodePath = removeFileExt(path) + BYTE_CODE_FILE_EXT;
-            if (FileUtils::getInstance()->isFileExist(byteCodePath))
-            {
-                Data fileData = FileUtils::getInstance()->getDataFromFile(byteCodePath);
+    //         std::string byteCodePath = removeFileExt(path) + BYTE_CODE_FILE_EXT;
+    //         if (FileUtils::getInstance()->isFileExist(byteCodePath))
+    //         {
+    //             Data fileData = FileUtils::getInstance()->getDataFromFile(byteCodePath);
 
-                uint32_t dataLen;
-                uint8_t *data = xxtea_decrypt((uint8_t *)fileData.getBytes(), (uint32_t)fileData.getSize(), (uint8_t *)xxteaKey.c_str(), (uint32_t)xxteaKey.size(), &dataLen);
+    //             uint32_t dataLen;
+    //             uint8_t *data = xxtea_decrypt((uint8_t *)fileData.getBytes(), (uint32_t)fileData.getSize(), (uint8_t *)xxteaKey.c_str(), (uint32_t)xxteaKey.size(), &dataLen);
 
-                if (data == nullptr)
-                {
-                    SE_REPORT_ERROR("Can't decrypt code for %s", byteCodePath.c_str());
-                    return "";
-                }
+    //             if (data == nullptr)
+    //             {
+    //                 SE_REPORT_ERROR("Can't decrypt code for %s", byteCodePath.c_str());
+    //                 return "";
+    //             }
 
-                if (ZipUtils::isGZipBuffer(data, dataLen))
-                {
-                    uint8_t *unpackedData;
-                    ssize_t unpackedLen = ZipUtils::inflateMemory(data, dataLen, &unpackedData);
-                    if (unpackedData == nullptr)
-                    {
-                        SE_REPORT_ERROR("Can't decrypt code for %s", byteCodePath.c_str());
-                        return "";
-                    }
+    //             if (ZipUtils::isGZipBuffer(data, dataLen))
+    //             {
+    //                 uint8_t *unpackedData;
+    //                 ssize_t unpackedLen = ZipUtils::inflateMemory(data, dataLen, &unpackedData);
+    //                 if (unpackedData == nullptr)
+    //                 {
+    //                     SE_REPORT_ERROR("Can't decrypt code for %s", byteCodePath.c_str());
+    //                     return "";
+    //                 }
 
-                    std::string ret(reinterpret_cast<const char *>(unpackedData), unpackedLen);
-                    free(unpackedData);
-                    free(data);
+    //                 std::string ret(reinterpret_cast<const char *>(unpackedData), unpackedLen);
+    //                 free(unpackedData);
+    //                 free(data);
 
-                    return ret;
-                }
-                else
-                {
-                    std::string ret(reinterpret_cast<const char *>(data), dataLen);
-                    free(data);
-                    return ret;
-                }
-            }
+    //                 return ret;
+    //             }
+    //             else
+    //             {
+    //                 std::string ret(reinterpret_cast<const char *>(data), dataLen);
+    //                 free(data);
+    //                 return ret;
+    //             }
+    //         }
 
-            if (FileUtils::getInstance()->isFileExist(path))
-            {
-                return FileUtils::getInstance()->getStringFromFile(path);
-            }
-            else
-            {
-                SE_LOGE("ScriptEngine::onGetStringFromFile %s not found, possible missing file.\n", path.c_str());
-            }
-            return "";
-        };
+    //         if (FileUtils::getInstance()->isFileExist(path))
+    //         {
+    //             return FileUtils::getInstance()->getStringFromFile(path);
+    //         }
+    //         else
+    //         {
+    //             SE_LOGE("ScriptEngine::onGetStringFromFile %s not found, possible missing file.\n", path.c_str());
+    //         }
+    //         return "";
+    //     };
 
-        delegate.onGetFullPath = [](const std::string &path) -> std::string
-        {
-            assert(!path.empty());
-            std::string byteCodePath = removeFileExt(path) + BYTE_CODE_FILE_EXT;
-            if (FileUtils::getInstance()->isFileExist(byteCodePath))
-            {
-                return FileUtils::getInstance()->fullPathForFilename(byteCodePath);
-            }
-            return FileUtils::getInstance()->fullPathForFilename(path);
-        };
+    //     delegate.onGetFullPath = [](const std::string &path) -> std::string
+    //     {
+    //         assert(!path.empty());
+    //         std::string byteCodePath = removeFileExt(path) + BYTE_CODE_FILE_EXT;
+    //         if (FileUtils::getInstance()->isFileExist(byteCodePath))
+    //         {
+    //             return FileUtils::getInstance()->fullPathForFilename(byteCodePath);
+    //         }
+    //         return FileUtils::getInstance()->fullPathForFilename(path);
+    //     };
 
-        delegate.onCheckFileExist = [](const std::string &path) -> bool
-        {
-            assert(!path.empty());
-            return FileUtils::getInstance()->isFileExist(path);
-        };
+    //     delegate.onCheckFileExist = [](const std::string &path) -> bool
+    //     {
+    //         assert(!path.empty());
+    //         return FileUtils::getInstance()->isFileExist(path);
+    //     };
 
-        assert(delegate.isValid());
-    }
+    //     assert(delegate.isValid());
+    // }
 
-    ScriptEngine::getInstance()->setFileOperationDelegate(delegate);
+    // ScriptEngine::getInstance()->setFileOperationDelegate(delegate);
 }
 
 bool jsb_enable_debugger(const std::string &debuggerServerAddr, uint32_t port, bool isWaitForConnect)
 {
-    if (debuggerServerAddr.empty() || port == 0)
-        return false;
+    // TODO: enable debugger for v8
+    return false;
+    // if (debuggerServerAddr.empty() || port == 0)
+    //     return false;
 
-    auto se = ScriptEngine::getInstance();
-    se->enableDebugger(debuggerServerAddr.c_str(), port, isWaitForConnect);
+    // auto se = ScriptEngine::getInstance();
+    // se->enableDebugger(debuggerServerAddr.c_str(), port, isWaitForConnect);
 
-    // For debugger main loop
-    class SimpleRunLoop
-    {
-    public:
-        void update(float dt)
-        {
-            ScriptEngine::getInstance()->mainLoopUpdate();
-        }
-    };
-    //    static SimpleRunLoop runLoop;
-    // cjh IDEA:    Director::getInstance()->getScheduler()->scheduleUpdate(&runLoop, 0, false);
-    return true;
+    // // For debugger main loop
+    // class SimpleRunLoop
+    // {
+    // public:
+    //     void update(float dt)
+    //     {
+    //         ScriptEngine::getInstance()->mainLoopUpdate();
+    //     }
+    // };
+    // //    static SimpleRunLoop runLoop;
+    // // cjh IDEA:    Director::getInstance()->getScheduler()->scheduleUpdate(&runLoop, 0, false);
+    // return true;
 }
 
 bool jsb_set_extend_property(const char *ns, const char *clsName)
@@ -1646,21 +1648,21 @@ bool jsb_register_global_variables(v8::Local<v8::Object> global)
 
     v8::Local<v8::Object> jsbObj = v8::Object::New(isolate);
     //     getOrCreatePlainObject_r("jsb", global, &__jsbObj);
-    getOrCreatePlainObject_r("jsb", global, &jsbObj);
-    __jsbObj.Reset(isolate, jsbObj);
+    JsbUtils::GetOrCreateJsObject(isolate, global, "jsb", &jsbObj);
+    // __jsbObj.Reset(isolate, jsbObj);
 
     //     auto glContextCls = se::Class::create("WebGLRenderingContext", global, nullptr, nullptr);
-    Class *glContextCls = Class::create("WebGLRenderingContext", &global, nullptr, nullptr);
+    // Class *glContextCls = Class::create("WebGLRenderingContext", &global, nullptr, nullptr);
 
-    //     glContextCls->install();
-    glContextCls->install();
+    // //     glContextCls->install();
+    // glContextCls->install();
 
-    SAFE_DEC_REF(__glObj);
+    // SAFE_DEC_REF(__glObj);
 
     //     __glObj = se::Object::createObjectWithClass(glContextCls);
-    __glObj = JsbObject::createObjectWithClass(glContextCls);
+    // __glObj = JsbObject::createObjectWithClass(glContextCls);
     //     global->setProperty("__gl", se::Value(__glObj));
-    JsbUtils::SetProperty(isolate, global, "__gl", __glObj->_getJSObject());
+    // JsbUtils::SetProperty(isolate, global, "__gl", __glObj->_getJSObject());
     //     __jsbObj->defineFunction("garbageCollect", _SE(jsc_garbageCollect));
     JsbUtils::DefineFunction(jsbObj, "garbageCollect", jsc_garbageCollect);
     //     __jsbObj->defineFunction("dumpNativePtrToSeObjectMap", _SE(jsc_dumpNativePtrToSeObjectMap));

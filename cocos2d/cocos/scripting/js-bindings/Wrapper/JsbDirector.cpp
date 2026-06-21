@@ -2494,7 +2494,7 @@ void js_cocos2dx_Director_replaceScene(const v8::FunctionCallbackInfo<v8::Value>
   if (args.Length() == 1)
   {
     //     cocos2d::Scene *arg0 = nullptr;
-    cocos2d::Scene *arg0 = nullptr;
+    cocos2d::Scene *scene = nullptr;
 
     //       if (args.get(0).isNull())
     //       {
@@ -2506,7 +2506,7 @@ void js_cocos2dx_Director_replaceScene(const v8::FunctionCallbackInfo<v8::Value>
     //         ok = false;
     //         break;
     //       }
-    if (!args[0]->IsObject() && !args[0]->IsNull())
+    if (!args[0]->IsObject() && args[0]->IsNull())
     {
       SE_REPORT_ERROR("js_cocos2dx_Director_replaceScene : Error processing arguments");
       return;
@@ -2516,17 +2516,14 @@ void js_cocos2dx_Director_replaceScene(const v8::FunctionCallbackInfo<v8::Value>
     //       jsProxy = jsb_get_js_proxy(tmpObj);
     //       arg0 = (cocos2d::Scene *)(jsProxy ? jsProxy->ptr : NULL);
     v8::Local<v8::Object> tmpObj = args[0]->ToObject(args.GetIsolate()->GetCurrentContext()).ToLocalChecked();
-    arg0 = (cocos2d::Scene *)tmpObj->GetAlignedPointerFromInternalField(0);
-    if (!arg0 && !args[0]->IsNull())
-    {
-      SE_REPORT_ERROR("js_cocos2dx_Director_replaceScene : Error processing arguments");
-      return;
-    }
+    scene = (cocos2d::Scene *)tmpObj->GetAlignedPointerFromInternalField(0);
+    SE_PRECONDITION2(scene, "js_cocos2dx_Director_replaceScene : Invalid Native Object");
+
     //       JSB_PRECONDITION2(arg0, cx, false, "Invalid Native Object");
 
     //     JSB_PRECONDITION2(ok, cx, false, "js_cocos2dx_Director_replaceScene : Error processing arguments");
     //     cobj->replaceScene(arg0);
-    cobj->replaceScene(arg0);
+    cobj->replaceScene(scene);
     //     args.rval().setUndefined();
     args.GetReturnValue().SetUndefined();
     //     return true;

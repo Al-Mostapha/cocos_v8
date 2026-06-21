@@ -552,6 +552,8 @@ declare namespace cc {
      */
     pause(): void;
 
+    replaceScene(scene: Scene): void;
+
     /**
      * Pops out a scene from the queue.<br/>
      * This scene will replace the running one.<br/>

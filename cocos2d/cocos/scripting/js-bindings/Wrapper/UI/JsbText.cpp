@@ -1364,7 +1364,7 @@ void js_cocos2dx_ui_Text_constructor(const v8::FunctionCallbackInfo<v8::Value> &
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     cocos2d::ui::Text* cobj = new (std::nothrow) cocos2d::ui::Text();
-  cocos2d::ui::Text *cText = new (std::nothrow) cocos2d::ui::Text();
+  cocos2d::ui::Text *cText = cocos2d::ui::Text::create();
 
   //     js_type_class_t *typeClass = js_get_type_from_native<cocos2d::ui::Text>(cobj);
 

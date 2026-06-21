@@ -69,7 +69,11 @@ public:
 
   static ScriptEngine *getInstance();
   static void destroyInstance();
-  bool garbageCollect();
+  bool garbageCollect(){
+    // CCASSERT(false, "ScriptEngine::garbageCollect is not implemented for V8");
+    SE_LOGD("ScriptEngine::garbageCollect is not implemented for V8");
+    return false;
+  }
 
   bool start();
 
@@ -123,6 +127,11 @@ public:
   void addAfterCleanupHook(const std::function<void()> &hook)
   {
     _afterCleanupHookArray.push_back(hook);
+  }
+
+  void addRegisterCallback(const std::function<bool(v8::Local<v8::Object>)> &callback)
+  {
+    _registerCallbackArray.push_back(callback);
   }
 
   std::chrono::steady_clock::time_point getStartTime() const { return _startTime; }
