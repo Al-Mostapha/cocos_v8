@@ -41,7 +41,11 @@ class HelloWorldLayer extends cc.Node {
     console.log("Window size: " + size.width + "x" + size.height);
 
     try {
-      const helloLabel = new ccui.Text("Hello ccccccc World", "fonts/arial.ttf", 38);
+      const helloLabel = new ccui.Text(
+        "Hello ccccccc World",
+        "fonts/arial.ttf",
+        38,
+      );
       // position the label on the center of the screen
       helloLabel.x = size.width / 2;
       helloLabel.y = size.height / 2 + 200;
@@ -62,38 +66,39 @@ class HelloWorldLayer extends cc.Node {
 }
 
 class HelloWorldScene extends cc.Scene {
+  _Text: ccui.Text | null = null;
   constructor() {
     super();
     console.log("HelloWorldScene constructor called");
-    const helloLabel = new ccui.Text("Hello ccccccc World");
+    this._Text = new ccui.Text("Hello ccccccc World");
     const size = cc.winSize;
 
     // position the label on the center of the screen
-    helloLabel.x = 100;
-    helloLabel.y = 150;
+    this._Text.x = 100;
+    this._Text.y = 150;
 
-    this.addChild(helloLabel, 5);
+    this.addChild(this._Text, 5);
   }
 
-  onEnter() {
-    super.onEnter();
+  // onEnter() {
+  //   super.onEnter();
 
-    console.log("HelloWorldScene onEnter called");
+  //   console.log("HelloWorldScene onEnter called");
 
-    // const layer = new HelloWorldLayer();
-    // this.addChild(layer);
-    // const helloLabel = new cc.LabelTTF("Hello ccccccc World", "Arial", 38);
+  //   // const layer = new HelloWorldLayer();
+  //   // this.addChild(layer);
+  //   // const helloLabel = new cc.LabelTTF("Hello ccccccc World", "Arial", 38);
 
-    const size = cc.winSize;
+  //   const size = cc.winSize;
 
-    // position the label on the center of the screen
-    // helloLabel.x = size.width / 2;
-    // helloLabel.y = size.height / 2 + 250;
+  //   // position the label on the center of the screen
+  //   // helloLabel.x = size.width / 2;
+  //   // helloLabel.y = size.height / 2 + 250;
 
-    // this.addChild(helloLabel, 5);
+  //   // this.addChild(helloLabel, 5);
 
-    // console.log("HelloWorldScene onEnter called");
-  }
+  //   // console.log("HelloWorldScene onEnter called");
+  // }
 }
 
 cc.game.onStart = function () {
