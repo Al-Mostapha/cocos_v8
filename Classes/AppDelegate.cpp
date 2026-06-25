@@ -79,7 +79,7 @@ bool AppDelegate::applicationDidFinishLaunching()
     if (!glview)
     {
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC) || (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
-        glview = GLViewImpl::createWithRect("Cocos.V8", cocos2d::Rect(0, 0, designResolutionSize.width, designResolutionSize.height));
+        glview = GLViewImpl::createWithRect("Cocos.V8", cocos2d::Rect(0, 0, mediumResolutionSize.width, mediumResolutionSize.height));
 #else
         glview = GLViewImpl::create("Cocos.V8");
 #endif
@@ -127,6 +127,7 @@ bool AppDelegate::applicationDidFinishLaunching()
     director->runWithScene(scene);
 
     js->start();
+
 
     return true;
 }

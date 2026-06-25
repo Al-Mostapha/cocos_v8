@@ -21,6 +21,8 @@ public:
     auto iter = _registeredClasses.find(className);
     if (iter != _registeredClasses.end())
       return handleScope.Escape(iter->second.Get(_isolate));
+
+    assert(false);
     return v8::Local<v8::FunctionTemplate>();
   }
   class FileOperationDelegate

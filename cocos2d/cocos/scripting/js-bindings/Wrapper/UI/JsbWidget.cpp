@@ -2866,7 +2866,7 @@ void js_register_cocos2dx_ui_Widget(v8::Isolate *isolate, v8::Local<v8::Object> 
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
   auto parent = ScriptEngine::getInstance()->getClassByName(typeid(cocos2d::ProtectedNode).name());
-  tpl->Inherit(v8::Local<v8::FunctionTemplate>::New(isolate, parent));
+
   v8::Local<v8::ObjectTemplate> proto = tpl->PrototypeTemplate();
   //     static JSPropertySpec properties[] = {
   //         JS_PS_END
@@ -3045,6 +3045,7 @@ void js_register_cocos2dx_ui_Widget(v8::Isolate *isolate, v8::Local<v8::Object> 
   proto->Set(isolate, "__nativeObj", v8::True(isolate));
   //     JS_SetProperty(cx, proto, "__is_ref", JS::TrueHandleValue);
   proto->Set(isolate, "__is_ref", v8::True(isolate));
+  tpl->Inherit(parent);
   //     // add the proto and JSClass to the type->js info hash table
   //     jsb_register_class<cocos2d::ui::Widget>(cx, jsb_cocos2d_ui_Widget_class, proto, parent_proto);
   //     anonEvaluate(cx, global, "(function () { ccui.Widget.extend = cc.Class.extend; })()");

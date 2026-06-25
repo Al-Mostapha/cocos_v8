@@ -6005,6 +6005,7 @@ void js_cocos2dx_Node_onEnter(const v8::FunctionCallbackInfo<v8::Value> &args)
 
   // TODO
   //     ScriptingCore::getInstance()->setCalledFromScript(true);
+  // call js function on enter
 
   //     cobj->onEnter();
   cNode->onEnter();
@@ -7471,51 +7472,51 @@ void js_register_cocos2dx_Node(v8::Isolate *isolate, v8::Local<v8::Object> globa
   // };
 
   // JS_DefineFunction(cx, tmpObj, "retain", js_cocos2dx_retain, 0, JSPROP_ENUMERATE | JSPROP_PERMANENT);
-  tpl->Set(isolate, "retain", v8::FunctionTemplate::New(isolate, js_cocos2dx_retain));
+  tpl->PrototypeTemplate()->Set(isolate, "retain", v8::FunctionTemplate::New(isolate, js_cocos2dx_retain));
   // JS_DefineFunction(cx, tmpObj, "release", js_cocos2dx_release, 0, JSPROP_ENUMERATE | JSPROP_PERMANENT);
-  tpl->Set(isolate, "release", v8::FunctionTemplate::New(isolate, js_cocos2dx_release));
+  tpl->PrototypeTemplate()->Set(isolate, "release", v8::FunctionTemplate::New(isolate, js_cocos2dx_release));
   // JS_DefineFunction(cx, tmpObj, "onEnter", js_cocos2dx_Node_onEnter, 0, JSPROP_ENUMERATE  | JSPROP_PERMANENT);
-  tpl->Set(isolate, "onEnter", v8::FunctionTemplate::New(isolate, js_cocos2dx_Node_onEnter));
+  tpl->PrototypeTemplate()->Set(isolate, "onEnter", v8::FunctionTemplate::New(isolate, js_cocos2dx_Node_onEnter));
   // JS_DefineFunction(cx, tmpObj, "onExit", js_cocos2dx_Node_onExit, 0, JSPROP_ENUMERATE  | JSPROP_PERMANENT);
-  tpl->Set(isolate, "onExit", v8::FunctionTemplate::New(isolate, js_cocos2dx_Node_onExit));
+  tpl->PrototypeTemplate()->Set(isolate, "onExit", v8::FunctionTemplate::New(isolate, js_cocos2dx_Node_onExit));
   // JS_DefineFunction(cx, tmpObj, "onEnterTransitionDidFinish", js_cocos2dx_Node_onEnterTransitionDidFinish, 0, JSPROP_ENUMERATE  | JSPROP_PERMANENT);
-  tpl->Set(isolate, "onEnterTransitionDidFinish", v8::FunctionTemplate::New(isolate, js_cocos2dx_Node_onEnterTransitionDidFinish));
+  tpl->PrototypeTemplate()->Set(isolate, "onEnterTransitionDidFinish", v8::FunctionTemplate::New(isolate, js_cocos2dx_Node_onEnterTransitionDidFinish));
   // JS_DefineFunction(cx, tmpObj, "onExitTransitionDidStart", js_cocos2dx_Node_onExitTransitionDidStart, 0, JSPROP_ENUMERATE  | JSPROP_PERMANENT);
-  tpl->Set(isolate, "onExitTransitionDidStart", v8::FunctionTemplate::New(isolate, js_cocos2dx_Node_onExitTransitionDidStart));
+  tpl->PrototypeTemplate()->Set(isolate, "onExitTransitionDidStart", v8::FunctionTemplate::New(isolate, js_cocos2dx_Node_onExitTransitionDidStart));
   // JS_DefineFunction(cx, tmpObj, "cleanup", js_cocos2dx_Node_cleanup, 0, JSPROP_ENUMERATE  | JSPROP_PERMANENT);
-  tpl->Set(isolate, "cleanup", v8::FunctionTemplate::New(isolate, js_cocos2dx_Node_cleanup));
+  tpl->PrototypeTemplate()->Set(isolate, "cleanup", v8::FunctionTemplate::New(isolate, js_cocos2dx_Node_cleanup));
   // JS_DefineFunction(cx, tmpObj, "schedule", js_CCNode_schedule, 1, JSPROP_ENUMERATE | JSPROP_PERMANENT);
-  tpl->Set(isolate, "schedule", v8::FunctionTemplate::New(isolate, js_CCNode_schedule));
+  tpl->PrototypeTemplate()->Set(isolate, "schedule", v8::FunctionTemplate::New(isolate, js_CCNode_schedule));
   // JS_DefineFunction(cx, tmpObj, "scheduleOnce", js_CCNode_scheduleOnce, 1, JSPROP_ENUMERATE | JSPROP_PERMANENT);
-  tpl->Set(isolate, "scheduleOnce", v8::FunctionTemplate::New(isolate, js_CCNode_scheduleOnce));
+  tpl->PrototypeTemplate()->Set(isolate, "scheduleOnce", v8::FunctionTemplate::New(isolate, js_CCNode_scheduleOnce));
   // JS_DefineFunction(cx, tmpObj, "scheduleUpdateWithPriority", js_cocos2dx_CCNode_scheduleUpdateWithPriority, 1, JSPROP_ENUMERATE | JSPROP_PERMANENT);
-  tpl->Set(isolate, "scheduleUpdateWithPriority", v8::FunctionTemplate::New(isolate, js_cocos2dx_CCNode_scheduleUpdateWithPriority));
+  tpl->PrototypeTemplate()->Set(isolate, "scheduleUpdateWithPriority", v8::FunctionTemplate::New(isolate, js_cocos2dx_CCNode_scheduleUpdateWithPriority));
   // JS_DefineFunction(cx, tmpObj, "unscheduleUpdate", js_cocos2dx_CCNode_unscheduleUpdate, 0, JSPROP_ENUMERATE | JSPROP_PERMANENT);
-  tpl->Set(isolate, "unscheduleUpdate", v8::FunctionTemplate::New(isolate, js_cocos2dx_CCNode_unscheduleUpdate));
+  tpl->PrototypeTemplate()->Set(isolate, "unscheduleUpdate", v8::FunctionTemplate::New(isolate, js_cocos2dx_CCNode_unscheduleUpdate));
   // JS_DefineFunction(cx, tmpObj, "scheduleUpdate", js_cocos2dx_CCNode_scheduleUpdate, 0, JSPROP_ENUMERATE | JSPROP_PERMANENT);
-  tpl->Set(isolate, "scheduleUpdate", v8::FunctionTemplate::New(isolate, js_cocos2dx_CCNode_scheduleUpdate));
+  tpl->PrototypeTemplate()->Set(isolate, "scheduleUpdate", v8::FunctionTemplate::New(isolate, js_cocos2dx_CCNode_scheduleUpdate));
   // JS_DefineFunction(cx, tmpObj, "unschedule", js_CCNode_unschedule, 1, JSPROP_ENUMERATE | JSPROP_PERMANENT);
-  tpl->Set(isolate, "unschedule", v8::FunctionTemplate::New(isolate, js_CCNode_unschedule));
+  tpl->PrototypeTemplate()->Set(isolate, "unschedule", v8::FunctionTemplate::New(isolate, js_CCNode_unschedule));
   // JS_DefineFunction(cx, tmpObj, "unscheduleAllCallbacks", js_cocos2dx_CCNode_unscheduleAllSelectors, 0, JSPROP_ENUMERATE | JSPROP_PERMANENT);
-  tpl->Set(isolate, "unscheduleAllCallbacks", v8::FunctionTemplate::New(isolate, js_cocos2dx_CCNode_unscheduleAllSelectors));
+  tpl->PrototypeTemplate()->Set(isolate, "unscheduleAllCallbacks", v8::FunctionTemplate::New(isolate, js_cocos2dx_CCNode_unscheduleAllSelectors));
   // JS_DefineFunction(cx, tmpObj, "setPosition", js_cocos2dx_CCNode_setPosition, 1, JSPROP_ENUMERATE | JSPROP_PERMANENT);
-  tpl->Set(isolate, "setPosition", v8::FunctionTemplate::New(isolate, js_cocos2dx_CCNode_setPosition));
+  tpl->PrototypeTemplate()->Set(isolate, "setPosition", v8::FunctionTemplate::New(isolate, js_cocos2dx_CCNode_setPosition));
   // JS_DefineFunction(cx, tmpObj, "setContentSize", js_cocos2dx_CCNode_setContentSize, 1, JSPROP_ENUMERATE | JSPROP_PERMANENT);
-  tpl->Set(isolate, "setContentSize", v8::FunctionTemplate::New(isolate, js_cocos2dx_CCNode_setContentSize));
+  tpl->PrototypeTemplate()->Set(isolate, "setContentSize", v8::FunctionTemplate::New(isolate, js_cocos2dx_CCNode_setContentSize));
   // JS_DefineFunction(cx, tmpObj, "setAnchorPoint", js_cocos2dx_CCNode_setAnchorPoint, 1, JSPROP_ENUMERATE | JSPROP_PERMANENT);
-  tpl->Set(isolate, "setAnchorPoint", v8::FunctionTemplate::New(isolate, js_cocos2dx_CCNode_setAnchorPoint));
+  tpl->PrototypeTemplate()->Set(isolate, "setAnchorPoint", v8::FunctionTemplate::New(isolate, js_cocos2dx_CCNode_setAnchorPoint));
   // JS_DefineFunction(cx, tmpObj, "setColor", js_cocos2dx_CCNode_setColor, 1, JSPROP_ENUMERATE | JSPROP_PERMANENT);
-  tpl->Set(isolate, "setColor", v8::FunctionTemplate::New(isolate, js_cocos2dx_CCNode_setColor));
+  tpl->PrototypeTemplate()->Set(isolate, "setColor", v8::FunctionTemplate::New(isolate, js_cocos2dx_CCNode_setColor));
   // JS_DefineFunction(cx, tmpObj, "pause", js_cocos2dx_CCNode_pause, 0, JSPROP_ENUMERATE | JSPROP_PERMANENT);
-  tpl->Set(isolate, "pause", v8::FunctionTemplate::New(isolate, js_cocos2dx_CCNode_pause));
+  tpl->PrototypeTemplate()->Set(isolate, "pause", v8::FunctionTemplate::New(isolate, js_cocos2dx_CCNode_pause));
   // JS_DefineFunction(cx, tmpObj, "resume", js_cocos2dx_CCNode_resume, 0, JSPROP_ENUMERATE | JSPROP_PERMANENT);
-  tpl->Set(isolate, "resume", v8::FunctionTemplate::New(isolate, js_cocos2dx_CCNode_resume));
+  tpl->PrototypeTemplate()->Set(isolate, "resume", v8::FunctionTemplate::New(isolate, js_cocos2dx_CCNode_resume));
   // JS_DefineFunction(cx, tmpObj, "convertToWorldSpace", js_cocos2dx_CCNode_convertToWorldSpace, 0, JSPROP_ENUMERATE | JSPROP_PERMANENT);
-  tpl->Set(isolate, "convertToWorldSpace", v8::FunctionTemplate::New(isolate, js_cocos2dx_CCNode_convertToWorldSpace));
+  tpl->PrototypeTemplate()->Set(isolate, "convertToWorldSpace", v8::FunctionTemplate::New(isolate, js_cocos2dx_CCNode_convertToWorldSpace));
   // JS_DefineFunction(cx, tmpObj, "convertToWorldSpaceAR", js_cocos2dx_CCNode_convertToWorldSpaceAR, 0, JSPROP_ENUMERATE | JSPROP_PERMANENT);
-  tpl->Set(isolate, "convertToWorldSpaceAR", v8::FunctionTemplate::New(isolate, js_cocos2dx_CCNode_convertToWorldSpaceAR));
+  tpl->PrototypeTemplate()->Set(isolate, "convertToWorldSpaceAR", v8::FunctionTemplate::New(isolate, js_cocos2dx_CCNode_convertToWorldSpaceAR));
   // JS_DefineFunction(cx, tmpObj, "setAdditionalTransform", js_cocos2dx_Node_setAdditionalTransform, 1, JSPROP_ENUMERATE | JSPROP_PERMANENT);
-  tpl->Set(isolate, "setAdditionalTransform", v8::FunctionTemplate::New(isolate, js_cocos2dx_Node_setAdditionalTransform));
+  tpl->PrototypeTemplate()->Set(isolate, "setAdditionalTransform", v8::FunctionTemplate::New(isolate, js_cocos2dx_Node_setAdditionalTransform));
 
   // static JSFunctionSpec st_funcs[] = {
   //     JS_FN("create", js_cocos2dx_Node_create, 0, JSPROP_PERMANENT | JSPROP_ENUMERATE),

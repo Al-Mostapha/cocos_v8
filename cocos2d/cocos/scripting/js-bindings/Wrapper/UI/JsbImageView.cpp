@@ -516,6 +516,30 @@ void js_cocos2dx_ui_ImageView_constructor(const v8::FunctionCallbackInfo<v8::Val
   //     cocos2d::ui::ImageView* cobj = new (std::nothrow) cocos2d::ui::ImageView();
   cocos2d::ui::ImageView *cImage = new (std::nothrow) cocos2d::ui::ImageView();
 
+  // ccui.ImageView.prototype._ctor = function(imageFileName, texType){
+  //     if(imageFileName !== undefined){
+  //         texType = texType || ccui.Widget.LOCAL_TEXTURE;
+  //         ccui.ImageView.prototype._init.call(this, imageFileName, texType);
+  //     }
+  //     else
+  //         ccui.Widget.prototype.init.call(this);
+  // };
+  if (args.Length() == 2)
+  {
+    std::string normalPath = JsbUtils::FromV8String(isolate, args[0]);
+    cocos2d::ui::Widget::TextureResType texType = (cocos2d::ui::Widget::TextureResType)args[1]->Int32Value(isolate->GetCurrentContext()).FromJust();
+    cImage->init(normalPath, texType);
+  }
+  else if (args.Length() == 1)
+  {
+    std::string normalPath = JsbUtils::FromV8String(isolate, args[0]);
+    cImage->init(normalPath);
+  }
+  else
+  {
+    cImage->init();
+  }
+
   //     js_type_class_t *typeClass = js_get_type_from_native<cocos2d::ui::ImageView>(cobj);
 
   //     // link the native object with the javascript object
@@ -570,7 +594,6 @@ void js_register_cocos2dx_ui_ImageView(v8::Isolate *isolate, v8::Local<v8::Objec
   auto tpl = v8::FunctionTemplate::New(isolate, js_cocos2dx_ui_ImageView_constructor);
   tpl->SetClassName(JsbUtils::ToV8String(isolate, "ImageView"));
   tpl->InstanceTemplate()->SetInternalFieldCount(1);
-
 
   auto proto = tpl->PrototypeTemplate();
   auto parent = ScriptEngine::getInstance()->getClassByName(typeid(cocos2d::ui::Widget).name());
@@ -634,7 +657,7 @@ void js_register_cocos2dx_ui_ImageView(v8::Isolate *isolate, v8::Local<v8::Objec
   //     // add the proto and JSClass to the type->js info hash table
   //     jsb_register_class<cocos2d::ui::ImageView>(cx, jsb_cocos2d_ui_ImageView_class, proto, parent_proto);
   //     anonEvaluate(cx, global, "(function () { ccui.ImageView.extend = cc.Class.extend; })()");
-  
+
   JsbUtils::RegisterV8Class(typeid(cocos2d::ui::ImageView).name(), &tpl);
   JsbUtils::BindJsClass("ImageView", global, tpl);
 }

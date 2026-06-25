@@ -1265,7 +1265,8 @@ void js_cocos2dx_Director_getRunningScene(const v8::FunctionCallbackInfo<v8::Val
   //   JS::RootedObject obj(cx, args.thisv().toObjectOrNull());
   //   js_proxy_t *proxy = jsb_get_js_proxy(obj);
   //   cocos2d::Director *cobj = (cocos2d::Director *)(proxy ? proxy->ptr : NULL);
-  cocos2d::Director *cobj = (cocos2d::Director *)args.This()->GetAlignedPointerFromInternalField(0);
+  // cocos2d::Director *cobj = (cocos2d::Director *)args.This()->GetAlignedPointerFromInternalField(0);
+  cocos2d::Director *cobj = cocos2d::Director::getInstance();
   SE_PRECONDITION2(cobj, "js_cocos2dx_Director_getRunningScene : Invalid Native Object");
   //   JSB_PRECONDITION2(cobj, cx, false, "js_cocos2dx_Director_getRunningScene : Invalid Native Object");
   //   if (argc == 0)

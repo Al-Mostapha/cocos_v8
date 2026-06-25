@@ -39,7 +39,7 @@ declare namespace ccui {
     //           this.setFontName(this._fontName);
     //       }
     //   },
-    constructor(textContent?: string, fontName?: string, fontSize?: number);
+    constructor(textContent: string, fontName: string, fontSize: number);
 
     //   _initRenderer: function () {
     //       this._labelRenderer = new cc.LabelTTF();

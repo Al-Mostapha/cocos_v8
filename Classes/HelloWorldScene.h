@@ -26,6 +26,7 @@
 #define __HELLOWORLD_SCENE_H__
 
 #include "cocos2d.h"
+#include "ScriptEngine.hpp"
 
 class HelloWorld : public cocos2d::Scene
 {
@@ -33,6 +34,26 @@ public:
     static cocos2d::Scene* createScene();
 
     virtual bool init();
+
+    virtual void onEnter() override{
+        Scene::onEnter();
+        auto js = ScriptEngine::getInstance();
+        js->runScript("dist/game.js");
+        int index = 0;
+        auto children = getChildren();
+        for (auto child : children)
+        {
+            child->setPositionX(0);
+            child->setPositionY(0);
+
+            if(index > 3){
+                child->setPositionX(100);
+                child->setPositionY(100);
+            }
+            index++;
+            cocos2d::log("child name: %s Desc: %s", child->getName().c_str(), typeid(*child).name());
+        }
+    }
     
     // a selector callback
     void menuCloseCallback(cocos2d::Ref* pSender);

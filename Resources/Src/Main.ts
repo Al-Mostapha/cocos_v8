@@ -70,14 +70,33 @@ class HelloWorldScene extends cc.Scene {
   constructor() {
     super();
     console.log("HelloWorldScene constructor called");
-    this._Text = new ccui.Text("Hello ccccccc World");
+    this._Text = new ccui.Text("Hello ccccccc World", "Arial", 38);
     const size = cc.winSize;
 
     // position the label on the center of the screen
-    this._Text.x = 100;
-    this._Text.y = 150;
+    this._Text.setPositionX(100);
+    this._Text.setPositionY(100);
 
-    this.addChild(this._Text, 5);
+    // cc.director.runScene(lScene);
+    const lText = new ccui.Text("Hello ccccccc World", "Arial", 38);
+    lText.setPosition(100, 100);
+    lText.setString("Hello cccccddddcc World");
+
+    const lSprite = new cc.Sprite("HelloWorld.png");
+    (<any>lSprite).initWithFile("HelloWorld.png");
+    lSprite.setPosition(480, 320);
+
+    this.addChild(lText, 5);
+    this.addChild(lSprite, 0);
+  }
+
+  onEnter() {
+    super.onEnter();
+    console.log("-------------------- HelloWorldScene onEnter called");
+  }
+
+  EnterScene() {
+    cc.director.getRunningScene().addChild(this._Text!);
   }
 
   // onEnter() {
@@ -128,7 +147,7 @@ cc.game.onStart = function () {
   // cc.view.setOrientation(cc.ORIENTATION_PORTRAIT);
 
   // Setup the resolution policy and design resolution size
-  cc.view.setDesignResolutionSize(960, 640, cc.ResolutionPolicy.SHOW_ALL);
+  cc.view.setDesignResolutionSize(1024, 768, cc.ResolutionPolicy.SHOW_ALL);
 
   // The game will be resized when browser size change
   cc.view.resizeWithBrowserSize(true);
@@ -138,8 +157,9 @@ cc.game.onStart = function () {
     g_resources,
     () => {
       console.log("Resources preloaded, running HelloWorldScene");
-      const lScene = new HelloWorldScene();
-      cc.director.runScene(lScene);
+
+      // cc.Director.getInstance().getRunningScene().addChild(lText);
+      cc.Director.getInstance().replaceScene(new HelloWorldScene());
     },
     this as any,
   );

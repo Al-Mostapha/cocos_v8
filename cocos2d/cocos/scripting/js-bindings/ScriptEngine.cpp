@@ -478,7 +478,7 @@ bool ScriptEngine::didStart()
     // }
     // runScript("test.js");
     // runScript("script/jsb_boot.js");
-    runScript("dist/game.js");
+
     return true;
 }
 
@@ -517,6 +517,7 @@ bool ScriptEngine::start()
         assert(ok);
         if (!ok)
             break;
+        cb(_globalObj.Get(_isolate));
     }
 
     for (auto cb : _afterInitHookArray)
@@ -538,6 +539,8 @@ bool ScriptEngine::start()
 
 bool ScriptEngine::runScript(const std::string &filePath, v8::Local<v8::Value> *rval)
 {
+    v8::HandleScope hs(_isolate);
+    
     assert(!filePath.empty());
 
     cocos2d::FileUtils *futil = cocos2d::FileUtils::getInstance();

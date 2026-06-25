@@ -1360,12 +1360,25 @@ void js_cocos2dx_ui_Text_create(const v8::FunctionCallbackInfo<v8::Value> &args)
 void js_cocos2dx_ui_Text_constructor(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
   v8::Isolate *isolate = args.GetIsolate();
-  v8::HandleScope handleScope(isolate);
+  v8::EscapableHandleScope handleScope(isolate);
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     cocos2d::ui::Text* cobj = new (std::nothrow) cocos2d::ui::Text();
-  cocos2d::ui::Text *cText = cocos2d::ui::Text::create();
-
+  cocos2d::ui::Text *cText = new (std::nothrow) cocos2d::ui::Text();
+  std::string text;
+  std::string font;
+  int fontSize = 0;
+  if (args.Length() == 3)
+  {
+    text = JsbUtils::FromV8String(isolate, args[0]);
+    font = JsbUtils::FromV8String(isolate, args[1]);
+    fontSize = args[2]->Int32Value(isolate->GetCurrentContext()).FromJust();
+    cText->init(text, font, fontSize);
+  }
+  else if (args.Length() == 0)
+  {
+    cText->init();
+  }
   //     js_type_class_t *typeClass = js_get_type_from_native<cocos2d::ui::Text>(cobj);
 
   //     // link the native object with the javascript object
@@ -1374,8 +1387,8 @@ void js_cocos2dx_ui_Text_constructor(const v8::FunctionCallbackInfo<v8::Value> &
   v8::Local<v8::Object> jsobj = jsb_ref_create_jsobject(cText);
   //     if (JS_HasProperty(cx, jsobj, "_ctor", &ok) && ok)
   //         ScriptingCore::getInstance()->executeFunctionWithOwner(OBJECT_TO_JSVAL(jsobj), "_ctor", args);
-  args.GetReturnValue().Set(jsobj);
-  CallCustomConstructor(args, jsobj);
+  args.GetReturnValue().Set(handleScope.Escape(jsobj));
+  // CallCustomConstructor(args, jsobj);
   //     return true;
 }
 
@@ -1423,7 +1436,7 @@ void js_register_cocos2dx_ui_Text(v8::Isolate *isolate, v8::Local<v8::Object> gl
 
   auto proto = tpl->PrototypeTemplate();
   auto parentPrototype = ScriptEngine::getInstance()->getClassByName(typeid(cocos2d::ui::Widget).name());
-  tpl->Inherit(parentPrototype);
+
   //     static JSPropertySpec properties[] = {
   //         JS_PS_END
   //     };
@@ -1527,6 +1540,8 @@ void js_register_cocos2dx_ui_Text(v8::Isolate *isolate, v8::Local<v8::Object> gl
   proto->Set(isolate, "__nativeObj", v8::True(isolate));
   //     JS_SetProperty(cx, proto, "__is_ref", JS::TrueHandleValue);
   proto->Set(isolate, "__is_ref", v8::True(isolate));
+
+  tpl->Inherit(parentPrototype);
 
   //     // add the proto and JSClass to the type->js info hash table
   //     jsb_register_class<cocos2d::ui::Text>(cx, jsb_cocos2d_ui_Text_class, proto, parent_proto);

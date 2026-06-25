@@ -1744,6 +1744,79 @@ void js_cocos2dx_Sprite_constructor(const v8::FunctionCallbackInfo<v8::Value> &a
   //     cocos2d::Sprite *cobj = new (std::nothrow) cocos2d::Sprite();
   cocos2d::Sprite *cSprite = new (std::nothrow) cocos2d::Sprite();
 
+  //   if (fileName === undefined) {
+  //     cc.Sprite.prototype.init.call(this);
+  // }
+  if (args.Length() == 0)
+  {
+    cSprite->init();
+  }
+  else
+  {
+    if (args[0]->IsString())
+    {
+      std::string filename = JsbUtils::FromV8String(isolate, args[0]);
+      if (filename[0] == '#')
+      {
+        std::string frameName = filename.substr(1, filename.length() - 1);
+        cSprite->initWithSpriteFrameName(frameName);
+      }
+      else
+      {
+        if (args.Length() == 2)
+        {
+          cocos2d::Rect rect;
+          bool ok = JsbUtils::jsval_to_ccrect(isolate, args[1], &rect);
+          if (!ok)
+          {
+            SE_REPORT_ERROR("js_cocos2dx_Sprite_constructor : Error processing arguments");
+            return;
+          }
+          cSprite->initWithFile(filename, rect);
+        }
+        else
+        {
+          cSprite->initWithFile(filename);
+        }
+      }
+    }
+    else if (args[0]->IsObject())
+    {
+      v8::Local<v8::Object> tmpObj = args[0]->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
+      void *ptr = tmpObj->GetAlignedPointerFromInternalField(0);
+      SE_PRECONDITION2(ptr, "js_cocos2dx_Sprite_constructor : Invalid Native Object");
+      if (dynamic_cast<cocos2d::Texture2D *>((cocos2d::Texture2D *)ptr))
+      {
+        cocos2d::Texture2D *texture = (cocos2d::Texture2D *)ptr;
+        if (args.Length() == 2)
+        {
+          cocos2d::Rect rect;
+          bool ok = JsbUtils::jsval_to_ccrect(isolate, args[1], &rect);
+          if (!ok)
+          {
+            SE_REPORT_ERROR("js_cocos2dx_Sprite_constructor : Error processing arguments");
+            return;
+          }
+          cSprite->initWithTexture(texture, rect);
+        }
+        else
+        {
+          cSprite->initWithTexture(texture);
+        }
+      }
+      else if (dynamic_cast<cocos2d::SpriteFrame *>((cocos2d::SpriteFrame *)ptr))
+      {
+        cocos2d::SpriteFrame *spriteFrame = (cocos2d::SpriteFrame *)ptr;
+        cSprite->initWithSpriteFrame(spriteFrame);
+      }
+      else if (dynamic_cast<cocos2d::PolygonInfo *>((cocos2d::PolygonInfo *)ptr))
+      {
+        cocos2d::PolygonInfo *polygonInfo = (cocos2d::PolygonInfo *)ptr;
+        cSprite->initWithPolygon(*polygonInfo);
+      }
+    }
+  }
+
   //     js_type_class_t *typeClass = js_get_type_from_native<cocos2d::Sprite>(cobj);
 
   //     // link the native object with the javascript object

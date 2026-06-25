@@ -397,7 +397,8 @@ void js_cocos2dx_Scene_constructor(const v8::FunctionCallbackInfo<v8::Value> &ar
   //     JS::CallArgs args = JS::CallArgsFromVp(argc, vp);
   //     bool ok = true;
   //     cocos2d::Scene* cobj = new (std::nothrow) cocos2d::Scene();
-  cocos2d::Scene *cobj = cocos2d::Scene::create();
+  cocos2d::Scene *cobj = new (std::nothrow) cocos2d::Scene();
+  cobj->init();
 
   //     js_type_class_t *typeClass = js_get_type_from_native<cocos2d::Scene>(cobj);
 

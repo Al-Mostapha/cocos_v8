@@ -1700,6 +1700,52 @@ void js_cocos2dx_ui_Button_constructor(const v8::FunctionCallbackInfo<v8::Value>
 
     //     js_type_class_t *typeClass = js_get_type_from_native<cocos2d::ui::Button>(cobj);
 
+    // ccui.Button.prototype._ctor = function (normalImage, selectedImage, disableImage, texType) {
+    //     if(texType !== undefined)
+    //         ccui.Button.prototype.init.call(this, normalImage, selectedImage, disableImage, texType);
+    //     else if(disableImage !== undefined)
+    //         ccui.Button.prototype.init.call(this, normalImage, selectedImage, disableImage);
+    //     else if(selectedImage !== undefined)
+    //         ccui.Button.prototype.init.call(this, normalImage, selectedImage);
+    //     else if(normalImage !== undefined)
+    //         ccui.Button.prototype.init.call(this, normalImage);
+    //     else
+    //         ccui.Widget.prototype.init.call(this);
+    if (args.Length() == 1)
+    {
+        std::string arg0 = JsbUtils::FromV8String(isolate, args[0]);
+        cBtn->init(arg0);
+    }
+    else if (args.Length() == 2)
+    {
+        std::string normalImage = JsbUtils::FromV8String(isolate, args[0]);
+        std::string selectedImage = JsbUtils::FromV8String(isolate, args[1]);
+        cBtn->init(normalImage, selectedImage);
+    }
+    else if (args.Length() == 3)
+    {
+        std::string normalImage = JsbUtils::FromV8String(isolate, args[0]);
+        std::string selectedImage = JsbUtils::FromV8String(isolate, args[1]);
+        std::string disableImage = JsbUtils::FromV8String(isolate, args[2]);
+        cBtn->init(normalImage, selectedImage, disableImage);
+    }
+    else if (args.Length() == 4)
+    {
+        std::string normalImage = JsbUtils::FromV8String(isolate, args[0]);
+        std::string selectedImage = JsbUtils::FromV8String(isolate, args[1]);
+        std::string disableImage = JsbUtils::FromV8String(isolate, args[2]);
+        int plistType = args[3]->Int32Value(isolate->GetCurrentContext()).FromJust();
+        cocos2d::ui::Widget::TextureResType texType = (cocos2d::ui::Widget::TextureResType)plistType;
+        cBtn->init(normalImage, selectedImage, disableImage, texType);
+    }
+    else
+    {
+        cBtn->init();
+    }
+
+    //     this.setTouchEnabled(true);
+    // };
+
     //     // link the native object with the javascript object
     //     JS::RootedObject jsobj(cx, jsb_ref_create_jsobject(cx, cobj, typeClass, "cocos2d::ui::Button"));
     v8::Local<v8::Object> jsObj = jsb_ref_create_jsobject(cBtn);
