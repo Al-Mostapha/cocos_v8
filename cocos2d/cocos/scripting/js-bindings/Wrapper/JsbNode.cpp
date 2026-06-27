@@ -6005,6 +6005,7 @@ void js_cocos2dx_Node_onEnter(const v8::FunctionCallbackInfo<v8::Value> &args)
 
   // TODO
   //     ScriptingCore::getInstance()->setCalledFromScript(true);
+  ScriptEngine::getInstance()->setCalledFromScript(true);
   // call js function on enter
 
   //     cobj->onEnter();

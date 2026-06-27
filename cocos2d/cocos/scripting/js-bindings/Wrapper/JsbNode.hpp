@@ -1,4 +1,4 @@
-
+#pragma once
 #include "v8.h"
 // extern JSClass  *jsb_cocos2d_Node_class;
 // extern JSObject *jsb_cocos2d_Node_prototype;
@@ -150,3 +150,13 @@ void js_register_cocos2dx_Node(v8::Isolate *isolate, v8::Local<v8::Object> globa
 // bool js_cocos2dx_Node_create(JSContext *cx, uint32_t argc, jsval *vp);
 // bool js_cocos2dx_Node_getAttachedNodeCount(JSContext *cx, uint32_t argc, jsval *vp);
 // bool js_cocos2dx_Node_Node(JSContext *cx, uint32_t argc, jsval *vp);
+
+
+
+void js_cocos2dx_Node_onEnter(const v8::FunctionCallbackInfo<v8::Value>& args);
+void js_cocos2dx_Node_onExit(const v8::FunctionCallbackInfo<v8::Value>& args);
+void js_cocos2dx_Node_onEnterTransitionDidFinish(const v8::FunctionCallbackInfo<v8::Value>& args);
+void js_cocos2dx_Node_onExitTransitionDidStart(const v8::FunctionCallbackInfo<v8::Value>& args);
+void js_cocos2dx_Node_cleanup(const v8::FunctionCallbackInfo<v8::Value>& args);
+void js_cocos2dx_Component_onEnter(const v8::FunctionCallbackInfo<v8::Value>& args);
+void js_cocos2dx_Component_onExit(const v8::FunctionCallbackInfo<v8::Value>& args);

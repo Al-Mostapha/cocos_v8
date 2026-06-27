@@ -38,6 +38,9 @@ public:
     virtual void onEnter() override{
         Scene::onEnter();
         auto js = ScriptEngine::getInstance();
+        cocos2d::ScriptEngineManager::getInstance()->setScriptEngine(js);
+
+        
         js->runScript("dist/game.js");
         int index = 0;
         auto children = getChildren();

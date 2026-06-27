@@ -648,7 +648,7 @@ public:
      * @lua NA
      * @js NA
      */
-    virtual ccScriptType getScriptType() { return kScriptTypeNone; }
+    virtual ccScriptType getScriptType() { return kScriptTypeJavascript; }
     
     /**
      * Reflect the retain relationship to script scope
@@ -805,7 +805,7 @@ public:
     virtual void removeObjectProxy(Ref* obj) {}
 
     /** Triggers the garbage collector */
-    virtual void garbageCollect() {}
+    virtual bool garbageCollect() { return false; }
 };
 
 class Node;
