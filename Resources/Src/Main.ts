@@ -91,8 +91,8 @@ class HelloWorldScene extends cc.Scene {
   }
 
   onEnter() {
-    super.onEnter();
     console.log("-------------------- HelloWorldScene onEnter called");
+    super.onEnter();
   }
 
   EnterScene() {

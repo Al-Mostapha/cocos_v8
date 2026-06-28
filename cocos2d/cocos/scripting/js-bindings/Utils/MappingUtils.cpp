@@ -39,6 +39,10 @@ void NativePtrToObjectMap::destroy()
 {
     if (__nativePtrToObjectMap != nullptr)
     {
+        for (auto &pair : *__nativePtrToObjectMap)
+        {
+            pair.second.Reset();
+        }
         delete __nativePtrToObjectMap;
         __nativePtrToObjectMap = nullptr;
     }
@@ -48,13 +52,14 @@ void NativePtrToObjectMap::emplace(void *nativeObj, v8::Local<v8::Object> seObj)
 {
     v8::Isolate *isolate = v8::Isolate::GetCurrent();
     auto pair = __nativePtrToObjectMap->emplace(nativeObj, v8::Global<v8::Object>(isolate, seObj));
-    if (!pair.second) {
+    if (!pair.second)
+    {
         pair.first->second.Reset(isolate, seObj);
     }
-    pair.first->second.SetWeak(nativeObj, [](const v8::WeakCallbackInfo<void> &data) {
+    pair.first->second.SetWeak(nativeObj, [](const v8::WeakCallbackInfo<void> &data)
+                               {
         void *nativeObj = data.GetParameter();
-        NativePtrToObjectMap::erase(nativeObj);
-    }, v8::WeakCallbackType::kParameter);
+        NativePtrToObjectMap::erase(nativeObj); }, v8::WeakCallbackType::kParameter);
 }
 
 NativePtrToObjectMap::Map::iterator NativePtrToObjectMap::find(void *nativeObj)

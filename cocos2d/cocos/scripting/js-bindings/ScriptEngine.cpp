@@ -4,10 +4,17 @@
 #define EXPOSE_GC "__jsb_gc__"
 #include "JsbUtils.h"
 #include <sstream>
+#include <mutex>
 #include "Utils/MappingUtils.hpp"
 #include "platform/CCFileUtils.h"
 #include "CCScriptSupport.h"
 #include "Wrapper/JsbNode.hpp"
+
+namespace
+{
+	std::once_flag g_v8InitOnce;
+	v8::Platform *g_v8Platform = nullptr;
+}
 
 ScriptEngine *ScriptEngine::_instance = nullptr;
 int __jsbInvocationCount = 0;
@@ -34,27 +41,31 @@ ScriptEngine::ScriptEngine()
 {
 	SE_LOGD("ScriptEngine::ScriptEngine()");
 	_startTime = std::chrono::steady_clock::now();
-	_platform = v8::platform::NewDefaultPlatform().release();
-	v8::V8::InitializePlatform(_platform);
+	std::call_once(g_v8InitOnce, []()
+								 {
+		g_v8Platform = v8::platform::NewDefaultPlatform().release();
+		v8::V8::InitializePlatform(g_v8Platform);
 
-	std::string flags;
-	// NOTICE: spaces are required between flags
-	flags.append(" --expose-gc-as=" EXPOSE_GC);
-	// flags.append(" --trace-gc"); // v8 trace gc
+		std::string flags;
+		// NOTICE: spaces are required between flags
+		flags.append(" --expose-gc-as=" EXPOSE_GC);
+		// flags.append(" --trace-gc"); // v8 trace gc
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 // TODO
 // if(!jitSupported()) {
 //     flags.append(" --jitless");
 // }
 #elif (CC_TARGET_PLATFORM == CC_PLATFORM_OPENHARMONY)
-	flags.append(" --jitless");
+		flags.append(" --jitless");
 #endif
-	if (!flags.empty())
-	{
-		v8::V8::SetFlagsFromString(flags.c_str(), (int)flags.length());
-	}
-	bool ok = v8::V8::Initialize();
-	assert(ok);
+		if (!flags.empty())
+		{
+			v8::V8::SetFlagsFromString(flags.c_str(), (int)flags.length());
+		}
+		bool ok = v8::V8::Initialize();
+		assert(ok); });
+
+	_platform = g_v8Platform;
 }
 
 void ScriptEngine::destroyInstance()
@@ -66,10 +77,8 @@ void ScriptEngine::destroyInstance()
 ScriptEngine::~ScriptEngine()
 {
 	cleanup();
-	v8::V8::Dispose();
-	// TODO
-	v8::V8::DisposePlatform();
-	delete _platform;
+	// Keep V8 global state alive until process shutdown to avoid cross-platform
+	// teardown crashes when background platform tasks still exist.
 }
 
 void ScriptEngine::callExceptionCallback(const char *location, const char *message, const char *stack)
@@ -519,7 +528,6 @@ bool ScriptEngine::start()
 		assert(ok);
 		if (!ok)
 			break;
-		cb(_globalObj.Get(_isolate));
 	}
 
 	for (auto cb : _afterInitHookArray)
@@ -606,13 +614,37 @@ void ScriptEngine::cleanup()
 		//             }
 		// #endif
 
-		_context.Get(_isolate)->Exit();
-		_context.Reset();
-		_isolate->Exit();
+		// _context.Get(_isolate)->Exit();
+		// _context.Reset();
+		// _isolate->Exit();
 	}
-	_globalObj.Reset();
-	_context.Reset();
-	_isolate->Dispose();
+	// Release persistent handles and leave entered scopes before isolate disposal.
+	for (auto &cls : _registeredClasses)
+	{
+		cls.second.Reset();
+	}
+
+	if (_isolate != nullptr)
+	{
+		v8::Isolate::Scope isolateScope(_isolate);
+		v8::HandleScope handleScope(_isolate);
+
+		if (!_context.IsEmpty() && _isolate->InContext())
+		{
+			_context.Get(_isolate)->Exit();
+		}
+
+		_globalObj.Reset();
+		_context.Reset();
+
+		_isolate->Exit();
+		_isolate->Dispose();
+	}
+	else
+	{
+		_globalObj.Reset();
+		_context.Reset();
+	}
 
 	_isolate = nullptr;
 	_isValid = false;
@@ -626,7 +658,8 @@ void ScriptEngine::cleanup()
 	_afterCleanupHookArray.clear();
 
 	_isInCleanup = false;
-	// NativePtrToObjectMap::destroy();
+	NativePtrToObjectMap::destroy();
+	// _registeredClasses.clear();
 	// NonRefNativePtrCreatedByCtorMap::destroy();
 	// _gcFunc = nullptr;
 	SE_LOGD("ScriptEngine::cleanup end ...\n");
@@ -746,7 +779,6 @@ void ScriptEngine::unrootScriptObject(cocos2d::Ref *target)
 	CCASSERT(false, "ScriptEngine::unrootScriptObject is not implemented for V8");
 }
 
-
 /**
  * Release all children in script scope
  */
@@ -769,15 +801,15 @@ void ScriptEngine::releaseAllNativeRefs(cocos2d::Ref *owner)
  */
 void ScriptEngine::removeScriptObjectByObject(cocos2d::Ref *obj)
 {
-    auto proxy = NativePtrToObjectMap::find(obj);
+	auto proxy = NativePtrToObjectMap::find(obj);
 
-    if (proxy != NativePtrToObjectMap::end())
-    {
-        // JSContext *cx = getGlobalContext();
-        // JS::RemoveObjectRoot(cx, &proxy->obj);
-        // jsb_remove_proxy(proxy);
-				CCASSERT(false, "ScriptEngine::removeScriptObjectByObject is not implemented for V8");
-    }
+	if (proxy != NativePtrToObjectMap::end())
+	{
+		// JSContext *cx = getGlobalContext();
+		// JS::RemoveObjectRoot(cx, &proxy->obj);
+		// jsb_remove_proxy(proxy);
+		CCASSERT(false, "ScriptEngine::removeScriptObjectByObject is not implemented for V8");
+	}
 }
 
 /**
@@ -815,88 +847,78 @@ bool ScriptEngine::isFunctionOverridedInJS(v8::Local<v8::Object> jsObj, const ch
 	if (!funcVal->IsFunction())
 		return false;
 
-	// check if the function is overrided in JS, not the one defined in C++.
-	v8::Local<v8::Function> func = funcVal.As<v8::Function>();
 
-	auto functionStr = func->ToString(context).FromMaybe(v8::Local<v8::String>());
-	std::string functionStrStd = JsbUtils::FromV8String(isolate, functionStr);
-
-	if(functionStrStd.find("[native code]") != std::string::npos)
+	v8::Maybe<bool> hasOwnProperty = jsObj->HasOwnProperty(context, JsbUtils::ToV8String(isolate, funcName));
+	if (hasOwnProperty.IsJust() && hasOwnProperty.FromJust())
+	{
+		// The user explicitly defined/overrode 'onEnter' on this specific instance!
+		v8::Local<v8::Value> property = jsObj->Get(context, JsbUtils::ToV8String(isolate, funcName)).ToLocalChecked();
+		if (property->IsFunction())
+		{
+			v8::Local<v8::Function> jsFunc = v8::Local<v8::Function>::Cast(property);
+			return true;
+		}
+	}
+	else
 	{
 		return false;
 	}
-
-	if(func->HasOwnProperty(context, JsbUtils::ToV8String(isolate, "name")).FromMaybe(false))
-	{
-		v8::Local<v8::Value> nameVal;
-		if (func->Get(context, JsbUtils::ToV8String(isolate, "name")).ToLocal(&nameVal))
-		{
-			v8::String::Utf8Value nameUtf8(isolate, nameVal);
-			std::string funcNameStr(*nameUtf8, nameUtf8.length());
-			if (funcNameStr == funcName)
-			{
-				return false;
-			}
-		}
-	}
-
 	return true;
 }
 
 void ScriptEngine::pauseSchedulesAndActions(v8::Local<v8::Value> p)
 {
-    // JS::RootedObject obj(_cx, p->obj.get());
-		if(p.IsEmpty() || !p->IsObject()){
-			SE_LOGE("ScriptEngine::pauseSchedulesAndActions: p is empty or not an object\n");
-			return;
-		}
-		v8::Local<v8::Object> obj = p.As<v8::Object>();
-    // auto arr = JSScheduleWrapper::getTargetForJSObject(obj);
-    // if (! arr) return;
+	// JS::RootedObject obj(_cx, p->obj.get());
+	if (p.IsEmpty() || !p->IsObject())
+	{
+		SE_LOGE("ScriptEngine::pauseSchedulesAndActions: p is empty or not an object\n");
+		return;
+	}
+	v8::Local<v8::Object> obj = p.As<v8::Object>();
+	// auto arr = JSScheduleWrapper::getTargetForJSObject(obj);
+	// if (! arr) return;
 
-    // Node* node = (Node*)p->ptr;
-		cocos2d::Node* node = (cocos2d::Node*)obj->GetAlignedPointerFromInternalField(0);
-		// TODO
-    // for(ssize_t i = 0; i < arr->size(); ++i) {
-    //     if (arr->at(i)) {
-    //         node->getScheduler()->pauseTarget(arr->at(i));
-    //     }
-    // }
+	// Node* node = (Node*)p->ptr;
+	cocos2d::Node *node = (cocos2d::Node *)obj->GetAlignedPointerFromInternalField(0);
+	// TODO
+	// for(ssize_t i = 0; i < arr->size(); ++i) {
+	//     if (arr->at(i)) {
+	//         node->getScheduler()->pauseTarget(arr->at(i));
+	//     }
+	// }
 }
-
 
 void ScriptEngine::resumeSchedulesAndActions(v8::Local<v8::Value> p)
 {
-	  // TODO
-    // JS::RootedObject obj(_cx, p->obj.get());
-    // auto arr = JSScheduleWrapper::getTargetForJSObject(obj);
-    // if (!arr) return;
+	// TODO
+	// JS::RootedObject obj(_cx, p->obj.get());
+	// auto arr = JSScheduleWrapper::getTargetForJSObject(obj);
+	// if (!arr) return;
 
-    // Node* node = (Node*)p->ptr;
-    // for(ssize_t i = 0; i < arr->size(); ++i) {
-    //     if (!arr->at(i)) continue;
-    //     node->getScheduler()->resumeTarget(arr->at(i));
-    // }
+	// Node* node = (Node*)p->ptr;
+	// for(ssize_t i = 0; i < arr->size(); ++i) {
+	//     if (!arr->at(i)) continue;
+	//     node->getScheduler()->resumeTarget(arr->at(i));
+	// }
 }
 
 void ScriptEngine::cleanupSchedulesAndActions(v8::Local<v8::Value> p)
 {
-	  // TODO
-    // JS::RootedObject obj(_cx, p->obj.get());
-    // auto targetArray = JSScheduleWrapper::getTargetForJSObject(obj);
-    // if (targetArray)
-    // {
-    //     Node* node = (Node*)p->ptr;
-    //     auto scheduler = node->getScheduler();
-    //     for (auto&& target : *targetArray)
-    //     {
-    //         scheduler->unscheduleAllForTarget(target);
-    //     }
+	// TODO
+	// JS::RootedObject obj(_cx, p->obj.get());
+	// auto targetArray = JSScheduleWrapper::getTargetForJSObject(obj);
+	// if (targetArray)
+	// {
+	//     Node* node = (Node*)p->ptr;
+	//     auto scheduler = node->getScheduler();
+	//     for (auto&& target : *targetArray)
+	//     {
+	//         scheduler->unscheduleAllForTarget(target);
+	//     }
 
-    //     JSScheduleWrapper::removeAllTargetsForJSObject(obj);
-    // }
+	//     JSScheduleWrapper::removeAllTargetsForJSObject(obj);
+	// }
 }
-
 
 int ScriptEngine::handleNodeEvent(void *data)
 {
@@ -969,48 +991,58 @@ int ScriptEngine::handleNodeEvent(void *data)
 	return ret;
 }
 
-int ScriptEngine::handleActionEvent(void *data) {
+int ScriptEngine::handleActionEvent(void *data)
+{
 	CCASSERT(false, "ScriptEngine::handleActionEvent is not implemented for V8");
 	return 0;
 }
 
-int ScriptEngine::handleComponentEvent(void *data) {
+int ScriptEngine::handleComponentEvent(void *data)
+{
 	CCASSERT(false, "ScriptEngine::handleComponentEvent is not implemented for V8");
 	return 0;
 }
 
-bool ScriptEngine::handleTouchesEvent(void *nativeObj, cocos2d::EventTouch::EventCode eventCode, const std::vector<cocos2d::Touch *> &touches, cocos2d::Event *event) {
+bool ScriptEngine::handleTouchesEvent(void *nativeObj, cocos2d::EventTouch::EventCode eventCode, const std::vector<cocos2d::Touch *> &touches, cocos2d::Event *event)
+{
 	CCASSERT(false, "ScriptEngine::handleTouchesEvent is not implemented for V8");
 	return 0;
 }
-bool ScriptEngine::handleTouchesEvent(void *nativeObj, cocos2d::EventTouch::EventCode eventCode, const std::vector<cocos2d::Touch *> &touches, cocos2d::Event *event, v8::Local<v8::Value> jsvalRet) {
+bool ScriptEngine::handleTouchesEvent(void *nativeObj, cocos2d::EventTouch::EventCode eventCode, const std::vector<cocos2d::Touch *> &touches, cocos2d::Event *event, v8::Local<v8::Value> jsvalRet)
+{
 	CCASSERT(false, "ScriptEngine::handleTouchesEvent is not implemented for V8");
 	return 0;
 }
 
-bool ScriptEngine::handleTouchEvent(void *nativeObj, cocos2d::EventTouch::EventCode eventCode, cocos2d::Touch *touch, cocos2d::Event *event) {
+bool ScriptEngine::handleTouchEvent(void *nativeObj, cocos2d::EventTouch::EventCode eventCode, cocos2d::Touch *touch, cocos2d::Event *event)
+{
 	CCASSERT(false, "ScriptEngine::handleTouchEvent is not implemented for V8");
 	return 0;
 }
-bool ScriptEngine::handleTouchEvent(void *nativeObj, cocos2d::EventTouch::EventCode eventCode, cocos2d::Touch *touch, cocos2d::Event *event, v8::Local<v8::Value> jsvalRet) {
+bool ScriptEngine::handleTouchEvent(void *nativeObj, cocos2d::EventTouch::EventCode eventCode, cocos2d::Touch *touch, cocos2d::Event *event, v8::Local<v8::Value> jsvalRet)
+{
 	CCASSERT(false, "ScriptEngine::handleTouchEvent is not implemented for V8");
 	return 0;
 }
 
-bool ScriptEngine::handleMouseEvent(void *nativeObj, cocos2d::EventMouse::MouseEventType eventType, cocos2d::Event *event) {
+bool ScriptEngine::handleMouseEvent(void *nativeObj, cocos2d::EventMouse::MouseEventType eventType, cocos2d::Event *event)
+{
 	CCASSERT(false, "ScriptEngine::handleMouseEvent is not implemented for V8");
 	return 0;
 }
-bool ScriptEngine::handleMouseEvent(void *nativeObj, cocos2d::EventMouse::MouseEventType eventType, cocos2d::Event *event, v8::Local<v8::Value> jsvalRet) {
+bool ScriptEngine::handleMouseEvent(void *nativeObj, cocos2d::EventMouse::MouseEventType eventType, cocos2d::Event *event, v8::Local<v8::Value> jsvalRet)
+{
 	CCASSERT(false, "ScriptEngine::handleMouseEvent is not implemented for V8");
 	return 0;
 }
 
-bool ScriptEngine::handleKeyboardEvent(void *nativeObj, cocos2d::EventKeyboard::KeyCode keyCode, bool isPressed, cocos2d::Event *event) {
+bool ScriptEngine::handleKeyboardEvent(void *nativeObj, cocos2d::EventKeyboard::KeyCode keyCode, bool isPressed, cocos2d::Event *event)
+{
 	CCASSERT(false, "ScriptEngine::handleKeyboardEvent is not implemented for V8");
 	return 0;
 }
-bool ScriptEngine::handleFocusEvent(void *nativeObj, cocos2d::ui::Widget *widgetLoseFocus, cocos2d::ui::Widget *widgetGetFocus) {
+bool ScriptEngine::handleFocusEvent(void *nativeObj, cocos2d::ui::Widget *widgetLoseFocus, cocos2d::ui::Widget *widgetGetFocus)
+{
 	CCASSERT(false, "ScriptEngine::handleFocusEvent is not implemented for V8");
 	return 0;
 }
